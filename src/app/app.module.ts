@@ -11,30 +11,39 @@ import { LoaderComponent } from './components/loader/loader.component'
 import { ToastComponent } from './components/toast/toast.component'
 import { SwiperModule } from 'swiper/angular'
 import { FooterComponent } from './components/footer/footer.component'
+
+// Pages
+import { LandingComponent } from './pages/landing/landing.component'
+import { LinkSleeperComponent } from './pages/link-sleeper/link-sleeper.component'
 import { SearchComponent } from './pages/search/search.component'
 import { MyLeagueComponent } from './pages/my-league/my-league.component'
 import { LeagueComponent } from './pages/league/league.component'
 import { MyProfileComponent } from './pages/my-profile/my-profile.component'
-import { LeagueService } from './services/league.service'
-import { UserService } from './services/user.service'
 import { ProfileComponent } from './pages/profile/profile.component'
 import { TeamComponent } from './pages/team/team.component'
 import { HomeComponent } from './pages/home/home.component'
-import { AuthService } from './services/auth.service'
-import { StandingsService } from './services/standings.service'
-import { TeamService } from './services/team.service'
 import { MyTeamComponent } from './pages/my-team/my-team.component'
 import { SelectedTeamComponent } from './pages/selected-team/selected-team.component'
 import { SelectedProfileComponent } from './pages/selected-profile/selected-profile.component'
 import { SelectedLeagueComponent } from './pages/selected-league/selected-league.component'
-import { PlayerService } from './services/player.service'
+import { TaxiSquadComponent } from './pages/taxi-squad/taxi-squad.component'
+
+// Modals
 import { PlayerModalComponent } from './components/player-modal/player-modal.component'
 import { MatchupModalComponent } from './components/matchup-modal/matchup-modal.component'
-import { TaxiSquadComponent } from './pages/taxi-squad/taxi-squad.component'
 import { TaxiSquadPlayerModalComponent } from './components/taxi-squad-player-modal/taxi-squad-player-modal.component'
+
+// Services
+import { LeagueService } from './services/league.service'
+import { UserService } from './services/user.service'
+import { AuthService } from './services/auth.service'
+import { StandingsService } from './services/standings.service'
+import { TeamService } from './services/team.service'
+import { PlayerService } from './services/player.service'
 import { TaxiSquadService } from './services/taxi-squad.service'
 import { DraftService } from './services/draft.service'
 import { SupabaseService } from './services/supabase.service'
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,6 +51,9 @@ import { SupabaseService } from './services/supabase.service'
     LoaderComponent,
     ToastComponent,
     FooterComponent,
+    // Pages
+    LandingComponent,
+    LinkSleeperComponent,
     SearchComponent,
     MyLeagueComponent,
     MyProfileComponent,
@@ -53,9 +65,10 @@ import { SupabaseService } from './services/supabase.service'
     TeamComponent,
     SelectedTeamComponent,
     HomeComponent,
+    TaxiSquadComponent,
+    // Modals
     PlayerModalComponent,
     MatchupModalComponent,
-    TaxiSquadComponent,
     TaxiSquadPlayerModalComponent,
   ],
   imports: [

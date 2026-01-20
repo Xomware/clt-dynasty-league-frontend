@@ -1,0 +1,79 @@
+<div class="link-page">
+  <div class="link-card">
+    <!-- Header -->
+    <div class="link-header">
+      <img src="assets/img/xomper-banner.jpg" alt="XOMPER" class="brand-logo" />
+      <h2>Link Your Sleeper Account</h2>
+      <p class="subtitle">Connect your Sleeper username to complete setup</p>
+    </div>
+
+    <!-- Search Mode -->
+    <ng-container *ngIf="!foundUser">
+      <div class="search-section">
+        <div class="input-wrapper">
+          <input
+            type="text"
+            class="sleeper-input"
+            placeholder="Enter your Sleeper username..."
+            [(ngModel)]="sleeperUsername"
+            (keydown)="onKeydown($event)"
+            [disabled]="loading"
+            autofocus
+          />
+        </div>
+
+        <button 
+          class="search-btn" 
+          (click)="searchSleeperUser()" 
+          [disabled]="loading || !sleeperUsername.trim()"
+        >
+          <span *ngIf="!loading">Find My Account</span>
+          <span *ngIf="loading">Searching...</span>
+        </button>
+
+        <p class="error-msg" *ngIf="error">{{ error }}</p>
+
+        <p class="help-text">
+          Your Sleeper username can be found in the Sleeper app under your profile settings.
+        </p>
+      </div>
+    </ng-container>
+
+    <!-- Confirm Mode -->
+    <ng-container *ngIf="foundUser">
+      <div class="confirm-section">
+        <p class="confirm-label">Is this you?</p>
+
+        <div class="user-preview">
+          <img 
+            [src]="foundUser.getProfilePicture()" 
+            (error)="foundUser.avatar = ''"
+            alt="Avatar" 
+            class="user-avatar" 
+          />
+          <div class="user-info">
+            <h3 class="user-name">{{ foundUser.getUserName() }}</h3>
+            <p class="user-id">ID: {{ foundUser.getUserId() }}</p>
+          </div>
+        </div>
+
+        <div class="confirm-buttons">
+          <button class="confirm-btn yes" (click)="confirmLink()" [disabled]="loading">
+            <span *ngIf="!loading">Yes, That's Me!</span>
+            <span *ngIf="loading">Linking...</span>
+          </button>
+          <button class="confirm-btn no" (click)="cancelLink()" [disabled]="loading">
+            No, Try Again
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Sign Out Link -->
+    <div class="sign-out-section">
+      <button class="sign-out-link" (click)="signOut()">
+        Sign out and go back
+      </button>
+    </div>
+  </div>
+</div>

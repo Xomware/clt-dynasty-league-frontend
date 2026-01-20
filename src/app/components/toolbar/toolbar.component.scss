@@ -30,8 +30,14 @@
 .tabs {
   display: flex;
   justify-content: flex-start;
+  align-items: center;
   flex-grow: 1;
   gap: $spacing-xs;
+
+  > div {
+    display: flex;
+    gap: $spacing-xs;
+  }
 
   a {
     color: $text-secondary;
@@ -58,6 +64,31 @@
       border-color: $champion-gold;
     }
   }
+}
+
+// Sign Out Button
+.sign-out-btn {
+  background: transparent;
+  color: $text-secondary;
+  border: 1px solid $surface-light;
+  border-radius: $radius-md;
+  padding: 8px 16px;
+  margin: 0 0 0 $spacing-md;
+  cursor: pointer;
+  font-size: $text-sm;
+  font-weight: 500;
+  font-family: $font-body;
+  transition: all $transition-base;
+
+  &:hover {
+    border-color: $accent-red;
+    color: $accent-red;
+    background: rgba($accent-red, 0.1);
+  }
+}
+
+.desktop-only {
+  display: inline-flex;
 }
 
 // Mobile dropdown
@@ -99,6 +130,7 @@
     font-family: $font-body;
     transition: all $transition-fast;
     border-left: 3px solid transparent;
+    cursor: pointer;
 
     &:hover {
       background-color: rgba($surface-light, 0.15);
@@ -112,6 +144,18 @@
       color: $champion-gold;
       border-left-color: $champion-gold;
       font-weight: 600;
+    }
+
+    &.sign-out-link {
+      color: $accent-red;
+      border-top: 1px solid rgba($surface-light, 0.3);
+      margin-top: $spacing-sm;
+      padding-top: $spacing-md;
+
+      &:hover {
+        background-color: rgba($accent-red, 0.1);
+        border-left-color: $accent-red;
+      }
     }
   }
 }
@@ -140,5 +184,9 @@
 
   .banner-icon {
     width: 140px;
+  }
+
+  .desktop-only {
+    display: none;
   }
 }

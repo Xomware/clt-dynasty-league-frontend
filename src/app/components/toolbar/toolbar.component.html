@@ -3,19 +3,25 @@
     <img
       class="banner-icon"
       src="assets/img/xomper-banner.jpg"
-      alt="spotify image"
+      alt="XOMPER"
+      (click)="goToLanding()"
+      style="cursor: pointer;"
     />
   </h2>
 
   <div class="tabs" [ngClass]="{ hidden: dropdownVisible }">
     <div>
+      <!-- Always show Home/Search -->
       <a
-        routerLink="/home"
+        routerLink="/"
         routerLinkActive="active"
-        [ngClass]="{ selected: isSelected('/home') }"
+        [routerLinkActiveOptions]="{ exact: true }"
+        [ngClass]="{ selected: isSelected('/') }"
       >
         Home
       </a>
+
+      <!-- Authenticated user tabs -->
       <ng-container *ngIf="isLoggedIn()">
         <a
           routerLink="/my-profile"
@@ -26,6 +32,7 @@
           My Profile
         </a>
         <a
+          *ngIf="leagueId"
           routerLink="/my-league"
           [queryParams]="{ leagueId: leagueId, view: 'league' }"
           routerLinkActive="active"
@@ -34,6 +41,7 @@
           My League
         </a>
         <a
+          *ngIf="teamUserName"
           routerLink="/my-team"
           [queryParams]="{ user: teamUserName, league: teamLeagueId }"
           routerLinkActive="active"
@@ -42,6 +50,7 @@
           My Team
         </a>
         <a
+          *ngIf="leagueId"
           routerLink="/taxi-squad"
           [queryParams]="{ league: leagueId }"
           routerLinkActive="active"
@@ -51,47 +60,73 @@
         </a>
       </ng-container>
     </div>
+
+    <!-- Sign Out Button (desktop) -->
+    <button *ngIf="isLoggedIn()" class="sign-out-btn desktop-only" (click)="signOut()">
+      Sign Out
+    </button>
   </div>
 
-  <!-- Dropdown Button -->
+  <!-- Dropdown Button (mobile) -->
   <div class="dropdown-button" (click)="toggleDropdown()">☰</div>
 
+  <!-- Mobile Dropdown -->
   <div class="dropdown" *ngIf="dropdownVisible">
     <a
-      routerLink="/home"
+      routerLink="/"
       routerLinkActive="active"
-      (click)="selectItem('/home')"
-      >Home</a
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="selectItem('/')"
     >
+      Home
+    </a>
+
     <ng-container *ngIf="isLoggedIn()">
       <a
         routerLink="/my-profile"
         [queryParams]="{ userId: userId }"
         routerLinkActive="active"
         (click)="selectItem('/my-profile')"
-        >My Profile</a
       >
+        My Profile
+      </a>
       <a
+        *ngIf="leagueId"
         routerLink="/my-league"
         [queryParams]="{ leagueId: leagueId, view: 'league' }"
         routerLinkActive="active"
         (click)="selectItem('/my-league')"
-        >My League</a
       >
+        My League
+      </a>
       <a
+        *ngIf="teamUserName"
         routerLink="/my-team"
         [queryParams]="{ user: teamUserName, league: teamLeagueId }"
         routerLinkActive="active"
         (click)="selectItem('/my-team')"
-        >My Team</a
       >
+        My Team
+      </a>
       <a
+        *ngIf="leagueId"
         routerLink="/taxi-squad"
         [queryParams]="{ league: leagueId }"
         routerLinkActive="active"
         (click)="selectItem('/taxi-squad')"
-        >Taxi Squad</a
       >
+        Taxi Squad
+      </a>
+      
+      <!-- Sign Out (mobile) -->
+      <a class="sign-out-link" (click)="signOut()">
+        Sign Out
+      </a>
     </ng-container>
+
+    <!-- Guest sign in link -->
+    <a *ngIf="!isLoggedIn()" routerLink="/" (click)="selectItem('/')">
+      Sign In
+    </a>
   </div>
 </div>
