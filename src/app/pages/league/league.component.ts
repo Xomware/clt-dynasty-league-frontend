@@ -34,7 +34,7 @@ export class LeagueComponent implements OnInit {
   activeTab: 'standings' | 'matchups' = 'standings'
   matchups: MatchupModel[] = []
   matchupsGrouped: MatchupDisplay[] = []
-  currentWeek: number = this.LeagueService.getNflState().week
+  currentWeek: number = -1
   selectedWeek: number = this.currentWeek
   weeks: number[] = Array.from({ length: 18 }, (_, i) => i + 1) // e.g., 1–18 weeks
   selectedMatchup: any = null
@@ -54,7 +54,7 @@ export class LeagueComponent implements OnInit {
     private StandingsService: StandingsService,
     private TeamService: TeamService,
     private UserService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -169,7 +169,7 @@ export class LeagueComponent implements OnInit {
 
           this.leagueTaxiSquadIds = this.leagueRosters.reduce(
             (acc: string[], roster) => acc.concat(roster.taxi),
-            []
+            [],
           )
           this.league.setTaxiSquadIds(this.leagueTaxiSquadIds)
           if (this.mode == 'my') {
@@ -182,7 +182,7 @@ export class LeagueComponent implements OnInit {
           this.standings = this.leagueRosters.map((roster) => {
             // Find the user object from leagueUsers
             const user = this.leagueUsers.find(
-              (u) => u.user_id === roster.owner_id
+              (u) => u.user_id === roster.owner_id,
             )
 
             // Parse streak from metadata.streak (example: "1W" or "2L")
@@ -202,11 +202,11 @@ export class LeagueComponent implements OnInit {
                 ? `division_${roster.settings.division}`
                 : null
             const divisionName = divisionIndex
-              ? this.league.metadata?.[divisionIndex] ?? 'Unknown Division'
+              ? (this.league.metadata?.[divisionIndex] ?? 'Unknown Division')
               : 'Unknown Division'
             const divisionAvatar = divisionIndex
-              ? this.league.metadata?.[`${divisionIndex}_avatar`] ??
-                'assets/img/nfl.png'
+              ? (this.league.metadata?.[`${divisionIndex}_avatar`] ??
+                'assets/img/nfl.png')
               : 'assets/img/nfl.png'
 
             // Build plain interface (StandingsTeam)
@@ -258,7 +258,7 @@ export class LeagueComponent implements OnInit {
             // Get My Team
             const myUserName = this.UserService.getMyUser().getUserName()
             const myTeam = this.standings.find(
-              (team) => team.userName === myUserName
+              (team) => team.userName === myUserName,
             )
             this.LeagueService.setMyLeague(this.league)
             this.TeamService.setMyTeam(myTeam)
@@ -326,10 +326,10 @@ export class LeagueComponent implements OnInit {
         next: (rawPairs) => {
           this.matchupsGrouped = rawPairs.map((pair) => {
             const teamAInfo = this.standings.find(
-              (t) => t.roster.roster_id === pair.teamA.roster_id
+              (t) => t.roster.roster_id === pair.teamA.roster_id,
             )
             const teamBInfo = this.standings.find(
-              (t) => t.roster.roster_id === pair.teamB.roster_id
+              (t) => t.roster.roster_id === pair.teamB.roster_id,
             )
 
             // Only highlight if week is in the past

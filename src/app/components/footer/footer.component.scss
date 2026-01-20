@@ -1,16 +1,36 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
 footer {
-  background-color: #333;
+  background: linear-gradient(180deg, $dark-navy 0%, $deep-navy 100%);
+  border-top: 1px solid rgba($champion-gold, 0.2);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 100px;
-  padding: 0 40px;
+  height: 80px;
+  padding: 0 $spacing-xl;
   position: fixed;
   bottom: 0;
   width: 100%;
   box-sizing: border-box;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
 
-  .footer-section {
+  .left-section {
+    color: $text-secondary;
+    font-size: $text-sm;
+    font-family: $font-body;
+
+    span {
+      opacity: 0.8;
+    }
+  }
+
+  .middle-section {
+    display: flex;
+    align-items: center;
+  }
+
+  .right-section {
     display: flex;
     align-items: center;
   }
@@ -20,22 +40,55 @@ footer {
   }
 
   .footer-button {
-    background-color: #bf0a0a;
-    color: white;
+    background: $gold-accent;
+    color: $deep-navy;
     border: none;
-    border-radius: 20px;
-    padding: 10px 15px;
+    border-radius: $radius-xl;
+    padding: 10px 20px;
     cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
+    font-size: $text-sm;
+    font-weight: 600;
+    font-family: $font-body;
+    transition: all $transition-base;
     text-decoration: none;
+    margin: 0;
 
     &:hover {
-      background-color: darken(#bf0a0a, 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba($champion-gold, 0.4);
     }
   }
 
   a.footer-button {
     text-decoration: none;
+  }
+}
+
+// Mobile
+@media (max-width: 768px) {
+  footer {
+    height: 70px;
+    padding: 0 $spacing-md;
+
+    .left-section {
+      font-size: $text-xs;
+    }
+
+    .footer-button {
+      padding: 8px 14px;
+      font-size: $text-xs;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  footer {
+    .left-section {
+      display: none;
+    }
+
+    .right-section {
+      margin-left: auto;
+    }
   }
 }

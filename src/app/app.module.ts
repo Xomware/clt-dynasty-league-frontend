@@ -34,6 +34,7 @@ import { TaxiSquadComponent } from './pages/taxi-squad/taxi-squad.component'
 import { TaxiSquadPlayerModalComponent } from './components/taxi-squad-player-modal/taxi-squad-player-modal.component'
 import { TaxiSquadService } from './services/taxi-squad.service'
 import { DraftService } from './services/draft.service'
+import { SupabaseService } from './services/supabase.service'
 @NgModule({
   declarations: [
     AppComponent,
@@ -74,6 +75,7 @@ import { DraftService } from './services/draft.service'
     PlayerService,
     TaxiSquadService,
     DraftService,
+    SupabaseService,
   ],
   bootstrap: [AppComponent],
 })

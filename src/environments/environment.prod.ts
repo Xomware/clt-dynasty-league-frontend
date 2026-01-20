@@ -1,6 +1,8 @@
 export const environment = {
-    production: true,
-    baseCallbackUrl: "https://xomper.com",
-    apiAuthToken: '---',
-    apiId: '---',
-};
+  production: true,
+  baseCallbackUrl: 'https://xomper.com',
+  apiAuthToken: '---',
+  apiId: '---',
+  supabaseUrl: '---',
+  supabaseAnonKey: '---',
+}

@@ -1,24 +1,27 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
 .loader {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #bf0a0a, #1b8edc);
+  background: linear-gradient(135deg, $deep-navy 0%, $dark-navy 50%, $deep-navy 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: $z-loader;
 }
 
 .spinner {
-  border: 8px solid rgba(0, 0, 0, 0.1);
-  border-top-color: #bf0a0a;
-  border-right-color: #1b8edc;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba($surface-light, 0.3);
+  border-top-color: $champion-gold;
+  border-right-color: $steel-blue;
+  border-radius: $radius-full;
   animation: spin 1s linear infinite;
 }
 
@@ -32,7 +35,9 @@
 }
 
 p {
-  margin-top: 10px;
-  font-size: 16px;
-  color: white;
+  margin-top: $spacing-md;
+  font-size: $text-base;
+  font-family: $font-body;
+  color: $text-secondary;
+  letter-spacing: 0.05em;
 }

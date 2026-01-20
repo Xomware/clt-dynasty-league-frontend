@@ -1,54 +1,133 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
 .league-page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: $spacing-lg;
   min-height: 100vh;
-  background-color: #121212;
-  color: #ffffff;
+  background: $bg-gradient;
+  color: $text-primary;
 }
 
 .league-container {
-  background-color: #1e1e1e;
-  border-radius: 12px;
-  padding: 20px;
-  width: 90%;
-  max-width: 1000px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  background: $card-gradient;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba($surface-light, 0.2);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  width: 95%;
+  max-width: 1200px;
+  box-shadow: $shadow-lg;
 }
 
 .league-header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: $spacing-lg;
 }
 
 .league-pic {
-  width: 120px;
-  height: 120px;
-  border-radius: 12px;
+  width: 100px;
+  height: 100px;
+  border-radius: $radius-lg;
   object-fit: cover;
-  border: 2px solid #bf0a0a;
+  border: 3px solid $champion-gold;
+  box-shadow: 0 0 20px rgba($champion-gold, 0.3);
 }
 
 .league-name {
-  margin-top: 10px;
-  font-size: 24px;
+  margin-top: $spacing-sm;
+  font-family: $font-display;
+  font-size: 2rem;
+  letter-spacing: 0.03em;
+  color: $text-primary;
 }
 
+// Tab Container
+.tab-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $spacing-lg;
+  gap: $spacing-sm;
+}
+
+.tab-button {
+  background: rgba($dark-navy, 0.6);
+  color: $text-secondary;
+  border: 1px solid $surface-light;
+  padding: 10px 28px;
+  margin: 0;
+  border-radius: $radius-md;
+  cursor: pointer;
+  font-size: $text-base;
+  font-family: $font-body;
+  font-weight: 500;
+  transition: all $transition-base;
+
+  &.active {
+    background: $gold-accent;
+    color: $deep-navy;
+    border-color: $champion-gold;
+    font-weight: 600;
+  }
+
+  &:hover:not(.active) {
+    background: rgba($surface-light, 0.3);
+    color: $text-primary;
+  }
+}
+
+// View Toggle Buttons
+.switch-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $spacing-lg;
+}
+
+.view-buttons {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.view-button {
+  background-color: rgba($dark-navy, 0.6);
+  color: $text-secondary;
+  border: 1px solid $surface-light;
+  border-radius: $radius-xl;
+  padding: 10px 24px;
+  margin: 0;
+  cursor: pointer;
+  font-size: $text-sm;
+  font-family: $font-body;
+  transition: all $transition-base;
+
+  &:hover:not(.selected) {
+    background-color: rgba($surface-light, 0.3);
+    color: $text-primary;
+  }
+
+  &.selected {
+    background: $red-accent;
+    color: white;
+    border-color: $accent-red;
+  }
+}
+
+// Standings Table
 .standings {
-  margin-top: 30px;
+  margin-top: $spacing-md;
   display: flex;
   flex-direction: column;
 }
 
-/* Grid for standings */
 .standings-header,
 .standings-row {
   display: grid;
-  grid-template-columns: 40px 2fr 1.5fr 0.7fr 0.7fr 0.8fr 1fr 1fr 80px;
-  gap: 10px;
+  grid-template-columns: 50px 2fr 1.5fr 0.7fr 0.7fr 0.8fr 1fr 1fr 90px;
+  gap: $spacing-sm;
   align-items: center;
-  padding: 10px 15px;
+  padding: 12px $spacing-md;
 
   span,
   .team-info,
@@ -62,29 +141,35 @@
 }
 
 .standings-header {
-  font-weight: bold;
-  border-bottom: 2px solid #333;
+  font-weight: 600;
+  font-size: $text-sm;
+  color: $text-secondary;
+  border-bottom: 2px solid $surface-light;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .standings-row {
-  border-bottom: 1px solid #333;
-  background-color: #1f1f1f;
-  border-radius: 6px;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  background-color: rgba($dark-navy, 0.4);
+  border-radius: $radius-md;
+  margin-bottom: $spacing-xs;
+  transition: transform $transition-base, background-color $transition-base;
   cursor: pointer;
 
   &:hover {
-    transform: scale(1.02);
-    background-color: #2a2a2a;
+    transform: translateX(4px);
+    background-color: rgba($surface-light, 0.2);
   }
 
   .rank-number {
     text-align: center;
-    font-weight: bold;
-    font-size: 16px;
+    font-weight: 700;
+    font-size: $text-lg;
+    font-family: $font-mono;
 
     &.gold {
       color: gold;
+      text-shadow: 0 0 10px rgba(gold, 0.5);
     }
     &.silver {
       color: silver;
@@ -92,354 +177,298 @@
     &.bronze {
       color: #cd7f32;
     }
-    color: white;
   }
 }
 
 .team-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: $spacing-sm;
   min-width: 0;
-
-  .team-pic {
-    flex-shrink: 0;
-  }
-
-  .team-name {
-    flex: 1;
-  }
 }
 
 .team-pic {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-full;
   object-fit: cover;
-  border: 1px solid #555;
+  border: 2px solid $surface-light;
+  flex-shrink: 0;
 }
 
 .team-name {
-  font-size: 14px;
+  font-size: $text-sm;
   font-weight: 500;
-}
-
-.standings-row.playoff-divider {
-  border-bottom: 4px solid #ff0033;
+  color: $text-primary;
 }
 
 .user-name {
-  font-size: 14px;
-  color: #bbb;
-  flex: 1;
-}
+  font-size: $text-sm;
+  color: $text-secondary;
 
-.team-more-btn {
-  background-color: #1b8edc;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 6px 14px;
-  cursor: pointer;
-  font-weight: bold;
-  text-align: center;
-  transition: background 0.2s;
-
-  &:hover {
-    background-color: #1470ad;
-  }
-}
-
-.win-streak {
-  color: #00ff00 !important;
-  font-weight: bold;
-}
-
-.loss-streak {
-  color: #ff4d4d !important;
-  font-weight: bold;
-}
-
-.standings-toggle {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1rem;
-
-  button {
-    margin: 0 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    border: none;
-    background: #ccc;
+  &.clickable {
+    color: $steel-blue;
     cursor: pointer;
+    text-decoration: none;
 
-    &.active {
-      background: #333;
-      color: #fff;
+    &:hover {
+      color: lighten($steel-blue, 15%);
+      text-decoration: underline;
     }
   }
 }
 
-.division-title {
-  margin-top: 1rem;
-  font-size: 1.25rem;
-  font-weight: bold;
+.standings-row.playoff-divider {
+  border-bottom: 3px solid $accent-red;
+  margin-bottom: $spacing-sm;
 }
 
-.switch-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.view-buttons {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.view-button {
-  background-color: white;
-  color: black;
-  border: none;
-  border-radius: 25px;
-  padding: 12px 30px;
-  margin: 0 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  font-size: 16px;
-
-  &:hover {
-    background-color: #0055ff;
-    color: white;
-  }
-}
-
-.selected {
-  background-color: #ff0033;
+.team-more-btn {
+  background: $steel-blue;
   color: white;
-}
-
-.user-name.clickable {
-  color: #007bff;
+  border: none;
+  border-radius: $radius-xl;
+  padding: 6px 16px;
   cursor: pointer;
-  text-decoration: underline;
+  font-weight: 600;
+  font-size: $text-sm;
+  margin: 0;
+  transition: all $transition-base;
 
   &:hover {
-    color: #0056b3;
+    background-color: darken($steel-blue, 10%);
+    transform: scale(1.05);
   }
 }
 
+.win-streak {
+  color: $success-green !important;
+  font-weight: 700;
+  font-family: $font-mono;
+}
+
+.loss-streak {
+  color: $error-red !important;
+  font-weight: 700;
+  font-family: $font-mono;
+}
+
+// Division View
 .division-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+  gap: $spacing-sm;
+  margin-top: $spacing-xl;
+  margin-bottom: $spacing-md;
 }
 
 .division-pic {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: $radius-full;
   object-fit: cover;
-  border: 1px solid #555;
+  border: 2px solid $champion-gold;
 }
 
 .division-title {
+  font-family: $font-display;
   font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
+  letter-spacing: 0.03em;
+  color: $champion-gold;
 }
 
-.tab-container {
+// Week Selector
+.week-selector {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  gap: 6px;
+  margin-bottom: $spacing-lg;
+  flex-wrap: wrap;
 }
 
-.tab-button {
-  background: #1e1e1e;
-  color: #fff;
-  border: none;
-  padding: 10px 25px;
-  margin: 0 5px;
-  border-radius: 8px;
+.week-bubble {
+  width: 38px;
+  height: 38px;
+  border-radius: $radius-full;
+  border: 2px solid $surface-light;
+  background-color: rgba($dark-navy, 0.6);
+  color: $text-secondary;
+  font-weight: 600;
+  font-size: $text-sm;
+  font-family: $font-mono;
   cursor: pointer;
-  font-size: 16px;
-  transition: background 0.3s;
+  margin: 0;
+  padding: 0;
+  transition: all $transition-base;
 
-  &.active {
-    background: #ff0033;
+  &.selected {
+    border-color: $champion-gold;
+    background: $gold-accent;
+    color: $deep-navy;
   }
 
-  &:hover {
-    background: #333;
+  &:hover:not(.selected) {
+    border-color: $text-secondary;
+    color: $text-primary;
   }
 }
 
-.matchups-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
+// Matchups Grid
 .matchups-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: $spacing-lg;
   justify-content: center;
   width: 100%;
-  padding: 20px;
+  padding: $spacing-md;
 }
 
 .matchup-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #1e1e1e;
-  border-radius: 12px;
-  padding: 20px;
-  width: 360px;
-  height: 180px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  background: rgba($dark-navy, 0.6);
+  border: 1px solid rgba($surface-light, 0.3);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  width: 380px;
+  min-height: 180px;
+  box-shadow: $shadow-md;
+  transition: transform $transition-base, box-shadow $transition-base;
+  cursor: pointer;
 
   &:hover {
-    transform: translateY(-4px);
-    background-color: #2a2a2a;
+    transform: translateY(-6px);
+    box-shadow: $shadow-xl;
+    border-color: rgba($champion-gold, 0.3);
   }
 
   .team-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     text-align: center;
-    width: 120px;
-    height: 100%;
-
-    .team-top {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+    width: 130px;
+    padding: $spacing-sm;
+    border-radius: $radius-md;
+    transition: all $transition-base;
 
     .team-pic {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      border-radius: $radius-full;
       object-fit: cover;
-      border: 2px solid #bf0a0a;
-      margin-bottom: 6px;
+      border: 2px solid $surface-light;
+      margin-bottom: $spacing-xs;
     }
 
     .team-name {
-      font-size: 14px;
-      font-weight: bold;
-      color: #fff;
+      font-size: $text-sm;
+      font-weight: 600;
+      color: $text-primary;
       margin-bottom: 2px;
-      text-align: center;
     }
 
     .team-user {
-      font-size: 12px;
-      color: #aaa;
+      font-size: $text-xs;
+      color: $text-secondary;
       margin-bottom: 4px;
-      text-align: center;
     }
 
     .team-record {
-      font-size: 12px;
-      color: #ccc;
+      font-size: $text-xs;
+      color: $text-muted;
+      font-family: $font-mono;
     }
 
     .team-points {
-      font-size: 20px;
-      font-weight: bold;
-      color: #ff0033;
+      font-size: $text-xl;
+      font-weight: 700;
+      font-family: $font-mono;
+      color: $champion-gold;
+      margin-top: $spacing-xs;
+    }
+
+    &.win {
+      background: rgba($success-green, 0.15);
+      border: 2px solid $success-green;
+
+      .team-points {
+        color: $success-green;
+      }
+    }
+
+    &.loss {
+      background: rgba($error-red, 0.15);
+      border: 2px solid $error-red;
+
+      .team-points {
+        color: $error-red;
+      }
     }
   }
 
   .vs {
-    font-size: 18px;
-    font-weight: bold;
-    color: #fff;
-    margin: 0 15px;
-  }
-}
-.week-selector {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.week-bubble {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-  background-color: #2a2a2a;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &.selected {
-    border-color: #4caf50;
-    background-color: #4caf50;
-    color: #fff;
-  }
-
-  &:hover:not(.selected) {
-    border-color: #888;
+    font-size: $text-lg;
+    font-weight: 700;
+    color: $text-muted;
+    margin: 0 $spacing-sm;
   }
 }
 
-.team-card.win {
-  border: 2px solid #4caf50;
-  background-color: rgba(76, 175, 80, 0.1);
-}
-
-.team-card.loss {
-  border: 2px solid #f44336;
-  background-color: rgba(244, 67, 54, 0.1);
-}
-
-/* Mobile adjustments */
+// Mobile
 @media (max-width: 768px) {
+  .league-container {
+    padding: $spacing-md;
+    width: 100%;
+  }
+
+  .standings-header,
+  .standings-row {
+    grid-template-columns: 40px 1.5fr 1fr 0.6fr 0.6fr 80px;
+    font-size: $text-xs;
+    padding: 10px $spacing-sm;
+
+    // Hide some columns on mobile
+    span:nth-child(6),
+    span:nth-child(7),
+    span:nth-child(8) {
+      display: none;
+    }
+  }
+
   .matchup-card {
     width: 100%;
-    height: 160px;
-    flex-direction: row;
-    justify-content: space-around;
+    min-height: 160px;
+    padding: $spacing-md;
 
     .team-card {
-      width: 100px;
+      width: 110px;
+
       .team-pic {
-        width: 50px;
-        height: 50px;
+        width: 48px;
+        height: 48px;
       }
+
       .team-name {
-        font-size: 12px;
+        font-size: $text-xs;
       }
-      .team-user {
-        font-size: 11px;
-      }
-      .team-record {
-        font-size: 11px;
-      }
+
       .team-points {
-        font-size: 16px;
+        font-size: $text-lg;
       }
     }
 
     .vs {
-      font-size: 16px;
-      margin: 0 10px;
+      font-size: $text-base;
     }
+  }
+
+  .week-bubble {
+    width: 34px;
+    height: 34px;
+    font-size: $text-xs;
   }
 }

@@ -1,11 +1,15 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
 .modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 999;
+  background: rgba($deep-navy, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: $z-modal-backdrop;
 }
 
 .matchup-modal {
@@ -13,128 +17,149 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #1e1e1e;
-  color: #fff;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 1200px;
-  max-height: 90%;
+  background: $card-gradient;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba($champion-gold, 0.3);
+  color: $text-primary;
+  border-radius: $radius-lg;
+  width: 95%;
+  max-width: 1100px;
+  max-height: 90vh;
   overflow-y: auto;
-  z-index: 1000;
-  padding: 16px;
+  z-index: $z-modal;
+  padding: $spacing-lg;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $deep-navy;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $surface-light;
+    border-radius: 4px;
+  }
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: $spacing-md;
+
+  h2 {
+    font-family: $font-display;
+    font-size: 1.5rem;
+    letter-spacing: 0.03em;
+    color: $champion-gold;
+    margin: 0;
+  }
 }
 
 .close-btn {
   background: transparent;
   border: none;
-  color: #fff;
-  font-size: 20px;
+  color: $text-secondary;
+  font-size: 24px;
   cursor: pointer;
+  padding: $spacing-xs;
+  margin: 0;
+  line-height: 1;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $champion-gold;
+    background: transparent;
+  }
 }
 
+// Team Headers
 .teams-header {
   display: flex;
-  gap: 16px;
-  margin: 16px 0;
+  gap: $spacing-md;
+  margin: $spacing-md 0;
   align-items: stretch;
 }
 
 .team-header {
-  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  gap: $spacing-xs;
+  padding: $spacing-lg;
+  border-radius: $radius-lg;
   text-align: center;
-  transition: all 0.3s ease;
+  transition: all $transition-base;
+  cursor: pointer;
+  border: 2px solid transparent;
 
-  &.neutral {
-    background: #2a2a2a;
-  }
-  &.winner {
-    background: linear-gradient(145deg, #4caf50, #2e7d32);
-  }
-  &.loser {
-    background: linear-gradient(145deg, #f44336, #b71c1c);
+  &:hover {
+    transform: scale(1.02);
   }
 
   .team-logo-header {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    border-radius: $radius-full;
     object-fit: cover;
-    border: 2px solid #fff;
-    position: relative; // overlay uses absolute
+    border: 3px solid rgba(white, 0.3);
+  }
 
-    // Overlay for W/L
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 48px;
-      font-weight: bold;
-      color: rgba(0, 0, 0, 0.5);
-      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
-      pointer-events: none; // let clicks pass through
-    }
+  h3 {
+    font-family: $font-body;
+    font-size: $text-lg;
+    font-weight: 600;
+    margin: $spacing-xs 0 0 0;
+  }
 
-    // Winner
-    .winner &::after {
-      content: 'W';
-      color: rgba(0, 100, 0, 0.6); // dark green overlay
-    }
+  p {
+    font-size: $text-sm;
+    color: rgba(white, 0.8);
+    margin: 0;
+    font-family: $font-mono;
+  }
 
-    // Loser
-    .loser &::after {
-      content: 'L';
-      color: rgba(139, 0, 0, 0.6); // dark red overlay
-    }
+  .team-score {
+    font-family: $font-mono;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: $spacing-xs 0 0 0;
   }
 }
 
 .mid-divider {
   width: 2px;
-  background-color: #444;
+  background: linear-gradient(180deg, transparent, $surface-light, transparent);
 }
 
 .thick-divider {
   border: none;
-  height: 4px;
-  background: #555;
-  margin: 24px 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, $surface-light, transparent);
+  margin: $spacing-xl 0;
 }
 
+// Player Groups
 .player-group {
-  margin-top: 16px;
+  margin-top: $spacing-lg;
 
   .group-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 12px;
+    font-family: $font-display;
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+    color: $champion-gold;
+    margin-bottom: $spacing-md;
   }
 }
 
 .roster.two-col {
   display: flex;
-  gap: 16px;
+  gap: $spacing-md;
 
   .roster-col {
     display: flex;
@@ -148,30 +173,32 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px;
-    margin-bottom: 12px;
-    background-color: #282828;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease-in-out;
+    padding: $spacing-sm $spacing-md;
+    margin-bottom: $spacing-sm;
+    background: rgba($dark-navy, 0.5);
+    border: 1px solid rgba($surface-light, 0.2);
+    border-radius: $radius-md;
+    transition: all $transition-fast;
 
     &:hover {
-      transform: translateY(-2px);
+      transform: translateX(4px);
+      border-color: rgba($champion-gold, 0.3);
     }
 
     .player-row {
       display: flex;
       align-items: center;
       width: 100%;
-      gap: 12px;
+      gap: $spacing-sm;
     }
 
     .player-pic {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      border-radius: $radius-full;
       object-fit: cover;
-      border: 2px solid #bf0a0a;
+      border: 2px solid $champion-gold;
+      flex-shrink: 0;
     }
 
     .player-info {
@@ -179,32 +206,88 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
+      min-width: 0;
 
       .player-name {
-        font-size: 16px;
-        font-weight: bold;
+        font-size: $text-sm;
+        font-weight: 600;
         margin: 0;
-        color: #fff;
+        color: $text-primary;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .player-meta {
-        font-size: 13px;
-        color: #aaa;
+        font-size: $text-xs;
+        color: $text-secondary;
         margin-top: 2px;
       }
     }
 
     .team-logo {
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
       object-fit: contain;
+      flex-shrink: 0;
     }
   }
 }
 
 .player-details {
   margin-top: auto;
-  font-size: 14px;
+  font-size: $text-sm;
   line-height: 1.4;
-  color: #ddd;
+  color: $text-secondary;
+}
+
+// Mobile
+@media (max-width: 768px) {
+  .matchup-modal {
+    padding: $spacing-md;
+    width: 98%;
+  }
+
+  .teams-header {
+    flex-direction: row;
+    gap: $spacing-sm;
+  }
+
+  .team-header {
+    padding: $spacing-md;
+
+    .team-logo-header {
+      width: 60px;
+      height: 60px;
+    }
+
+    h3 {
+      font-size: $text-base;
+    }
+
+    .team-score {
+      font-size: 1.5rem;
+    }
+  }
+
+  .roster.two-col {
+    flex-direction: column;
+
+    .mid-divider {
+      width: 100%;
+      height: 2px;
+      margin: $spacing-md 0;
+    }
+
+    .player-card {
+      .player-pic {
+        width: 36px;
+        height: 36px;
+      }
+
+      .player-info .player-name {
+        font-size: $text-xs;
+      }
+    }
+  }
 }

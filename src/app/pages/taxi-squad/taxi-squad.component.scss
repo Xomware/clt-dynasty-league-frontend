@@ -1,10 +1,13 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
 .taxi-page {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  padding: 0 16px;
-  background-color: #121212;
-  color: #fff;
+  min-height: 100vh;
+  padding: $spacing-md;
+  background: $bg-gradient;
+  color: $text-primary;
 }
 
 .taxi-container {
@@ -12,216 +15,248 @@
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
-  padding-top: 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-.taxi-header {
-  background-color: #1e1e1e;
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-
-  .taxi-header-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-
-  .taxi-pic {
-    width: 80px;
-    height: 80px;
-    border-radius: 12px;
-    object-fit: cover;
-    border: 2px solid #bf0a0a;
-  }
-
-  .taxi-name {
-    font-size: 24px;
-    font-weight: bold;
-    margin-right: 10px;
-  }
-
-  .taxi-record {
-    font-weight: bold;
-    color: #fff;
-  }
-
-  .taxi-streak {
-    font-weight: bold;
-    &.win-streak {
-      color: #4caf50;
-    }
-    &.loss-streak {
-      color: #f44336;
-    }
-  }
-
-  .taxi-place {
-    background-color: #2a2a2a;
-    padding: 4px 8px;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #bbb;
-  }
-}
-
+// Page Title
 .group-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
+  font-family: $font-display;
+  font-size: 2rem;
+  letter-spacing: 0.05em;
+  color: $champion-gold;
+  margin-bottom: $spacing-lg;
   text-align: center;
 }
 
-/* Tabs like league page */
+// Tabs
 .tabs {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: $spacing-xl;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
 
   button {
-    background: #1e1e1e;
-    color: #fff;
-    border: none;
-    padding: 10px 25px;
-    margin: 0 5px;
-    border-radius: 8px;
+    background: rgba($dark-navy, 0.6);
+    color: $text-secondary;
+    border: 1px solid $surface-light;
+    padding: 10px 24px;
+    margin: 0;
+    border-radius: $radius-md;
     cursor: pointer;
-    font-size: 16px;
-    transition: background 0.3s;
+    font-size: $text-base;
+    font-family: $font-body;
+    font-weight: 500;
+    transition: all $transition-base;
 
     &.active {
-      background: #ff0033;
+      background: $gold-accent;
+      color: $deep-navy;
+      border-color: $champion-gold;
+      font-weight: 600;
     }
 
-    &:hover {
-      background: #333;
+    &:hover:not(.active) {
+      background: rgba($surface-light, 0.3);
+      color: $text-primary;
     }
   }
 }
 
+// Player Groups
 .player-groups {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: $spacing-xl;
 }
 
 .group-header {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 12px;
-  border-bottom: 1px solid #333;
-  padding-bottom: 4px;
+  font-family: $font-display;
+  font-size: 1.3rem;
+  letter-spacing: 0.03em;
+  color: $champion-gold;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-xs;
+  border-bottom: 2px solid rgba($champion-gold, 0.3);
+
+  small {
+    font-family: $font-body;
+    font-size: $text-sm;
+    color: $text-secondary;
+    font-weight: normal;
+  }
 }
 
-/* Roster grid */
+// Roster Grid
 .roster {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
+  gap: $spacing-md;
+  justify-content: flex-start;
 }
 
+// Player Cards
 .player-card {
-  background-color: #282828;
-  border-radius: 10px;
-  padding: 20px;
-  width: 280px;
-  min-height: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease-in-out;
+  background: rgba($dark-navy, 0.6);
+  border: 1px solid rgba($surface-light, 0.3);
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  width: 320px;
+  box-shadow: $shadow-md;
+  transition: transform $transition-base, box-shadow $transition-base;
 
   &:hover {
     transform: translateY(-4px);
+    box-shadow: $shadow-lg;
   }
 
   .player-header {
     display: flex;
-    align-items: center;
-    margin-bottom: 12px;
+    align-items: flex-start;
+    margin-bottom: $spacing-sm;
 
     .player-pic {
       width: 60px;
       height: 60px;
-      border-radius: 50%;
+      border-radius: $radius-full;
       object-fit: cover;
-      border: 2px solid #bf0a0a;
-      margin-right: 12px;
+      border: 2px solid $champion-gold;
+      margin-right: $spacing-md;
+      flex-shrink: 0;
     }
 
     .player-info {
       flex: 1;
+      min-width: 0;
 
       .name-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: $spacing-sm;
+        margin-bottom: 4px;
 
         .player-name {
-          font-size: 18px;
-          font-weight: bold;
+          font-size: $text-base;
+          font-weight: 600;
           margin: 0;
+          color: $text-primary;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .team-logo {
-          width: 36px;
-          height: 36px;
-          margin-left: 8px;
+          width: 32px;
+          height: 32px;
+          flex-shrink: 0;
         }
       }
 
-      .player-meta,
-      .owner-meta,
-      .draft-meta {
-        font-size: 14px;
-        color: #aaa;
-        margin-top: 4px;
+      .player-meta {
+        font-size: $text-sm;
+        color: $text-secondary;
+        margin: 2px 0;
         text-align: left;
       }
 
       .owner-meta {
-        color: #fff;
+        font-size: $text-sm;
+        color: $text-primary;
+        margin: 2px 0;
+        text-align: left;
       }
 
       .draft-meta {
-        color: #f0ad4e;
+        font-size: $text-sm;
+        color: $champion-gold;
+        margin: 2px 0;
+        text-align: left;
       }
     }
   }
 
   .view-more-btn {
-    margin-top: 8px;
     width: 100%;
-    padding: 8px 0;
-    font-weight: bold;
-    border-radius: 20px;
+    padding: 10px 0;
+    margin: $spacing-sm 0 0 0;
+    font-weight: 600;
+    font-size: $text-sm;
+    border-radius: $radius-xl;
+    border: none;
     cursor: pointer;
-    text-align: center;
-    transition: background 0.2s;
+    transition: all $transition-base;
 
     &:hover {
       opacity: 0.85;
+      transform: scale(1.02);
     }
   }
 
   .player-details {
-    margin-top: 12px;
-    font-size: 14px;
-    line-height: 1.4;
-    color: #ddd;
+    margin-top: $spacing-sm;
+    padding-top: $spacing-sm;
+    border-top: 1px solid rgba($surface-light, 0.3);
+    font-size: $text-sm;
+    line-height: 1.6;
+    color: $text-secondary;
     display: flex;
     flex-direction: column;
     gap: 4px;
+
+    p {
+      margin: 0;
+
+      strong {
+        color: $text-primary;
+      }
+    }
   }
 }
 
+// Clickable
 .clickable {
   cursor: pointer;
-  color: #007bff;
-  text-decoration: underline;
+  color: $steel-blue;
+  text-decoration: none;
+  transition: color $transition-fast;
 
   &:hover {
-    color: #0056b3;
+    color: lighten($steel-blue, 15%);
+    text-decoration: underline;
+  }
+}
+
+// Mobile
+@media (max-width: 768px) {
+  .taxi-page {
+    padding: $spacing-sm;
+  }
+
+  .group-title {
+    font-size: 1.5rem;
+  }
+
+  .tabs {
+    button {
+      padding: 8px 16px;
+      font-size: $text-sm;
+    }
+  }
+
+  .roster {
+    justify-content: center;
+  }
+
+  .player-card {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .group-header {
+    font-size: 1.1rem;
+    text-align: center;
   }
 }

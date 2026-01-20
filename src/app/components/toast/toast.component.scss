@@ -1,24 +1,42 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
 .toast {
   position: fixed;
-  bottom: 50px;
+  bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
   color: white;
-  padding: 15px 30px;
-  border-radius: 25px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  font-size: 1.2rem;
-  width: 350px;
+  padding: 14px 28px;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-lg;
+  z-index: $z-toast;
+  font-size: $text-base;
+  font-family: $font-body;
+  font-weight: 500;
+  width: auto;
+  max-width: 400px;
   text-align: center;
+  backdrop-filter: blur(10px);
+
+  &.positive {
+    background: linear-gradient(135deg, $steel-blue, darken($steel-blue, 15%));
+    border: 1px solid rgba($steel-blue, 0.5);
+  }
+
+  &.negative {
+    background: linear-gradient(135deg, $accent-red, darken($accent-red, 15%));
+    border: 1px solid rgba($accent-red, 0.5);
+  }
 }
 
-.toast.positive {
-  background-color: #1b8edc;
-  color: white;
-}
-
-.toast.negative {
-  background-color: red;
-  color: white;
+// Mobile
+@media (max-width: 480px) {
+  .toast {
+    width: 90%;
+    max-width: none;
+    padding: 12px 20px;
+    font-size: $text-sm;
+    bottom: 90px;
+  }
 }
