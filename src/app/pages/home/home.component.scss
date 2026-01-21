@@ -12,7 +12,7 @@
   color: $text-primary;
 }
 
-// Loading Overlay
+// Loading
 .loading-overlay {
   display: flex;
   flex-direction: column;
@@ -40,7 +40,7 @@
   to { transform: rotate(360deg); }
 }
 
-// Main Content
+// Content
 .home-content {
   display: flex;
   flex-direction: column;
@@ -50,7 +50,7 @@
   max-width: 420px;
 }
 
-// Brand Section
+// Brand
 .brand-section {
   text-align: center;
 
@@ -90,7 +90,7 @@
   margin-bottom: $spacing-lg;
 }
 
-// Auth Buttons
+// Buttons
 .auth-btn {
   width: 100%;
   display: flex;
@@ -153,7 +153,7 @@
   }
 }
 
-// Auth Note
+// Note
 .auth-note {
   margin-top: $spacing-lg;
   padding: $spacing-md;
@@ -185,9 +185,5 @@
 
   .login-box {
     padding: $spacing-lg;
-  }
-
-  .login-title {
-    font-size: 1.3rem;
   }
 }

@@ -13,17 +13,17 @@ import { SelectedTeamComponent } from './pages/selected-team/selected-team.compo
 import { TaxiSquadComponent } from './pages/taxi-squad/taxi-squad.component';
 
 const routes: Routes = [
-  // Public routes
+  // Public
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'search', component: SearchComponent },
   
-  // Guest-accessible routes (view other users/leagues)
+  // Guest accessible (view others)
   { path: 'selected-profile', component: ProfileComponent },
   { path: 'selected-league', component: LeagueComponent },
   { path: 'selected-team', component: SelectedTeamComponent },
   
-  // Authenticated routes
+  // Authenticated
   { path: 'my-profile', component: MyProfileComponent, canActivate: [AuthGuard] },
   { path: 'my-league', component: MyLeagueComponent, canActivate: [AuthGuard] },
   { path: 'my-team', component: MyTeamComponent, canActivate: [AuthGuard] },

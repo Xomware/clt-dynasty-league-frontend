@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil, filter, take, switchMap } from 'rxjs/operators';
 import { SupabaseService } from 'src/app/services/supabase.service';
 import { UserService } from 'src/app/services/user.service';
+import { LeagueService } from 'src/app/services/league.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ToastService } from 'src/app/services/toast.service';
 
@@ -21,13 +22,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private supabaseService: SupabaseService,
     private userService: UserService,
+    private leagueService: LeagueService,
     private authService: AuthService,
     private router: Router,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    // Wait for Supabase to initialize, then check if user is logged in
+    // Wait for Supabase to initialize
     this.supabaseService.initialized$
       .pipe(
         filter(init => init),
@@ -39,7 +41,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.checkingAuth = false;
 
         if (user) {
-          // User just came back from OAuth or already logged in
           this.handleAuthenticatedUser();
         }
       });
@@ -60,29 +61,45 @@ export class HomeComponent implements OnInit, OnDestroy {
   private handleAuthenticatedUser(): void {
     this.loading = true;
 
-    this.supabaseService.isUserWhitelisted()
+    // Get whitelisted user data (includes sleeper_username)
+    this.supabaseService.getWhitelistedUser()
       .pipe(take(1))
-      .subscribe(isWhitelisted => {
-        if (isWhitelisted) {
-          const user = this.supabaseService.getUser();
-          
-          // Get Sleeper user by email or username
-          // For now, we'll use the email prefix as username lookup
-          // You may want to store sleeper_user_id in Supabase profiles table
-          this.toastService.showPositiveToast('Login successful!');
-          this.authService.toggleAuthentication();
-          
-          // Navigate to my-profile
-          // Note: You'll need to get the Sleeper user ID somehow
-          // Option 1: Store it in Supabase profiles table
-          // Option 2: Look it up by username/email
-          this.router.navigate(['/my-profile'], {
-            queryParams: { userId: user?.id }
-          });
-          
+      .subscribe(whitelistedUser => {
+        if (whitelistedUser && whitelistedUser.sleeper_username) {
+          // Look up Sleeper user by username
+          this.userService.searchUser(whitelistedUser.sleeper_username)
+            .pipe(take(1))
+            .subscribe({
+              next: (sleeperUser) => {
+                if (sleeperUser) {
+                  this.userService.setMyUser(sleeperUser);
+                  this.authService.toggleAuthentication();
+                  this.toastService.showPositiveToast('Welcome back!');
+                  
+                  this.router.navigate(['/my-profile'], {
+                    queryParams: { userId: sleeperUser.user_id }
+                  });
+                } else {
+                  this.toastService.showNegativeToast('Sleeper user not found');
+                  this.supabaseService.signOut().subscribe();
+                }
+                this.loading = false;
+              },
+              error: (err) => {
+                console.error('Error loading Sleeper user:', err);
+                this.toastService.showNegativeToast('Error loading profile');
+                this.supabaseService.signOut().subscribe();
+                this.loading = false;
+              }
+            });
+        } else if (whitelistedUser && !whitelistedUser.sleeper_username) {
+          // Whitelisted but no Sleeper username set
+          this.toastService.showNegativeToast('Sleeper username not configured. Contact admin.');
+          this.supabaseService.signOut().subscribe();
           this.loading = false;
         } else {
-          this.toastService.showNegativeToast('Your email is not authorized. Contact an admin.');
+          // Not whitelisted
+          this.toastService.showNegativeToast('Your email is not authorized.');
           this.supabaseService.signOut().subscribe();
           this.loading = false;
         }
@@ -98,7 +115,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.loading = false;
           this.toastService.showNegativeToast('Failed to start sign in');
         }
-        // If success, browser redirects to Google
       });
   }
 

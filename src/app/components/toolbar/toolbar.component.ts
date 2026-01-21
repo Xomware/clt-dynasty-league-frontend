@@ -1,7 +1,6 @@
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 import { SupabaseService } from 'src/app/services/supabase.service';
 import { LeagueService } from 'src/app/services/league.service';
@@ -85,12 +84,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
   signOut(): void {
     this.supabaseService.signOut().subscribe(() => {
-      // Reset legacy auth if needed
       if (this.authService.isLoggedIn()) {
         this.authService.toggleAuthentication();
       }
       
-      // Reset services
       this.leagueService.reset();
       this.userService.reset();
       this.teamService.reset();

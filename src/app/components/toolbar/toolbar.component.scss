@@ -23,7 +23,6 @@
   width: 180px;
   height: auto;
   margin-right: $spacing-md;
-  vertical-align: middle;
   filter: brightness(1.1);
 }
 
@@ -82,7 +81,6 @@
   }
 }
 
-// Mobile
 .dropdown-button {
   display: none;
   cursor: pointer;

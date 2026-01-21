@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
-import { createClient, SupabaseClient, User, Session } from '@supabase/supabase-js';
+import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { BehaviorSubject, Observable, from, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
-export interface Profile {
+export interface WhitelistedUser {
   id: string;
   email: string;
-  sleeper_user_id?: string;
-  sleeper_username?: string;
+  sleeper_username: string;
+  display_name: string;
+  role: string;
+  is_active: boolean;
 }
 
 @Injectable({
@@ -35,7 +37,6 @@ export class SupabaseService {
       }
     );
 
-    // Listen for auth changes
     this.supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth event:', event);
       this.currentUser.next(session?.user ?? null);
@@ -45,7 +46,6 @@ export class SupabaseService {
       }
     });
 
-    // Check existing session on startup
     this.initSession();
   }
 
@@ -88,21 +88,37 @@ export class SupabaseService {
     );
   }
 
-  // Check if user's email is whitelisted
-  isUserWhitelisted(): Observable<boolean> {
+  /**
+   * Get whitelisted user data including sleeper_username
+   * Returns null if user is not whitelisted
+   */
+  getWhitelistedUser(): Observable<WhitelistedUser | null> {
     const user = this.currentUser.value;
-    if (!user?.email) return of(false);
+    if (!user?.email) return of(null);
 
     return from(
       this.supabase
         .from('whitelisted_users')
-        .select('id')
+        .select('*')
         .eq('email', user.email.toLowerCase())
         .eq('is_active', true)
         .maybeSingle()
     ).pipe(
-      map(({ data }) => !!data),
-      catchError(() => of(false))
+      map(({ data, error }) => {
+        if (error || !data) {
+          console.log('User not whitelisted:', user.email);
+          return null;
+        }
+        return data as WhitelistedUser;
+      }),
+      catchError(() => of(null))
+    );
+  }
+
+  // Simple check if whitelisted (no data returned)
+  isUserWhitelisted(): Observable<boolean> {
+    return this.getWhitelistedUser().pipe(
+      map(user => !!user)
     );
   }
 

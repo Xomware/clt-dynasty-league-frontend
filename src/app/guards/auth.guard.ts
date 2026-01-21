@@ -14,12 +14,10 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   canActivate(): boolean {
-    // Check Supabase auth OR legacy auth
     if (this.supabaseService.isAuthenticated() || this.authService.isLoggedIn()) {
       return true;
     }
 
-    // Not authenticated - redirect to home
     this.router.navigate(['/home']);
     return false;
   }
