@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
+import { takeUntil, filter, take } from 'rxjs/operators';
 import { SupabaseService } from 'src/app/services/supabase.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -31,21 +32,30 @@ export class LandingComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Check if user is already authenticated
-    this.supabaseService.currentUser$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(user => {
+    // Wait for Supabase to initialize, then check if user is already logged in
+    this.supabaseService.initialized$
+      .pipe(
+        filter(initialized => initialized),
+        take(1),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
         this.checkingAuth = false;
+        const user = this.supabaseService.getUser();
+        
         if (user) {
-          // User is logged in, check if whitelisted
+          console.log('User already logged in:', user.email);
           this.handleAuthenticatedUser();
         }
       });
 
-    // Give it a moment to check session
+    // Fallback timeout in case initialization takes too long
     setTimeout(() => {
-      this.checkingAuth = false;
-    }, 1500);
+      if (this.checkingAuth) {
+        console.log('Init timeout - showing landing page');
+        this.checkingAuth = false;
+      }
+    }, 3000);
   }
 
   ngOnDestroy(): void {
@@ -60,7 +70,7 @@ export class LandingComponent implements OnInit, OnDestroy {
       .subscribe(isWhitelisted => {
         this.loading = false;
         if (isWhitelisted) {
-          // Full access - redirect to link Sleeper or go to profile
+          // Full access - check if Sleeper is linked
           const profile = this.supabaseService.getProfile();
           if (profile?.sleeper_user_id) {
             this.authService.toggleAuthentication();
@@ -74,7 +84,7 @@ export class LandingComponent implements OnInit, OnDestroy {
         } else {
           // Not whitelisted - sign them out and show error
           this.toastService.showNegativeToast('Your account is not authorized. Contact an admin for access.');
-          this.supabaseService.signOut();
+          this.supabaseService.signOut().subscribe();
         }
       });
   }

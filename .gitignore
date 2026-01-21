@@ -45,4 +45,4 @@ Thumbs.db
 **/.terraform/*
 
 # Testing
-src/environments/environment.dev.ts
+src/environments/environment.ts

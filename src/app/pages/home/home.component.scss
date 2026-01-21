@@ -4,137 +4,190 @@
 .home-page {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding-top: 80px;
+  padding: $spacing-lg;
   background: $bg-gradient;
   color: $text-primary;
 }
 
-.login-header {
-  text-align: center;
-  margin-bottom: $spacing-lg;
+// Loading Overlay
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
-  h2 {
-    font-family: $font-display;
-    font-size: 2.5rem;
-    letter-spacing: 0.05em;
-    color: $text-primary;
-    
-    span, &::after {
-      color: $champion-gold;
-    }
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba($surface-light, 0.3);
+    border-top-color: $champion-gold;
+    border-right-color: $steel-blue;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    margin-top: $spacing-md;
+    color: $text-secondary;
+    font-size: $text-base;
   }
 }
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Main Content
+.home-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xl;
+  width: 100%;
+  max-width: 420px;
+}
+
+// Brand Section
+.brand-section {
+  text-align: center;
+
+  .brand-logo {
+    width: 280px;
+    height: auto;
+    filter: brightness(1.1);
+    margin-bottom: $spacing-sm;
+  }
+
+  .tagline {
+    font-family: $font-display;
+    font-size: 1.2rem;
+    letter-spacing: 0.15em;
+    color: $text-secondary;
+    text-transform: uppercase;
+  }
+}
+
+// Login Box
 .login-box {
   background: $card-gradient;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba($champion-gold, 0.2);
   border-radius: $radius-lg;
-  padding: $spacing-xl $spacing-lg;
+  padding: $spacing-xl;
+  width: 100%;
   box-shadow: $shadow-xl;
-  width: 380px;
-  max-width: 90vw;
 }
 
-.login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: $spacing-md;
-}
-
-.login-input {
-  width: 100%;
-  padding: 14px 20px;
-  border-radius: $radius-xl;
-  border: 1px solid $surface-light;
-  background-color: rgba($deep-navy, 0.8);
+.login-title {
+  font-family: $font-display;
+  font-size: 1.5rem;
+  letter-spacing: 0.03em;
   color: $text-primary;
-  font-size: $text-base;
-  font-family: $font-body;
-  transition: border-color $transition-base, box-shadow $transition-base;
-
-  &::placeholder {
-    color: $text-secondary;
-  }
-
-  &:focus {
-    outline: none;
-    border-color: $champion-gold;
-    box-shadow: 0 0 0 3px rgba($champion-gold, 0.2);
-  }
+  text-align: center;
+  margin-bottom: $spacing-lg;
 }
 
-.login-buttons {
+// Auth Buttons
+.auth-btn {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: $spacing-md;
   align-items: center;
-  margin-top: $spacing-sm;
-}
-
-.login-button {
-  width: 100%;
-  border: none;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: 14px $spacing-lg;
   border-radius: $radius-xl;
-  padding: 14px;
   font-size: $text-base;
   font-weight: 600;
   font-family: $font-body;
   cursor: pointer;
-  background: $gold-accent;
-  color: $deep-navy;
-  transition: transform $transition-base, box-shadow $transition-base;
-  margin: 0;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba($champion-gold, 0.4);
-    background: $gold-accent;
-    color: $deep-navy;
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-.reset-button {
-  width: 100%;
-  border: 1px solid $surface-light;
-  border-radius: $radius-xl;
-  padding: 14px;
-  font-size: $text-base;
-  font-weight: 600;
-  font-family: $font-body;
-  cursor: pointer;
-  background-color: transparent;
-  color: $text-secondary;
   transition: all $transition-base;
+  border: none;
   margin: 0;
+}
+
+.google-btn {
+  background: white;
+  color: #333;
 
   &:hover {
+    background: #f5f5f5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.guest-btn {
+  background: transparent;
+  color: $text-secondary;
+  border: 1px solid $surface-light;
+
+  &:hover {
+    background: rgba($surface-light, 0.15);
     border-color: $steel-blue;
     color: $steel-blue;
-    background-color: rgba($steel-blue, 0.1);
+  }
+}
+
+// Divider
+.divider {
+  display: flex;
+  align-items: center;
+  margin: $spacing-lg 0;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: $surface-light;
+  }
+
+  span {
+    padding: 0 $spacing-md;
+    color: $text-muted;
+    font-size: $text-sm;
+    text-transform: uppercase;
+  }
+}
+
+// Auth Note
+.auth-note {
+  margin-top: $spacing-lg;
+  padding: $spacing-md;
+  background: rgba($dark-navy, 0.5);
+  border-radius: $radius-md;
+  font-size: $text-sm;
+  line-height: 1.6;
+  color: $text-secondary;
+  text-align: center;
+
+  strong {
+    color: $champion-gold;
   }
 }
 
 // Mobile
 @media (max-width: 480px) {
   .home-page {
-    padding-top: 60px;
+    padding: $spacing-md;
   }
 
-  .login-header h2 {
-    font-size: 2rem;
+  .brand-section .brand-logo {
+    width: 220px;
+  }
+
+  .brand-section .tagline {
+    font-size: 1rem;
   }
 
   .login-box {
-    padding: $spacing-lg $spacing-md;
+    padding: $spacing-lg;
+  }
+
+  .login-title {
+    font-size: 1.3rem;
   }
 }

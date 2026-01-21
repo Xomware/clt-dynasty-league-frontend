@@ -29,12 +29,10 @@
 
 .tabs {
   display: flex;
-  justify-content: flex-start;
   align-items: center;
-  flex-grow: 1;
-  gap: $spacing-xs;
+  gap: $spacing-md;
 
-  > div {
+  .nav-links {
     display: flex;
     gap: $spacing-xs;
   }
@@ -43,7 +41,6 @@
     color: $text-secondary;
     text-decoration: none;
     padding: 8px 16px;
-    margin: 0 4px;
     border-radius: $radius-md;
     font-size: $text-sm;
     font-weight: 500;
@@ -56,8 +53,7 @@
       color: $text-primary;
     }
 
-    &.active,
-    &.selected {
+    &.active {
       background: $gold-accent;
       color: $deep-navy;
       font-weight: 600;
@@ -66,14 +62,13 @@
   }
 }
 
-// Sign Out Button
 .sign-out-btn {
   background: transparent;
   color: $text-secondary;
   border: 1px solid $surface-light;
   border-radius: $radius-md;
   padding: 8px 16px;
-  margin: 0 0 0 $spacing-md;
+  margin: 0;
   cursor: pointer;
   font-size: $text-sm;
   font-weight: 500;
@@ -87,16 +82,11 @@
   }
 }
 
-.desktop-only {
-  display: inline-flex;
-}
-
-// Mobile dropdown
+// Mobile
 .dropdown-button {
   display: none;
   cursor: pointer;
   margin-left: auto;
-  margin-right: $spacing-sm;
   font-size: 24px;
   color: $champion-gold;
   padding: $spacing-xs;
@@ -138,8 +128,7 @@
       border-left-color: $champion-gold;
     }
 
-    &.active,
-    &.selected {
+    &.active {
       background-color: rgba($champion-gold, 0.15);
       color: $champion-gold;
       border-left-color: $champion-gold;
@@ -150,7 +139,6 @@
       color: $accent-red;
       border-top: 1px solid rgba($surface-light, 0.3);
       margin-top: $spacing-sm;
-      padding-top: $spacing-md;
 
       &:hover {
         background-color: rgba($accent-red, 0.1);
@@ -164,7 +152,6 @@
   display: flex;
 }
 
-// Mobile styles
 @media (max-width: 768px) {
   .toolbar {
     padding: $spacing-sm $spacing-md;
@@ -178,15 +165,7 @@
     display: none;
   }
 
-  .hidden {
-    display: none;
-  }
-
   .banner-icon {
     width: 140px;
-  }
-
-  .desktop-only {
-    display: none;
   }
 }

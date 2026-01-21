@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 import { SupabaseService } from 'src/app/services/supabase.service';
 import { LeagueService } from 'src/app/services/league.service';
@@ -15,59 +16,46 @@ import { UserService } from 'src/app/services/user.service';
 export class ToolbarComponent implements OnInit, OnDestroy {
   dropdownVisible = false;
   isMobile: boolean;
-  userEmail: string | null = null;
   
   private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
-    private LeagueService: LeagueService,
-    private UserService: UserService,
-    private TeamService: TeamService,
-    private AuthService: AuthService,
+    private leagueService: LeagueService,
+    private userService: UserService,
+    private teamService: TeamService,
+    private authService: AuthService,
     private supabaseService: SupabaseService
   ) {
     this.checkIfMobile();
     window.addEventListener('resize', this.checkIfMobile.bind(this));
   }
 
-  ngOnInit(): void {
-    console.log("Toolbar locked n loaded.");
-    
-    // Subscribe to Supabase auth state
-    this.supabaseService.currentUser$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(user => {
-        this.userEmail = user?.email ?? null;
-      });
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  // Toggle dropdown visibility
-  toggleDropdown() {
+  toggleDropdown(): void {
     this.dropdownVisible = !this.dropdownVisible;
   }
 
-  // Handle item selection and close dropdown
-  selectItem(route: string) {
+  selectItem(route: string): void {
     this.dropdownVisible = false;
     this.router.navigate([route]);
   }
 
-  // Close dropdown if clicked outside
   @HostListener('document:click', ['$event'])
-  closeDropdown(event: MouseEvent) {
+  closeDropdown(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     if (!target.closest('.dropdown') && !target.closest('.dropdown-button')) {
       this.dropdownVisible = false;
     }
   }
 
-  checkIfMobile() {
+  checkIfMobile(): void {
     this.isMobile = window.innerWidth <= 768;
   }
 
@@ -76,45 +64,45 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   }
 
   get leagueId(): string {
-    return this.LeagueService.getMyLeague()?.getId();
+    return this.leagueService.getMyLeague()?.getId();
   }
 
   get userId(): string {
-    return this.UserService.getMyUser()?.getUserId();
+    return this.userService.getMyUser()?.getUserId();
   }
 
   get teamUserName(): string {
-    return this.TeamService.getMyTeam()?.getUserName();
+    return this.teamService.getMyTeam()?.getUserName();
   }
 
   get teamLeagueId(): string {
-    return this.TeamService.getMyTeam()?.getLeague()?.getId();  
+    return this.teamService.getMyTeam()?.getLeague()?.getId();
   }
-  
+
   isLoggedIn(): boolean {
-    return this.AuthService.isLoggedIn() || this.supabaseService.isAuthenticated();
+    return this.supabaseService.isAuthenticated() || this.authService.isLoggedIn();
   }
 
   signOut(): void {
-    // Sign out from Supabase
     this.supabaseService.signOut().subscribe(() => {
-      // Reset legacy auth
-      if (this.AuthService.isLoggedIn()) {
-        this.AuthService.toggleAuthentication();
+      // Reset legacy auth if needed
+      if (this.authService.isLoggedIn()) {
+        this.authService.toggleAuthentication();
       }
       
       // Reset services
-      this.LeagueService.reset();
-      this.UserService.reset();
-      this.TeamService.reset();
+      this.leagueService.reset();
+      this.userService.reset();
+      this.teamService.reset();
       
-      // Navigate to landing
-      this.router.navigate(['/']);
+      this.router.navigate(['/home']);
     });
+    
+    this.dropdownVisible = false;
   }
 
-  goToLanding(): void {
+  goHome(): void {
     this.dropdownVisible = false;
-    this.router.navigate(['/']);
+    this.router.navigate(['/home']);
   }
 }
