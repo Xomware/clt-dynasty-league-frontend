@@ -1,28 +1,41 @@
-import { Injectable } from '@angular/core';
-import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
-import { BehaviorSubject, Observable, from, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
+import { Injectable } from '@angular/core'
+import { createClient, SupabaseClient, User } from '@supabase/supabase-js'
+import { BehaviorSubject, Observable, from, of } from 'rxjs'
+import { map, catchError, tap } from 'rxjs/operators'
+import { environment } from 'src/environments/environment'
 
 export interface WhitelistedUser {
-  id: string;
-  email: string;
-  sleeper_username: string;
-  display_name: string;
-  role: string;
-  is_active: boolean;
+  id: string
+  email: string
+  sleeper_username: string
+  display_name: string
+  role: string
+  is_active: boolean
+}
+
+export interface Profile {
+  id: string
+  email: string
+  sleeper_user_id: string | null
+  sleeper_username: string | null
+  sleeper_avatar: string | null
+  display_name: string | null
+  created_at: string
+  updated_at: string
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class SupabaseService {
-  private supabase: SupabaseClient;
-  private currentUser = new BehaviorSubject<User | null>(null);
-  private initialized = new BehaviorSubject<boolean>(false);
+  private supabase: SupabaseClient
+  private currentUser = new BehaviorSubject<User | null>(null)
+  private currentProfile = new BehaviorSubject<Profile | null>(null)
+  private initialized = new BehaviorSubject<boolean>(false)
 
-  currentUser$ = this.currentUser.asObservable();
-  initialized$ = this.initialized.asObservable();
+  currentUser$ = this.currentUser.asObservable()
+  profile$ = this.currentProfile.asObservable()
+  initialized$ = this.initialized.asObservable()
 
   constructor() {
     this.supabase = createClient(
@@ -35,29 +48,52 @@ export class SupabaseService {
           detectSessionInUrl: true
         }
       }
-    );
+    )
 
     this.supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth event:', event);
-      this.currentUser.next(session?.user ?? null);
-      
-      if (!this.initialized.value) {
-        this.initialized.next(true);
-      }
-    });
+      console.log('Auth event:', event)
+      this.currentUser.next(session?.user ?? null)
 
-    this.initSession();
+      if (session?.user) {
+        this.loadProfile(session.user.id)
+      } else {
+        this.currentProfile.next(null)
+      }
+
+      if (!this.initialized.value) {
+        this.initialized.next(true)
+      }
+    })
+
+    this.initSession()
   }
 
   private async initSession() {
     try {
-      const { data: { session } } = await this.supabase.auth.getSession();
-      this.currentUser.next(session?.user ?? null);
+      const { data: { session } } = await this.supabase.auth.getSession()
+      this.currentUser.next(session?.user ?? null)
+      
+      if (session?.user) {
+        this.loadProfile(session.user.id)
+      }
     } catch (err) {
-      console.error('Session init error:', err);
+      console.error('Session init error:', err)
     } finally {
-      this.initialized.next(true);
+      this.initialized.next(true)
     }
+  }
+
+  private loadProfile(userId: string): void {
+    this.supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single()
+      .then(({ data, error }) => {
+        if (data && !error) {
+          this.currentProfile.next(data as Profile)
+        }
+      })
   }
 
   // Sign in with Google
@@ -72,7 +108,46 @@ export class SupabaseService {
     ).pipe(
       map(({ error }) => !error),
       catchError(() => of(false))
-    );
+    )
+  }
+
+  // Sign up with email/password
+  signUpWithEmail(email: string, password: string): Observable<{ success: boolean; message: string }> {
+    return from(
+      this.supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${environment.baseCallbackUrl}/home`
+        }
+      })
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          return { success: false, message: error.message }
+        }
+        if (data.user && !data.session) {
+          return { success: true, message: 'Check your email for a confirmation link.' }
+        }
+        return { success: true, message: 'Account created successfully.' }
+      }),
+      catchError(() => of({ success: false, message: 'Sign up failed. Please try again.' }))
+    )
+  }
+
+  // Sign in with email/password
+  signInWithEmail(email: string, password: string): Observable<{ success: boolean; message: string }> {
+    return from(
+      this.supabase.auth.signInWithPassword({ email, password })
+    ).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          return { success: false, message: error.message }
+        }
+        return { success: true, message: '' }
+      }),
+      catchError(() => of({ success: false, message: 'Sign in failed. Please try again.' }))
+    )
   }
 
   // Sign out
@@ -80,12 +155,13 @@ export class SupabaseService {
     return from(this.supabase.auth.signOut()).pipe(
       map(({ error }) => {
         if (!error) {
-          this.currentUser.next(null);
+          this.currentUser.next(null)
+          this.currentProfile.next(null)
         }
-        return !error;
+        return !error
       }),
       catchError(() => of(false))
-    );
+    )
   }
 
   /**
@@ -93,8 +169,8 @@ export class SupabaseService {
    * Returns null if user is not whitelisted
    */
   getWhitelistedUser(): Observable<WhitelistedUser | null> {
-    const user = this.currentUser.value;
-    if (!user?.email) return of(null);
+    const user = this.currentUser.value
+    if (!user?.email) return of(null)
 
     return from(
       this.supabase
@@ -106,32 +182,101 @@ export class SupabaseService {
     ).pipe(
       map(({ data, error }) => {
         if (error || !data) {
-          console.log('User not whitelisted:', user.email);
-          return null;
+          console.log('User not whitelisted:', user.email)
+          return null
         }
-        return data as WhitelistedUser;
+        return data as WhitelistedUser
       }),
       catchError(() => of(null))
-    );
+    )
   }
 
   // Simple check if whitelisted (no data returned)
   isUserWhitelisted(): Observable<boolean> {
     return this.getWhitelistedUser().pipe(
       map(user => !!user)
-    );
+    )
+  }
+
+  /**
+   * Link a Sleeper account to the current user's profile
+   */
+  linkSleeperAccount(sleeperUserId: string, sleeperUsername: string, sleeperAvatar?: string): Observable<boolean> {
+    const user = this.currentUser.value
+    if (!user) return of(false)
+
+    return from(
+      this.supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          email: user.email,
+          sleeper_user_id: sleeperUserId,
+          sleeper_username: sleeperUsername,
+          sleeper_avatar: sleeperAvatar || null,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'id' })
+    ).pipe(
+      tap(() => {
+        // Update local profile
+        const profile = this.currentProfile.value
+        if (profile) {
+          this.currentProfile.next({
+            ...profile,
+            sleeper_user_id: sleeperUserId,
+            sleeper_username: sleeperUsername,
+            sleeper_avatar: sleeperAvatar || null
+          })
+        }
+      }),
+      map(({ error }) => !error),
+      catchError(() => of(false))
+    )
+  }
+
+  /**
+   * Update profile display name
+   */
+  updateDisplayName(displayName: string): Observable<boolean> {
+    const user = this.currentUser.value
+    if (!user) return of(false)
+
+    return from(
+      this.supabase
+        .from('profiles')
+        .update({ display_name: displayName, updated_at: new Date().toISOString() })
+        .eq('id', user.id)
+    ).pipe(
+      tap(() => {
+        const profile = this.currentProfile.value
+        if (profile) {
+          this.currentProfile.next({ ...profile, display_name: displayName })
+        }
+      }),
+      map(({ error }) => !error),
+      catchError(() => of(false))
+    )
   }
 
   // Getters
   isAuthenticated(): boolean {
-    return !!this.currentUser.value;
+    return !!this.currentUser.value
   }
 
   getUser(): User | null {
-    return this.currentUser.value;
+    return this.currentUser.value
+  }
+
+  getProfile(): Profile | null {
+    return this.currentProfile.value
   }
 
   isInitialized(): boolean {
-    return this.initialized.value;
+    return this.initialized.value
+  }
+
+  // Direct Supabase client access for advanced queries
+  getClient(): SupabaseClient {
+    return this.supabase
   }
 }

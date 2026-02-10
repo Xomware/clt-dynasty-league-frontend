@@ -19,11 +19,11 @@
   transform: translate(-50%, -50%);
   background: $card-gradient;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba($champion-gold, 0.3);
+  border: 1px solid rgba($surface-light, 0.3);
   color: $text-primary;
   border-radius: $radius-lg;
   width: 95%;
-  max-width: 1100px;
+  max-width: 900px;
   max-height: 90vh;
   overflow-y: auto;
   z-index: $z-modal;
@@ -31,19 +31,20 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
 
   &::-webkit-scrollbar-track {
-    background: $deep-navy;
+    background: transparent;
   }
 
   &::-webkit-scrollbar-thumb {
     background: $surface-light;
-    border-radius: 4px;
+    border-radius: 3px;
   }
 }
 
+// Header
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -52,10 +53,15 @@
 
   h2 {
     font-family: $font-display;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     letter-spacing: 0.03em;
-    color: $champion-gold;
+    color: $text-primary;
     margin: 0;
+  }
+
+  .season-label {
+    color: $text-secondary;
+    font-size: 1rem;
   }
 }
 
@@ -79,9 +85,9 @@
 // Team Headers
 .teams-header {
   display: flex;
-  gap: $spacing-md;
-  margin: $spacing-md 0;
-  align-items: stretch;
+  gap: $spacing-sm;
+  margin: $spacing-md 0 $spacing-lg;
+  align-items: center;
 }
 
 .team-header {
@@ -89,59 +95,101 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: $spacing-xs;
-  padding: $spacing-lg;
+  gap: 4px;
+  padding: $spacing-md $spacing-sm;
   border-radius: $radius-lg;
   text-align: center;
-  transition: all $transition-base;
-  cursor: pointer;
-  border: 2px solid transparent;
+  background: rgba($dark-navy, 0.6);
+  border: 2px solid rgba($surface-light, 0.2);
+  transition: border-color $transition-base;
 
-  &:hover {
-    transform: scale(1.02);
+  &.winner {
+    border-color: rgba($success-green, 0.5);
+
+    .team-score {
+      color: $success-green;
+    }
+  }
+
+  &.loser {
+    border-color: rgba($error-red, 0.3);
+
+    .team-score {
+      color: rgba($error-red, 0.7);
+    }
   }
 
   .team-logo-header {
-    width: 80px;
-    height: 80px;
+    width: 56px;
+    height: 56px;
     border-radius: $radius-full;
     object-fit: cover;
-    border: 3px solid rgba(white, 0.3);
+    border: 2px solid rgba($surface-light, 0.3);
   }
 
   h3 {
     font-family: $font-body;
-    font-size: $text-lg;
+    font-size: $text-base;
     font-weight: 600;
-    margin: $spacing-xs 0 0 0;
+    margin: 0;
+    color: $text-primary;
   }
 
-  p {
-    font-size: $text-sm;
-    color: rgba(white, 0.8);
+  .team-user {
+    font-size: $text-xs;
+    color: $text-secondary;
     margin: 0;
+  }
+
+  .team-record {
+    font-size: $text-xs;
+    color: $text-muted;
     font-family: $font-mono;
+    margin: 0;
   }
 
   .team-score {
     font-family: $font-mono;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 700;
-    margin: $spacing-xs 0 0 0;
+    color: $champion-gold;
+    margin: 4px 0 0 0;
   }
 }
 
-.mid-divider {
-  width: 2px;
-  background: linear-gradient(180deg, transparent, $surface-light, transparent);
+.vs-badge {
+  font-size: $text-xs;
+  font-weight: 700;
+  color: $text-muted;
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
 }
 
-.thick-divider {
-  border: none;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, $surface-light, transparent);
-  margin: $spacing-xl 0;
+// Loading
+.modal-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-xl;
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba($surface-light, 0.3);
+    border-top-color: $champion-gold;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    margin-top: $spacing-sm;
+    color: $text-secondary;
+    font-size: $text-sm;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 // Player Groups
@@ -150,95 +198,138 @@
 
   .group-title {
     font-family: $font-display;
-    font-size: 1.2rem;
+    font-size: 1rem;
     letter-spacing: 0.05em;
-    color: $champion-gold;
-    margin-bottom: $spacing-md;
+    color: $text-secondary;
+    margin-bottom: $spacing-sm;
+    text-transform: uppercase;
   }
 }
 
 .roster.two-col {
   display: flex;
-  gap: $spacing-md;
+  gap: $spacing-sm;
 
   .roster-col {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    flex: 1;
+    gap: 4px;
   }
+}
 
-  .player-card {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: $spacing-sm $spacing-md;
-    margin-bottom: $spacing-sm;
-    background: rgba($dark-navy, 0.5);
-    border: 1px solid rgba($surface-light, 0.2);
-    border-radius: $radius-md;
-    transition: all $transition-fast;
+.col-divider {
+  width: 1px;
+  background: rgba($surface-light, 0.2);
+  flex-shrink: 0;
+}
 
-    &:hover {
-      transform: translateX(4px);
-      border-color: rgba($champion-gold, 0.3);
-    }
+// Player Cards
+.player-card {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 6px $spacing-sm;
+  background: rgba($dark-navy, 0.4);
+  border: 1px solid rgba($surface-light, 0.1);
+  border-radius: $radius-md;
 
-    .player-row {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      gap: $spacing-sm;
-    }
+  &.bench {
+    opacity: 0.7;
 
     .player-pic {
-      width: 40px;
-      height: 40px;
-      border-radius: $radius-full;
-      object-fit: cover;
-      border: 2px solid $champion-gold;
-      flex-shrink: 0;
+      display: none;
+    }
+  }
+
+  .player-pic {
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-full;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .player-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+
+    .player-name {
+      font-size: $text-sm;
+      font-weight: 600;
+      color: $text-primary;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .player-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-width: 0;
-
-      .player-name {
-        font-size: $text-sm;
-        font-weight: 600;
-        margin: 0;
-        color: $text-primary;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .player-meta {
-        font-size: $text-xs;
-        color: $text-secondary;
-        margin-top: 2px;
-      }
-    }
-
-    .team-logo {
-      width: 24px;
-      height: 24px;
-      object-fit: contain;
-      flex-shrink: 0;
+    .player-meta {
+      font-size: $text-xs;
+      color: $text-muted;
     }
   }
 }
 
-.player-details {
-  margin-top: auto;
+// Position Badges
+.position-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 22px;
+  border-radius: $radius-sm;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: $font-mono;
+  flex-shrink: 0;
+
+  &[data-position='QB'] {
+    background: rgba($steel-blue, 0.2);
+    color: $steel-blue;
+  }
+
+  &[data-position='RB'] {
+    background: rgba($success-green, 0.15);
+    color: $success-green;
+  }
+
+  &[data-position='WR'] {
+    background: rgba($champion-gold, 0.15);
+    color: $champion-gold;
+  }
+
+  &[data-position='TE'] {
+    background: rgba(#ff6b6b, 0.15);
+    color: #ff6b6b;
+  }
+
+  &[data-position='K'] {
+    background: rgba($text-secondary, 0.15);
+    color: $text-secondary;
+  }
+
+  &[data-position='DEF'] {
+    background: rgba($surface-light, 0.2);
+    color: $text-primary;
+  }
+}
+
+// Player Points
+.player-points {
+  font-family: $font-mono;
   font-size: $text-sm;
-  line-height: 1.4;
-  color: $text-secondary;
+  font-weight: 700;
+  color: $champion-gold;
+  min-width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+
+  &.muted {
+    color: $text-secondary;
+    font-weight: 400;
+  }
 }
 
 // Mobile
@@ -249,45 +340,44 @@
   }
 
   .teams-header {
-    flex-direction: row;
-    gap: $spacing-sm;
+    gap: $spacing-xs;
   }
 
   .team-header {
-    padding: $spacing-md;
+    padding: $spacing-sm;
 
     .team-logo-header {
-      width: 60px;
-      height: 60px;
+      width: 44px;
+      height: 44px;
     }
 
     h3 {
-      font-size: $text-base;
+      font-size: $text-sm;
     }
 
     .team-score {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
     }
   }
 
   .roster.two-col {
     flex-direction: column;
 
-    .mid-divider {
+    .col-divider {
       width: 100%;
-      height: 2px;
-      margin: $spacing-md 0;
+      height: 1px;
+      margin: $spacing-sm 0;
+    }
+  }
+
+  .player-card {
+    .player-pic {
+      width: 28px;
+      height: 28px;
     }
 
-    .player-card {
-      .player-pic {
-        width: 36px;
-        height: 36px;
-      }
-
-      .player-info .player-name {
-        font-size: $text-xs;
-      }
+    .player-info .player-name {
+      font-size: $text-xs;
     }
   }
 }

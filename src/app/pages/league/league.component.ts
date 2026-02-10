@@ -10,8 +10,10 @@ import { UserModel } from 'src/app/models/user.model'
 import { LeagueModel } from 'src/app/models/league.model'
 import { RosterModel } from 'src/app/models/roster.model'
 import { StandingsTeamModel } from 'src/app/models/standings.model'
+import { Matchup } from 'src/app/models/matchup.interface'
 import { MatchupModel } from 'src/app/models/matchup.model'
 import { MatchupDisplay } from 'src/app/models/matchup-display.interface'
+import { MatchupDetailInput } from 'src/app/models/matchup-detail-input.interface'
 
 @Component({
   selector: 'app-league',
@@ -34,10 +36,11 @@ export class LeagueComponent implements OnInit {
   activeTab: 'standings' | 'matchups' = 'standings'
   matchups: MatchupModel[] = []
   matchupsGrouped: MatchupDisplay[] = []
+  private rawMatchupPairs: { teamA: Matchup; teamB: Matchup }[] = []
   currentWeek: number = -1
   selectedWeek: number = this.currentWeek
   weeks: number[] = Array.from({ length: 18 }, (_, i) => i + 1) // e.g., 1–18 weeks
-  selectedMatchup: any = null
+  selectedMatchupDetail: MatchupDetailInput | null = null
   modalStart!: {
     top: number
     left: number
@@ -324,6 +327,7 @@ export class LeagueComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (rawPairs) => {
+          this.rawMatchupPairs = rawPairs
           this.matchupsGrouped = rawPairs.map((pair) => {
             const teamAInfo = this.standings.find(
               (t) => t.roster.roster_id === pair.teamA.roster_id,
@@ -395,7 +399,7 @@ export class LeagueComponent implements OnInit {
     }
   }
 
-  openMatchupModal(matchup: MatchupModel, event: MouseEvent) {
+  openMatchupModal(index: number, event: MouseEvent) {
     const card = (event.currentTarget as HTMLElement).getBoundingClientRect()
     this.modalStart = {
       top: card.top,
@@ -403,11 +407,47 @@ export class LeagueComponent implements OnInit {
       width: card.width,
       height: card.height,
     }
-    this.selectedMatchup = matchup
+
+    const pair = this.rawMatchupPairs[index]
+    const display = this.matchupsGrouped[index]
+    if (!pair || !display) return
+
+    this.selectedMatchupDetail = {
+      teamA: {
+        teamName: display.teamA.teamName,
+        userName: display.teamA['userName'] || '',
+        avatar: display.teamA.avatar || 'assets/img/nfl.png',
+        wins: display.teamA.wins,
+        losses: display.teamA.losses,
+        totalPoints: pair.teamA.points,
+        rosterId: pair.teamA.roster_id,
+        starters: pair.teamA.starters || [],
+        players: pair.teamA.players || [],
+        startersPoints: pair.teamA.starters_points || [],
+        playersPoints: pair.teamA.players_points || {},
+      },
+      teamB: {
+        teamName: display.teamB.teamName,
+        userName: display.teamB['userName'] || '',
+        avatar: display.teamB.avatar || 'assets/img/nfl.png',
+        wins: display.teamB.wins,
+        losses: display.teamB.losses,
+        totalPoints: pair.teamB.points,
+        rosterId: pair.teamB.roster_id,
+        starters: pair.teamB.starters || [],
+        players: pair.teamB.players || [],
+        startersPoints: pair.teamB.starters_points || [],
+        playersPoints: pair.teamB.players_points || {},
+      },
+      week: this.selectedWeek,
+      season: this.league.season,
+      leagueId: this.leagueId,
+      status: display.status,
+    }
   }
 
   closeMatchupModal() {
-    this.selectedMatchup = null
+    this.selectedMatchupDetail = null
     this.modalStart = null
   }
 }

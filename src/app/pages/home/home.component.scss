@@ -37,7 +37,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 // Content
@@ -119,6 +121,20 @@
   }
 }
 
+.email-btn {
+  background: transparent;
+  color: $text-primary;
+  border: 1px solid $surface-light;
+  margin-top: $spacing-sm;
+
+  &:hover {
+    background: rgba($surface-light, 0.15);
+    border-color: $champion-gold;
+    color: $champion-gold;
+    transform: translateY(-2px);
+  }
+}
+
 .guest-btn {
   background: transparent;
   color: $text-secondary;
@@ -128,6 +144,91 @@
     background: rgba($surface-light, 0.15);
     border-color: $steel-blue;
     color: $steel-blue;
+  }
+}
+
+.submit-btn {
+  background: $champion-gold;
+  color: $deep-navy;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($champion-gold, 0.4);
+  }
+}
+
+// Back button
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: $text-secondary;
+  font-size: $text-sm;
+  font-family: $font-body;
+  cursor: pointer;
+  padding: 4px;
+  margin: 0 0 $spacing-md 0;
+  border-radius: $radius-sm;
+  transition: color $transition-base;
+
+  &:hover {
+    color: $champion-gold;
+  }
+}
+
+// Email form
+.email-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px $spacing-md;
+  border-radius: $radius-xl;
+  border: 1px solid $surface-light;
+  background: rgba($deep-navy, 0.8);
+  color: $text-primary;
+  font-size: $text-base;
+  font-family: $font-body;
+  transition: border-color $transition-base, box-shadow $transition-base;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $champion-gold;
+    box-shadow: 0 0 0 3px rgba($champion-gold, 0.2);
+  }
+}
+
+.auth-error {
+  color: #ef4444;
+  font-size: $text-sm;
+  text-align: center;
+  margin: 0;
+}
+
+.toggle-mode {
+  font-size: $text-sm;
+  color: $text-secondary;
+  text-align: center;
+  margin: 0;
+
+  a {
+    color: $champion-gold;
+    cursor: pointer;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 

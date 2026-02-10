@@ -31,6 +31,12 @@
         <a *ngIf="leagueId" routerLink="/taxi-squad" [queryParams]="{ league: leagueId }" routerLinkActive="active">
           Taxi Squad
         </a>
+        <a *ngIf="leagueId" routerLink="/draft-history" routerLinkActive="active">
+          Draft History
+        </a>
+        <a *ngIf="leagueId" routerLink="/matchup-history" routerLinkActive="active">
+          Scores
+        </a>
       </ng-container>
     </div>
 
@@ -46,8 +52,10 @@
   <div class="dropdown" *ngIf="dropdownVisible">
     <a routerLink="/home" (click)="selectItem('/home')">Home</a>
     <a routerLink="/search" (click)="selectItem('/search')">Search</a>
-    
+
     <ng-container *ngIf="isLoggedIn()">
+      <div class="dropdown-section-header">My Stuff</div>
+      
       <a *ngIf="userId" routerLink="/my-profile" [queryParams]="{ userId: userId }" (click)="selectItem('/my-profile')">
         My Profile
       </a>
@@ -57,9 +65,19 @@
       <a *ngIf="teamUserName" routerLink="/my-team" [queryParams]="{ user: teamUserName, league: teamLeagueId }" (click)="selectItem('/my-team')">
         My Team
       </a>
+      
+      <div class="dropdown-section-header">League Features</div>
+      
       <a *ngIf="leagueId" routerLink="/taxi-squad" [queryParams]="{ league: leagueId }" (click)="selectItem('/taxi-squad')">
         Taxi Squad
       </a>
+      <a *ngIf="leagueId" routerLink="/draft-history" (click)="selectItem('/draft-history')">
+        Draft History
+      </a>
+      <a *ngIf="leagueId" routerLink="/matchup-history" (click)="selectItem('/matchup-history')">
+        Score History
+      </a>
+      
       <a class="sign-out-link" (click)="signOut()">Sign Out</a>
     </ng-container>
   </div>

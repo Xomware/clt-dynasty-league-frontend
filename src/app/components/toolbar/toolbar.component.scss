@@ -29,7 +29,7 @@
 .tabs {
   display: flex;
   align-items: center;
-  gap: $spacing-md;
+  gap: $spacing-sm;
 
   .nav-links {
     display: flex;
@@ -39,13 +39,14 @@
   a {
     color: $text-secondary;
     text-decoration: none;
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: $radius-md;
     font-size: $text-sm;
     font-weight: 500;
     font-family: $font-body;
     transition: all $transition-base;
     border: 1px solid transparent;
+    white-space: nowrap;
 
     &:hover {
       background-color: rgba($surface-light, 0.2);
@@ -108,6 +109,20 @@
   z-index: $z-dropdown;
   box-shadow: $shadow-lg;
   padding: $spacing-sm 0;
+  max-height: 80vh;
+  overflow-y: auto;
+
+  .dropdown-section-header {
+    padding: $spacing-sm $spacing-lg;
+    font-size: $text-xs;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: $champion-gold;
+    background: rgba($deep-navy, 0.5);
+    margin-top: $spacing-sm;
+    border-top: 1px solid rgba($surface-light, 0.2);
+  }
 
   a {
     display: block;
@@ -148,6 +163,30 @@
 
 .show-dropdown .dropdown {
   display: flex;
+}
+
+// Desktop with many tabs - make it scrollable if needed
+@media (min-width: 769px) and (max-width: 1200px) {
+  .tabs {
+    .nav-links {
+      overflow-x: auto;
+      max-width: 70vw;
+      
+      &::-webkit-scrollbar {
+        height: 4px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: $surface-light;
+        border-radius: 2px;
+      }
+    }
+
+    a {
+      padding: 8px 12px;
+      font-size: $text-xs;
+    }
+  }
 }
 
 @media (max-width: 768px) {

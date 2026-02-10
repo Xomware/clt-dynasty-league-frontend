@@ -68,4 +68,13 @@ export class DraftService {
       })
     )
   }
+
+  loadDraftsAndPicksForChain(leagueIds: string[]): Observable<DraftModel[]> {
+    if (leagueIds.length === 0) return of([])
+
+    const perLeague$ = leagueIds.map(id => this.loadDraftsAndPicks(id))
+    return forkJoin(perLeague$).pipe(
+      map(results => results.flat())
+    )
+  }
 }

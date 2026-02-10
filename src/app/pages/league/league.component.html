@@ -196,9 +196,9 @@
       </div>
       <div class="matchups-grid">
         <div
-          *ngFor="let matchup of matchupsGrouped"
+          *ngFor="let matchup of matchupsGrouped; let i = index"
           class="matchup-card"
-          (click)="openMatchupModal(matchup, $event)"
+          (click)="openMatchupModal(i, $event)"
         >
           <!-- Team A -->
           <div class="team-card" [ngClass]="matchup.teamA.highlight">
@@ -238,10 +238,9 @@
 </div>
 
 <app-matchup-modal
-  *ngIf="selectedMatchup"
-  [matchup]="selectedMatchup"
-  [week]="selectedWeek"
+  *ngIf="selectedMatchupDetail"
+  [matchupDetail]="selectedMatchupDetail"
   [startPos]="modalStart"
-  (close)="selectedMatchup = null"
+  (close)="closeMatchupModal()"
 >
 </app-matchup-modal>
