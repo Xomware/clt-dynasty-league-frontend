@@ -29,6 +29,20 @@
       >
         Matchups
       </button>
+      <button
+        class="tab-button"
+        [ngClass]="{ active: activeTab === 'playoffs' }"
+        (click)="setTab('playoffs')"
+      >
+        Playoffs
+      </button>
+      <button
+        class="tab-button worldcup"
+        [ngClass]="{ active: activeTab === 'worldcup' }"
+        (click)="setTab('worldcup')"
+      >
+        World Cup
+      </button>
     </div>
 
     <!-- Standings Tab -->
@@ -230,6 +244,124 @@
               {{ matchup.teamB.wins }}-{{ matchup.teamB.losses }}
             </div>
             <div class="team-points">{{ matchup.teamB.points }} pts</div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Playoffs Tab -->
+    <ng-container *ngIf="activeTab === 'playoffs'">
+      <div class="bracket-container" *ngIf="playoffsLoaded">
+        <!-- Winners Bracket -->
+        <h2 class="bracket-title">Winners Bracket</h2>
+        <div class="bracket">
+          <div class="bracket-round" *ngFor="let roundData of bracketRounds">
+            <div class="round-label">Round {{ roundData.round }}</div>
+            <div class="round-matches">
+              <div
+                class="bracket-match"
+                *ngFor="let match of roundData.matches"
+                [class.championship]="match.p === 1"
+              >
+                <div class="match-label" *ngIf="getBracketMatchLabel(match)">
+                  {{ getBracketMatchLabel(match) }}
+                </div>
+                <div class="bracket-team" [class.winner]="match.w === match.t1" [class.loser]="match.w && match.w !== match.t1">
+                  <img [src]="getTeamAvatar(match.t1)" class="bracket-team-pic" alt="" />
+                  <span class="bracket-team-name">{{ getTeamName(match.t1) }}</span>
+                  <span class="bracket-seed" *ngIf="roundData.round === 1 && match.t1">{{ match.t1 }}</span>
+                </div>
+                <div class="bracket-team" [class.winner]="match.w === match.t2" [class.loser]="match.w && match.w !== match.t2">
+                  <img [src]="getTeamAvatar(match.t2)" class="bracket-team-pic" alt="" />
+                  <span class="bracket-team-name">{{ getTeamName(match.t2) }}</span>
+                  <span class="bracket-seed" *ngIf="roundData.round === 1 && match.t2">{{ match.t2 }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Losers Bracket -->
+        <div *ngIf="loserRounds.length > 0">
+          <h2 class="bracket-title consolation">Consolation Bracket</h2>
+          <div class="bracket">
+            <div class="bracket-round" *ngFor="let roundData of loserRounds">
+              <div class="round-label">Round {{ roundData.round }}</div>
+              <div class="round-matches">
+                <div class="bracket-match" *ngFor="let match of roundData.matches">
+                  <div class="bracket-team" [class.winner]="match.w === match.t1" [class.loser]="match.w && match.w !== match.t1">
+                    <img [src]="getTeamAvatar(match.t1)" class="bracket-team-pic" alt="" />
+                    <span class="bracket-team-name">{{ getTeamName(match.t1) }}</span>
+                  </div>
+                  <div class="bracket-team" [class.winner]="match.w === match.t2" [class.loser]="match.w && match.w !== match.t2">
+                    <img [src]="getTeamAvatar(match.t2)" class="bracket-team-pic" alt="" />
+                    <span class="bracket-team-name">{{ getTeamName(match.t2) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- World Cup Tab -->
+    <ng-container *ngIf="activeTab === 'worldcup'">
+      <div class="worldcup-container" *ngIf="worldCupLoaded">
+        <div class="worldcup-header">
+          <h2 class="worldcup-title">World Cup Qualifying</h2>
+          <p class="worldcup-subtitle">
+            Divisional head-to-head records across {{ worldCupSeasons.length }} season{{ worldCupSeasons.length !== 1 ? 's' : '' }}
+            ({{ worldCupSeasons.join(', ') }})
+          </p>
+          <p class="worldcup-rule">Top 2 in each division qualify</p>
+        </div>
+
+        <div class="worldcup-divisions">
+          <div class="wc-division" *ngFor="let division of worldCupDivisions">
+            <div class="wc-division-header">
+              <h3 class="wc-division-name">{{ division.divisionName }}</h3>
+            </div>
+
+            <div class="wc-standings-header" [style.grid-template-columns]="wcGridColumns">
+              <span class="wc-rank">#</span>
+              <span class="wc-team">Team</span>
+              <span class="wc-record">W</span>
+              <span class="wc-record">L</span>
+              <span class="wc-pts">PF</span>
+              <span class="wc-pts">PA</span>
+              <span class="wc-seasons" *ngFor="let season of worldCupSeasons">{{ season }}</span>
+            </div>
+
+            <div
+              class="wc-standings-row"
+              *ngFor="let team of division.teams; let i = index"
+              [class.qualified]="team.qualified"
+              [class.eliminated]="!team.qualified"
+              [style.grid-template-columns]="wcGridColumns"
+            >
+              <span class="wc-rank" [class.gold]="i === 0" [class.silver]="i === 1">
+                {{ i + 1 }}
+              </span>
+              <div class="wc-team">
+                <span class="wc-team-name">{{ team.team_name || team.username }}</span>
+                <span class="wc-username">{{ team.username }}</span>
+              </div>
+              <span class="wc-record wins">{{ team.wins }}</span>
+              <span class="wc-record losses">{{ team.losses }}</span>
+              <span class="wc-pts">{{ team.pointsFor.toFixed(1) }}</span>
+              <span class="wc-pts">{{ team.pointsAgainst.toFixed(1) }}</span>
+              <span class="wc-seasons" *ngFor="let season of worldCupSeasons">
+                <ng-container *ngIf="getSeasonBreakdown(team, season) as sb">
+                  {{ sb.wins }}-{{ sb.losses }}
+                </ng-container>
+              </span>
+            </div>
+
+            <div class="wc-qualify-line" *ngIf="division.teams.length > 2">
+              <span class="qualify-tag">Qualified</span>
+              <span class="qualify-divider"></span>
+            </div>
           </div>
         </div>
       </div>

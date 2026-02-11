@@ -168,8 +168,8 @@
     font-family: $font-mono;
 
     &.gold {
-      color: gold;
-      text-shadow: 0 0 10px rgba(gold, 0.5);
+      color: $champion-gold;
+      text-shadow: 0 0 10px rgba($champion-gold, 0.5);
     }
     &.silver {
       color: silver;
@@ -418,6 +418,326 @@
   }
 }
 
+// =============================================
+// PLAYOFFS BRACKET
+// =============================================
+
+.bracket-container {
+  padding: $spacing-md 0;
+}
+
+.bracket-title {
+  font-family: $font-display;
+  font-size: 1.8rem;
+  letter-spacing: 0.05em;
+  color: $champion-gold;
+  text-align: center;
+  margin-bottom: $spacing-lg;
+
+  &.consolation {
+    color: $text-secondary;
+    margin-top: $spacing-2xl;
+  }
+}
+
+.bracket {
+  display: flex;
+  gap: $spacing-lg;
+  overflow-x: auto;
+  padding: $spacing-md;
+  align-items: flex-start;
+}
+
+.bracket-round {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  min-width: 220px;
+}
+
+.round-label {
+  font-family: $font-display;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  color: $text-secondary;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: $spacing-sm;
+}
+
+.round-matches {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  justify-content: space-around;
+  min-height: 100%;
+}
+
+.bracket-match {
+  background: rgba($dark-navy, 0.6);
+  border: 1px solid rgba($surface-light, 0.3);
+  border-radius: $radius-md;
+  overflow: hidden;
+
+  &.championship {
+    border-color: rgba($champion-gold, 0.5);
+    box-shadow: 0 0 12px rgba($champion-gold, 0.15);
+  }
+}
+
+.match-label {
+  text-align: center;
+  font-family: $font-display;
+  font-size: $text-sm;
+  letter-spacing: 0.05em;
+  color: $champion-gold;
+  padding: 4px;
+  background: rgba($champion-gold, 0.1);
+}
+
+.bracket-team {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 10px $spacing-md;
+  transition: background-color $transition-fast;
+
+  &:first-of-type {
+    border-bottom: 1px solid rgba($surface-light, 0.2);
+  }
+
+  &.winner {
+    background: rgba($success-green, 0.12);
+
+    .bracket-team-name {
+      color: $success-green;
+      font-weight: 700;
+    }
+  }
+
+  &.loser {
+    opacity: 0.6;
+  }
+}
+
+.bracket-team-pic {
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-full;
+  object-fit: cover;
+  border: 1px solid $surface-light;
+  flex-shrink: 0;
+}
+
+.bracket-team-name {
+  font-size: $text-sm;
+  font-weight: 500;
+  color: $text-primary;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bracket-seed {
+  font-size: $text-xs;
+  font-family: $font-mono;
+  color: $text-muted;
+  background: rgba($surface-light, 0.2);
+  padding: 2px 6px;
+  border-radius: $radius-sm;
+}
+
+// =============================================
+// WORLD CUP
+// =============================================
+
+.tab-button.worldcup {
+  &.active {
+    background: $red-accent;
+    border-color: $accent-red;
+    color: white;
+  }
+}
+
+.worldcup-container {
+  padding: $spacing-md 0;
+}
+
+.worldcup-header {
+  text-align: center;
+  margin-bottom: $spacing-xl;
+}
+
+.worldcup-title {
+  font-family: $font-display;
+  font-size: 2rem;
+  letter-spacing: 0.05em;
+  color: $champion-gold;
+  margin: 0;
+}
+
+.worldcup-subtitle {
+  font-size: $text-base;
+  color: $text-secondary;
+  margin: $spacing-xs 0 0;
+}
+
+.worldcup-rule {
+  font-size: $text-sm;
+  color: $success-green;
+  font-weight: 600;
+  margin-top: $spacing-xs;
+}
+
+.worldcup-divisions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.wc-division {
+  background: rgba($dark-navy, 0.4);
+  border: 1px solid rgba($surface-light, 0.2);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  position: relative;
+}
+
+.wc-division-header {
+  text-align: center;
+  margin-bottom: $spacing-md;
+}
+
+.wc-division-name {
+  font-family: $font-display;
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  color: $champion-gold;
+  margin: 0;
+}
+
+.wc-standings-header,
+.wc-standings-row {
+  display: grid;
+  grid-template-columns: 40px 2fr 0.6fr 0.6fr 1fr 1fr repeat(auto-fill, 0.8fr);
+  gap: $spacing-sm;
+  align-items: center;
+  padding: 10px $spacing-md;
+}
+
+.wc-standings-header {
+  font-weight: 600;
+  font-size: $text-xs;
+  color: $text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba($surface-light, 0.3);
+}
+
+.wc-standings-row {
+  border-radius: $radius-md;
+  margin-bottom: $spacing-xs;
+  transition: all $transition-base;
+
+  &.qualified {
+    background: rgba($success-green, 0.08);
+    border-left: 3px solid $success-green;
+  }
+
+  &.eliminated {
+    opacity: 0.6;
+  }
+}
+
+.wc-rank {
+  text-align: center;
+  font-weight: 700;
+  font-family: $font-mono;
+  font-size: $text-base;
+
+  &.gold {
+    color: $champion-gold;
+    text-shadow: 0 0 8px rgba($champion-gold, 0.4);
+  }
+
+  &.silver {
+    color: silver;
+  }
+}
+
+.wc-team {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.wc-team-name {
+  font-size: $text-sm;
+  font-weight: 600;
+  color: $text-primary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wc-username {
+  font-size: $text-xs;
+  color: $text-secondary;
+}
+
+.wc-record {
+  font-family: $font-mono;
+  font-weight: 700;
+  font-size: $text-base;
+  text-align: center;
+
+  &.wins {
+    color: $success-green;
+  }
+
+  &.losses {
+    color: $error-red;
+  }
+}
+
+.wc-pts {
+  font-family: $font-mono;
+  font-size: $text-sm;
+  color: $text-secondary;
+  text-align: center;
+}
+
+.wc-seasons {
+  font-family: $font-mono;
+  font-size: $text-sm;
+  color: $text-secondary;
+  text-align: center;
+}
+
+.wc-qualify-line {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+  padding: 0 $spacing-md;
+
+  .qualify-tag {
+    font-size: $text-xs;
+    font-weight: 700;
+    color: $success-green;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .qualify-divider {
+    flex: 1;
+    height: 1px;
+    background: rgba($success-green, 0.3);
+  }
+}
+
 // Mobile
 @media (max-width: 768px) {
   .league-container {
@@ -470,5 +790,34 @@
     width: 34px;
     height: 34px;
     font-size: $text-xs;
+  }
+
+  .tab-container {
+    flex-wrap: wrap;
+  }
+
+  .tab-button {
+    padding: 8px 16px;
+    font-size: $text-sm;
+  }
+
+  .bracket {
+    gap: $spacing-md;
+    padding: $spacing-sm;
+  }
+
+  .bracket-round {
+    min-width: 180px;
+  }
+
+  .wc-standings-header,
+  .wc-standings-row {
+    grid-template-columns: 30px 1.5fr 0.5fr 0.5fr;
+    font-size: $text-xs;
+
+    .wc-pts,
+    .wc-seasons {
+      display: none;
+    }
   }
 }

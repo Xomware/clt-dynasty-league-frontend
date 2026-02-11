@@ -48,6 +48,8 @@ export interface MatchupHistoryRecord {
   winner_roster_id: number
   is_playoff: boolean
   is_championship: boolean
+  team_a_division: number
+  team_b_division: number
 }
 
 export interface SeasonStandingsRecord {
@@ -69,6 +71,33 @@ export interface SeasonStandingsRecord {
   is_champion: boolean
   is_runner_up: boolean
   made_playoffs: boolean
+}
+
+export interface WorldCupTeamRecord {
+  user_id: string
+  username: string
+  team_name: string
+  division: number
+  divisionName: string
+  wins: number
+  losses: number
+  ties: number
+  pointsFor: number
+  pointsAgainst: number
+  qualified: boolean         // top 2 in division
+  seasonBreakdown: {
+    season: string
+    wins: number
+    losses: number
+    pointsFor: number
+    pointsAgainst: number
+  }[]
+}
+
+export interface WorldCupDivision {
+  divisionNumber: number
+  divisionName: string
+  teams: WorldCupTeamRecord[]
 }
 
 export interface LeagueChampion {
@@ -421,7 +450,9 @@ export class LeagueHistoryService {
           team_b_points: pointsB,
           winner_roster_id: winnerId,
           is_playoff: week > 14,
-          is_championship: week === 16 || week === 17
+          is_championship: week === 16 || week === 17,
+          team_a_division: rosterA?.settings?.division ?? 0,
+          team_b_division: rosterB?.settings?.division ?? 0
         })
       })
     })
@@ -523,7 +554,9 @@ export class LeagueHistoryService {
               team_b_points: pair.teamB.points || 0,
               winner_roster_id: winnerId,
               is_playoff: week > 14, // Adjust based on league settings
-              is_championship: week === 16 || week === 17
+              is_championship: week === 16 || week === 17,
+              team_a_division: teamAStanding?.roster?.settings?.division ?? 0,
+              team_b_division: teamBStanding?.roster?.settings?.division ?? 0
             })
           })
         })
@@ -645,6 +678,162 @@ export class LeagueHistoryService {
         return of([])
       })
     )
+  }
+
+  // =========================================
+  // WORLD CUP (DIVISIONAL HEAD-TO-HEAD)
+  // =========================================
+
+  /**
+   * Compute World Cup standings from divisional head-to-head records
+   * across all seasons in the chain. Only counts regular-season
+   * intra-divisional matchups (both teams in same division).
+   * Uses user_id as stable identifier across seasons.
+   */
+  getWorldCupStandings(
+    chain: LeagueModel[],
+    matchups: MatchupHistoryRecord[]
+  ): WorldCupDivision[] {
+    // Get division names from the most recent league in chain
+    const currentLeague = chain[0]
+    const divisionNameMap = new Map<number, string>()
+    if (currentLeague?.metadata) {
+      for (const key of Object.keys(currentLeague.metadata)) {
+        const match = key.match(/^division_(\d+)$/)
+        if (match && !key.endsWith('_avatar')) {
+          divisionNameMap.set(parseInt(match[1]), currentLeague.metadata[key])
+        }
+      }
+    }
+
+    // Filter: regular season only, intra-divisional matchups with scores
+    const divisionalMatchups = matchups.filter(m =>
+      !m.is_playoff &&
+      m.team_a_division > 0 &&
+      m.team_b_division > 0 &&
+      m.team_a_division === m.team_b_division &&
+      (m.team_a_points > 0 || m.team_b_points > 0)
+    )
+
+    // Build per-user records: keyed by user_id
+    const userRecords = new Map<string, {
+      user_id: string
+      username: string
+      team_name: string
+      division: number
+      wins: number
+      losses: number
+      ties: number
+      pointsFor: number
+      pointsAgainst: number
+      seasonData: Map<string, { wins: number; losses: number; pointsFor: number; pointsAgainst: number }>
+    }>()
+
+    const ensureUser = (userId: string, username: string, teamName: string, division: number) => {
+      if (!userRecords.has(userId)) {
+        userRecords.set(userId, {
+          user_id: userId,
+          username,
+          team_name: teamName,
+          division,
+          wins: 0, losses: 0, ties: 0,
+          pointsFor: 0, pointsAgainst: 0,
+          seasonData: new Map()
+        })
+      }
+      // Update team name to latest
+      const rec = userRecords.get(userId)!
+      if (teamName) rec.team_name = teamName
+      if (division > 0) rec.division = division
+      return rec
+    }
+
+    const ensureSeason = (rec: ReturnType<typeof ensureUser>, season: string) => {
+      if (!rec.seasonData.has(season)) {
+        rec.seasonData.set(season, { wins: 0, losses: 0, pointsFor: 0, pointsAgainst: 0 })
+      }
+      return rec.seasonData.get(season)!
+    }
+
+    for (const m of divisionalMatchups) {
+      const recA = ensureUser(m.team_a_user_id, m.team_a_username, m.team_a_team_name, m.team_a_division)
+      const recB = ensureUser(m.team_b_user_id, m.team_b_username, m.team_b_team_name, m.team_b_division)
+      const seasonA = ensureSeason(recA, m.season)
+      const seasonB = ensureSeason(recB, m.season)
+
+      recA.pointsFor += m.team_a_points
+      recA.pointsAgainst += m.team_b_points
+      seasonA.pointsFor += m.team_a_points
+      seasonA.pointsAgainst += m.team_b_points
+
+      recB.pointsFor += m.team_b_points
+      recB.pointsAgainst += m.team_a_points
+      seasonB.pointsFor += m.team_b_points
+      seasonB.pointsAgainst += m.team_a_points
+
+      if (m.winner_roster_id === null) {
+        recA.ties++; recB.ties++
+      } else if (m.team_a_points > m.team_b_points) {
+        recA.wins++; recB.losses++
+        seasonA.wins++; seasonB.losses++
+      } else {
+        recB.wins++; recA.losses++
+        seasonB.wins++; seasonA.losses++
+      }
+    }
+
+    // Group by division
+    const divisionGroups = new Map<number, WorldCupTeamRecord[]>()
+
+    for (const rec of userRecords.values()) {
+      if (!divisionGroups.has(rec.division)) {
+        divisionGroups.set(rec.division, [])
+      }
+
+      const seasonBreakdown = Array.from(rec.seasonData.entries())
+        .map(([season, data]) => ({ season, ...data }))
+        .sort((a, b) => parseInt(a.season) - parseInt(b.season))
+
+      divisionGroups.get(rec.division)!.push({
+        user_id: rec.user_id,
+        username: rec.username,
+        team_name: rec.team_name,
+        division: rec.division,
+        divisionName: divisionNameMap.get(rec.division) || `Division ${rec.division}`,
+        wins: rec.wins,
+        losses: rec.losses,
+        ties: rec.ties,
+        pointsFor: rec.pointsFor,
+        pointsAgainst: rec.pointsAgainst,
+        qualified: false,
+        seasonBreakdown
+      })
+    }
+
+    // Sort within each division: wins desc, then points for desc as tiebreaker
+    const divisions: WorldCupDivision[] = []
+
+    for (const [divNum, teams] of divisionGroups.entries()) {
+      teams.sort((a, b) => {
+        if (b.wins !== a.wins) return b.wins - a.wins
+        return b.pointsFor - a.pointsFor
+      })
+
+      // Top 2 qualify
+      if (teams.length >= 1) teams[0].qualified = true
+      if (teams.length >= 2) teams[1].qualified = true
+
+      divisions.push({
+        divisionNumber: divNum,
+        divisionName: divisionNameMap.get(divNum) || `Division ${divNum}`,
+        teams
+      })
+    }
+
+    // Sort divisions by number
+    divisions.sort((a, b) => a.divisionNumber - b.divisionNumber)
+
+    return divisions
   }
 
   // =========================================

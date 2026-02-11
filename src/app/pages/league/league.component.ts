@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { take } from 'rxjs'
+import { forkJoin, switchMap, take } from 'rxjs'
 import { LeagueService } from 'src/app/services/league.service'
+import { LeagueHistoryService, WorldCupDivision } from 'src/app/services/league-history.service'
 import { StandingsService } from 'src/app/services/standings.service'
 import { ToastService } from 'src/app/services/toast.service'
 import { TeamService } from 'src/app/services/team.service'
@@ -14,6 +15,7 @@ import { Matchup } from 'src/app/models/matchup.interface'
 import { MatchupModel } from 'src/app/models/matchup.model'
 import { MatchupDisplay } from 'src/app/models/matchup-display.interface'
 import { MatchupDetailInput } from 'src/app/models/matchup-detail-input.interface'
+import { PlayoffBracketMatch } from 'src/app/models/playoff-bracket.interface'
 
 @Component({
   selector: 'app-league',
@@ -33,7 +35,7 @@ export class LeagueComponent implements OnInit {
   standings: StandingsTeamModel[] = []
   standingsByDivision: { [division: string]: StandingsTeamModel[] }
   loading = false
-  activeTab: 'standings' | 'matchups' = 'standings'
+  activeTab: 'standings' | 'matchups' | 'playoffs' | 'worldcup' = 'standings'
   matchups: MatchupModel[] = []
   matchupsGrouped: MatchupDisplay[] = []
   private rawMatchupPairs: { teamA: Matchup; teamB: Matchup }[] = []
@@ -50,8 +52,22 @@ export class LeagueComponent implements OnInit {
 
   leagueTaxiSquadIds: string[] = []
 
+  // Playoffs bracket
+  winnersBracket: PlayoffBracketMatch[] = []
+  losersBracket: PlayoffBracketMatch[] = []
+  bracketRounds: { round: number; matches: PlayoffBracketMatch[] }[] = []
+  loserRounds: { round: number; matches: PlayoffBracketMatch[] }[] = []
+  playoffsLoaded = false
+
+  // World Cup
+  worldCupDivisions: WorldCupDivision[] = []
+  worldCupLoaded = false
+  worldCupSeasons: string[] = []
+  wcGridColumns = '40px 2fr 0.6fr 0.6fr 1fr 1fr'
+
   constructor(
     private LeagueService: LeagueService,
+    private LeagueHistoryService: LeagueHistoryService,
     private router: Router,
     private ToastService: ToastService,
     private StandingsService: StandingsService,
@@ -392,11 +408,106 @@ export class LeagueComponent implements OnInit {
       })
   }
 
-  setTab(tab: 'standings' | 'matchups') {
+  setTab(tab: 'standings' | 'matchups' | 'playoffs' | 'worldcup') {
     this.activeTab = tab
     if (tab === 'matchups' && this.matchups.length === 0) {
       this.getMatchups()
     }
+    if (tab === 'playoffs' && !this.playoffsLoaded) {
+      this.loadPlayoffBracket()
+    }
+    if (tab === 'worldcup' && !this.worldCupLoaded) {
+      this.loadWorldCup()
+    }
+  }
+
+  // ---- PLAYOFFS BRACKET ----
+
+  loadPlayoffBracket(): void {
+    this.loading = true
+    forkJoin({
+      winners: this.LeagueService.getWinnersBracket(this.leagueId),
+      losers: this.LeagueService.getLosersBracket(this.leagueId)
+    }).pipe(take(1)).subscribe({
+      next: ({ winners, losers }) => {
+        this.winnersBracket = winners as PlayoffBracketMatch[]
+        this.losersBracket = losers as PlayoffBracketMatch[]
+        this.bracketRounds = this.groupBracketByRound(this.winnersBracket)
+        this.loserRounds = this.groupBracketByRound(this.losersBracket)
+        this.playoffsLoaded = true
+        this.loading = false
+      },
+      error: () => {
+        this.ToastService.showNegativeToast('Error loading playoff bracket.')
+        this.loading = false
+      }
+    })
+  }
+
+  private groupBracketByRound(matches: PlayoffBracketMatch[]): { round: number; matches: PlayoffBracketMatch[] }[] {
+    const roundMap = new Map<number, PlayoffBracketMatch[]>()
+    matches.forEach(m => {
+      if (!roundMap.has(m.r)) roundMap.set(m.r, [])
+      roundMap.get(m.r)!.push(m)
+    })
+    return Array.from(roundMap.entries())
+      .map(([round, matches]) => ({ round, matches }))
+      .sort((a, b) => a.round - b.round)
+  }
+
+  getTeamName(rosterId: number | null): string {
+    if (!rosterId) return 'TBD'
+    const team = this.standings.find(s => s.roster.roster_id === rosterId)
+    return team?.teamName || `Roster ${rosterId}`
+  }
+
+  getTeamAvatar(rosterId: number | null): string {
+    if (!rosterId) return 'assets/img/nfl.png'
+    const team = this.standings.find(s => s.roster.roster_id === rosterId)
+    return team?.avatar || 'assets/img/nfl.png'
+  }
+
+  getBracketMatchLabel(match: PlayoffBracketMatch): string {
+    if (match.p === 1) return 'Championship'
+    if (match.p === 3) return '3rd Place'
+    if (match.p === 5) return '5th Place'
+    return ''
+  }
+
+  // ---- WORLD CUP ----
+
+  loadWorldCup(): void {
+    this.loading = true
+    this.LeagueService.getLeagueChain(this.leagueId).pipe(
+      switchMap(chain => this.LeagueHistoryService.getMatchupHistoryFromChain(chain).pipe(
+        take(1),
+        switchMap(matchups => {
+          this.worldCupDivisions = this.LeagueHistoryService.getWorldCupStandings(chain, matchups)
+          // Gather unique seasons
+          this.worldCupSeasons = [...new Set(matchups.map(m => m.season))]
+            .sort((a, b) => parseInt(a) - parseInt(b))
+          return [this.worldCupDivisions]
+        })
+      )),
+      take(1)
+    ).subscribe({
+      next: () => {
+        // Build dynamic grid columns: base + one column per season
+        const seasonCols = this.worldCupSeasons.map(() => '0.8fr').join(' ')
+        this.wcGridColumns = `40px 2fr 0.6fr 0.6fr 1fr 1fr ${seasonCols}`.trim()
+        this.worldCupLoaded = true
+        this.loading = false
+      },
+      error: () => {
+        this.ToastService.showNegativeToast('Error loading World Cup standings.')
+        this.loading = false
+      }
+    })
+  }
+
+  getSeasonBreakdown(team: any, season: string): { wins: number; losses: number } {
+    const sb = team.seasonBreakdown?.find((s: any) => s.season === season)
+    return sb || { wins: 0, losses: 0 }
   }
 
   openMatchupModal(index: number, event: MouseEvent) {
