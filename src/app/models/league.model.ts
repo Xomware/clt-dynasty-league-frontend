@@ -25,6 +25,9 @@ export class LeagueModel implements League {
   taxiSquadIds: string[] = []
   standingsTeams: StandingsTeamModel[] = []
 
+  scoring_settings: Record<string, number>
+  roster_positions: string[]
+
   settings: {
     daily_waivers?: number
     daily_waiver_hour?: number
@@ -34,6 +37,10 @@ export class LeagueModel implements League {
     waiver_type?: number
     reserve_slots?: number
     taxi_slots?: number
+    trade_deadline?: number
+    max_keepers?: number
+    draft_rounds?: number
+    num_teams?: number
     [key: string]: any
   }
 
@@ -81,7 +88,7 @@ export class LeagueModel implements League {
   }
 
   isDynasty(): boolean {
-    return this.metadata?.dynasty === '1' || false
+    return this.settings?.type === 2 || this.metadata?.dynasty === '1' || false
   }
 
   getPlayoffTeams(): number {
@@ -94,6 +101,14 @@ export class LeagueModel implements League {
 
   getReserveSlots(): number {
     return this.settings?.reserve_slots ?? 0
+  }
+
+  getScoringSettings(): Record<string, number> {
+    return this.scoring_settings ?? {}
+  }
+
+  getRosterPositions(): string[] {
+    return this.roster_positions ?? []
   }
 
   getWinnerRosterId(): string | null {

@@ -33,6 +33,7 @@
 
   .nav-links {
     display: flex;
+    align-items: center;
     gap: $spacing-xs;
   }
 
@@ -47,6 +48,7 @@
     transition: all $transition-base;
     border: 1px solid transparent;
     white-space: nowrap;
+    cursor: pointer;
 
     &:hover {
       background-color: rgba($surface-light, 0.2);
@@ -59,6 +61,72 @@
       font-weight: 600;
       border-color: $champion-gold;
     }
+  }
+}
+
+// Desktop league dropdown
+.league-dropdown-wrapper {
+  position: relative;
+  display: inline-flex;
+
+  .league-trigger {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    user-select: none;
+  }
+
+  .dropdown-arrow {
+    font-size: 10px;
+    transition: transform $transition-fast;
+
+    &.open {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.league-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 180px;
+  background: $dark-navy;
+  border: 1px solid rgba($surface-light, 0.4);
+  border-radius: $radius-md;
+  box-shadow: $shadow-lg;
+  z-index: $z-dropdown;
+  padding: $spacing-xs 0;
+  animation: dropdownFadeIn 150ms ease;
+
+  a {
+    display: block;
+    color: $text-secondary;
+    text-decoration: none;
+    padding: 10px $spacing-md;
+    font-size: $text-sm;
+    font-family: $font-body;
+    transition: all $transition-fast;
+    border: none;
+    border-radius: 0;
+    border-left: 2px solid transparent;
+
+    &:hover {
+      background-color: rgba($surface-light, 0.2);
+      color: $text-primary;
+      border-left-color: $champion-gold;
+    }
+  }
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -163,30 +231,6 @@
 
 .show-dropdown .dropdown {
   display: flex;
-}
-
-// Desktop with many tabs - make it scrollable if needed
-@media (min-width: 769px) and (max-width: 1200px) {
-  .tabs {
-    .nav-links {
-      overflow-x: auto;
-      max-width: 70vw;
-      
-      &::-webkit-scrollbar {
-        height: 4px;
-      }
-      
-      &::-webkit-scrollbar-thumb {
-        background: $surface-light;
-        border-radius: 2px;
-      }
-    }
-
-    a {
-      padding: 8px 12px;
-      font-size: $text-xs;
-    }
-  }
 }
 
 @media (max-width: 768px) {

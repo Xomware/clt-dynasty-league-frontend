@@ -1,31 +1,31 @@
 // ================================================
-// XOMPER Design System - Dark Emerald
+// XOMPER Design System - Midnight Emerald (High Contrast)
 // ================================================
 
 // Primary Colors
-$deep-navy: #0a1210; // Primary background (deep forest black)
-$dark-navy: #131f1b; // Card backgrounds (dark forest)
-$accent-red: #e04040; // Primary accent (alerts, active states)
-$champion-gold: #2dd4a8; // Primary accent (emerald mint — rankings, highlights)
-$steel-blue: #34d399; // Tertiary (links, info — lighter emerald)
+$deep-navy: #050a08; // Primary background (near black)
+$dark-navy: #0c1612; // Card backgrounds (very dark)
+$accent-red: #ff4757; // Primary accent (vibrant red)
+$champion-gold: #00ffab; // Primary accent (bright neon emerald)
+$steel-blue: #00e89d; // Tertiary (links, info — vivid emerald)
 
 // Supporting Colors
-$success-green: #22c55e; // Wins, positive changes
-$error-red: #ef4444; // Errors, losses
-$surface-light: #2a3f38; // Dividers, subtle borders
-$text-primary: #e8ede6; // Primary text (warm cream)
-$text-secondary: #7a9989; // Secondary text (muted sage)
-$text-muted: #3d5549; // Muted text (dark sage)
+$success-green: #00e676; // Wins, positive changes
+$error-red: #ff5252; // Errors, losses
+$surface-light: #1a2e26; // Dividers, subtle borders
+$text-primary: #f0f5f0; // Primary text (near white, slight green tint)
+$text-secondary: #8fadA0; // Secondary text (brighter sage)
+$text-muted: #4a6b5c; // Muted text (lifted for readability)
 
 // Legacy colors (for backward compatibility during migration)
 $legacy-red: #bf0a0a;
 $legacy-blue: #1b8edc;
 
 // Backgrounds
-$bg-dark: #080e0c;
-$bg-card: #111c18;
-$bg-card-hover: #1a2b25;
-$bg-input: #1a2b25;
+$bg-dark: #030706;
+$bg-card: #0a1610;
+$bg-card-hover: #14271e;
+$bg-input: #14271e;
 
 // Gradients
 $bg-gradient: linear-gradient(
@@ -36,12 +36,12 @@ $bg-gradient: linear-gradient(
 );
 $card-gradient: linear-gradient(
   135deg,
-  rgba(19, 31, 27, 0.95) 0%,
-  rgba(10, 18, 16, 0.95) 100%
+  rgba(12, 22, 18, 0.97) 0%,
+  rgba(5, 10, 8, 0.97) 100%
 );
-$gold-accent: linear-gradient(90deg, #2dd4a8 0%, #34d399 100%);
-$red-accent: linear-gradient(90deg, $accent-red 0%, #f06060 100%);
-$loader-gradient: linear-gradient(135deg, #2dd4a8, #059669);
+$gold-accent: linear-gradient(90deg, #00ffab 0%, #00e89d 100%);
+$red-accent: linear-gradient(90deg, $accent-red 0%, #ff6b7a 100%);
+$loader-gradient: linear-gradient(135deg, #00ffab, #00c97a);
 
 // Typography
 $font-display: 'Bebas Neue', sans-serif; // Headlines, stats

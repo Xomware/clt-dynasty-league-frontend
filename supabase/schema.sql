@@ -21,12 +21,20 @@ CREATE TABLE public.profiles (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Auto-create profile on signup
+-- Auto-create profile on signup (pulls display name from Google/OAuth metadata)
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email)
-  VALUES (NEW.id, NEW.email);
+  INSERT INTO public.profiles (id, email, display_name)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(
+      NEW.raw_user_meta_data->>'full_name',
+      NEW.raw_user_meta_data->>'name',
+      split_part(NEW.email, '@', 1)
+    )
+  );
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -151,10 +159,10 @@ ALTER TABLE public.user_league_access ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.world_cup_standings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.world_cup_brackets ENABLE ROW LEVEL SECURITY;
 
--- PROFILES: Users can read/update their own profile
-CREATE POLICY "Users can view own profile"
+-- PROFILES: Authenticated users can read basic profile info (needed for joins like rule proposals)
+CREATE POLICY "Authenticated users can view profiles"
   ON public.profiles FOR SELECT
-  USING (auth.uid() = id);
+  USING (auth.uid() IS NOT NULL);
 
 CREATE POLICY "Users can update own profile"
   ON public.profiles FOR UPDATE
@@ -237,4 +245,76 @@ CREATE TRIGGER update_league_configs_updated_at
 
 CREATE TRIGGER update_world_cup_standings_updated_at
   BEFORE UPDATE ON public.world_cup_standings
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- =============================================
+-- 7. RULE PROPOSALS TABLE
+-- League members can propose new rules for voting
+-- =============================================
+CREATE TABLE public.rule_proposals (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  league_id TEXT NOT NULL,
+  proposed_by UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT,
+  status TEXT DEFAULT 'open' CHECK (status IN ('open', 'approved', 'rejected', 'closed')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- =============================================
+-- 8. RULE VOTES TABLE
+-- One vote per user per proposal
+-- =============================================
+CREATE TABLE public.rule_votes (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  proposal_id UUID NOT NULL REFERENCES public.rule_proposals(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  vote TEXT NOT NULL CHECK (vote IN ('yes', 'no')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(proposal_id, user_id)
+);
+
+-- RLS for rule_proposals
+ALTER TABLE public.rule_proposals ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can view rule proposals"
+  ON public.rule_proposals FOR SELECT
+  USING (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Authenticated users can create rule proposals"
+  ON public.rule_proposals FOR INSERT
+  WITH CHECK (auth.uid() = proposed_by);
+
+CREATE POLICY "Proposer can update own proposals"
+  ON public.rule_proposals FOR UPDATE
+  USING (auth.uid() = proposed_by);
+
+CREATE POLICY "Proposer can delete own proposals"
+  ON public.rule_proposals FOR DELETE
+  USING (auth.uid() = proposed_by);
+
+-- RLS for rule_votes
+ALTER TABLE public.rule_votes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can view rule votes"
+  ON public.rule_votes FOR SELECT
+  USING (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Authenticated users can insert own votes"
+  ON public.rule_votes FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own votes"
+  ON public.rule_votes FOR UPDATE
+  USING (auth.uid() = user_id);
+
+-- Indexes
+CREATE INDEX idx_rule_proposals_league_id ON public.rule_proposals(league_id);
+CREATE INDEX idx_rule_votes_proposal_id ON public.rule_votes(proposal_id);
+CREATE INDEX idx_rule_votes_user_id ON public.rule_votes(user_id);
+
+-- Triggers
+CREATE TRIGGER update_rule_proposals_updated_at
+  BEFORE UPDATE ON public.rule_proposals
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

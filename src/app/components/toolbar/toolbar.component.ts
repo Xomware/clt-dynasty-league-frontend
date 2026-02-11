@@ -14,6 +14,7 @@ import { UserService } from 'src/app/services/user.service'
 })
 export class ToolbarComponent implements OnInit, OnDestroy {
   dropdownVisible = false
+  leagueDropdownVisible = false
   isMobile: boolean
 
   private destroy$ = new Subject<void>()
@@ -39,10 +40,23 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
   toggleDropdown(): void {
     this.dropdownVisible = !this.dropdownVisible
+    this.leagueDropdownVisible = false
+  }
+
+  toggleLeagueDropdown(event: MouseEvent): void {
+    event.stopPropagation()
+    this.leagueDropdownVisible = !this.leagueDropdownVisible
+  }
+
+  navigateLeagueFeature(route: string, queryParams?: Record<string, string>): void {
+    this.leagueDropdownVisible = false
+    this.dropdownVisible = false
+    this.router.navigate([route], queryParams ? { queryParams } : undefined)
   }
 
   selectItem(route: string): void {
     this.dropdownVisible = false
+    this.leagueDropdownVisible = false
     this.router.navigate([route])
   }
 
@@ -52,6 +66,9 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     if (!target.closest('.dropdown') && !target.closest('.dropdown-button')) {
       this.dropdownVisible = false
     }
+    if (!target.closest('.league-dropdown-wrapper')) {
+      this.leagueDropdownVisible = false
+    }
   }
 
   checkIfMobile(): void {
@@ -60,6 +77,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
   isSelected(route: string): boolean {
     return this.router.url.startsWith(route)
+  }
+
+  isLeagueRouteActive(): boolean {
+    const url = this.router.url
+    return url.includes('/my-league') || url.includes('/taxi-squad') || url.includes('/draft-history') || url.includes('/matchup-history')
   }
 
   get leagueId(): string {
