@@ -178,4 +178,44 @@ export class RulesService {
       catchError(() => of(false))
     )
   }
+
+  getVoterNames(proposalId: string): Observable<{ approved_by: string[]; rejected_by: string[] }> {
+    return from(
+      this.supabase
+        .from('rule_votes')
+        .select(`
+          vote,
+          profiles:user_id ( display_name, sleeper_username, email )
+        `)
+        .eq('proposal_id', proposalId)
+    ).pipe(
+      map(({ data, error }) => {
+        if (error || !data) return { approved_by: [], rejected_by: [] }
+        const approved_by: string[] = []
+        const rejected_by: string[] = []
+        ;(data as any[]).forEach((v) => {
+          const name = v.profiles?.display_name || v.profiles?.sleeper_username || v.profiles?.email?.split('@')[0] || 'Unknown'
+          if (v.vote === 'yes') approved_by.push(name)
+          else rejected_by.push(name)
+        })
+        return { approved_by, rejected_by }
+      }),
+      catchError(() => of({ approved_by: [] as string[], rejected_by: [] as string[] }))
+    )
+  }
+
+  getLeagueMemberEmails(): Observable<string[]> {
+    return from(
+      this.supabase
+        .from('whitelisted_users')
+        .select('email')
+        .eq('is_active', true)
+    ).pipe(
+      map(({ data, error }) => {
+        if (error || !data) return []
+        return (data as any[]).map((u) => u.email).filter(Boolean)
+      }),
+      catchError(() => of([]))
+    )
+  }
 }

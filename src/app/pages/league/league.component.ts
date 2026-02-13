@@ -7,6 +7,7 @@ import {
   WorldCupDivision,
 } from 'src/app/services/league-history.service'
 import { RulesService, RuleProposal } from 'src/app/services/rules.service'
+import { EmailService } from 'src/app/services/email.service'
 import { StandingsService } from 'src/app/services/standings.service'
 import { ToastService } from 'src/app/services/toast.service'
 import { TeamService } from 'src/app/services/team.service'
@@ -130,6 +131,7 @@ export class LeagueComponent implements OnInit {
     private LeagueService: LeagueService,
     private LeagueHistoryService: LeagueHistoryService,
     private RulesService: RulesService,
+    private EmailService: EmailService,
     private router: Router,
     private ToastService: ToastService,
     private StandingsService: StandingsService,
@@ -777,11 +779,9 @@ export class LeagueComponent implements OnInit {
   submitProposal(): void {
     if (!this.proposalTitle.trim()) return
     this.submittingProposal = true
-    this.RulesService.createProposal(
-      this.leagueId,
-      this.proposalTitle.trim(),
-      this.proposalDescription.trim(),
-    )
+    const title = this.proposalTitle.trim()
+    const description = this.proposalDescription.trim()
+    this.RulesService.createProposal(this.leagueId, title, description)
       .pipe(take(1))
       .subscribe({
         next: (success) => {
@@ -791,6 +791,29 @@ export class LeagueComponent implements OnInit {
             this.showProposalForm = false
             this.ToastService.showPositiveToast('Proposal submitted!')
             this.loadProposals()
+
+            // Fire-and-forget email notification
+            const profile = this.supabaseService.getProfile()
+            const proposerName =
+              profile?.display_name ||
+              profile?.sleeper_username ||
+              profile?.email?.split('@')[0] ||
+              'A league member'
+            this.RulesService.getLeagueMemberEmails()
+              .pipe(take(1))
+              .subscribe((recipients) => {
+                if (recipients.length > 0) {
+                  this.EmailService.sendRuleProposalEmail(
+                    {
+                      title,
+                      description,
+                      proposed_by_username: proposerName,
+                    } as RuleProposal,
+                    recipients,
+                    this.leagueName,
+                  )
+                }
+              })
           } else {
             this.ToastService.showNegativeToast('Failed to submit proposal.')
           }
@@ -837,7 +860,7 @@ export class LeagueComponent implements OnInit {
   private checkThresholds(): void {
     this.proposals.forEach((p) => {
       if (p.status !== 'open') return
-      if (p.yes_count >= this.approvalThreshold) {
+      if (p.yes_count >= 1) {
         this.recentlyStamped.add(p.id)
         this.RulesService.updateProposalStatus(p.id, 'approved')
           .pipe(take(1))
@@ -848,10 +871,11 @@ export class LeagueComponent implements OnInit {
                 this.ToastService.showPositiveToast(
                   `"${p.title}" has been APPROVED!`,
                 )
+                this.sendRuleStatusEmail(p, 'approved')
               }
             },
           })
-      } else if (p.no_count >= this.denialThreshold) {
+      } else if (p.no_count >= 1) {
         this.recentlyStamped.add(p.id)
         this.RulesService.updateProposalStatus(p.id, 'rejected')
           .pipe(take(1))
@@ -862,11 +886,43 @@ export class LeagueComponent implements OnInit {
                 this.ToastService.showNegativeToast(
                   `"${p.title}" has been DENIED.`,
                 )
+                this.sendRuleStatusEmail(p, 'rejected')
               }
             },
           })
       }
     })
+  }
+
+  private sendRuleStatusEmail(
+    proposal: RuleProposal,
+    status: 'approved' | 'rejected',
+  ): void {
+    forkJoin({
+      voters: this.RulesService.getVoterNames(proposal.id),
+      recipients: this.RulesService.getLeagueMemberEmails(),
+    })
+      .pipe(take(1))
+      .subscribe(({ voters, recipients }) => {
+        if (recipients.length === 0) return
+        if (status === 'approved') {
+          this.EmailService.sendRuleAcceptedEmail(
+            proposal,
+            voters.approved_by,
+            voters.rejected_by,
+            recipients,
+            this.leagueName,
+          )
+        } else {
+          this.EmailService.sendRuleDeniedEmail(
+            proposal,
+            voters.approved_by,
+            voters.rejected_by,
+            recipients,
+            this.leagueName,
+          )
+        }
+      })
   }
 
   deleteProposal(proposalId: string): void {

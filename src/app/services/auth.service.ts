@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment'
   providedIn: 'root',
 })
 export class AuthService {
-  private xomperApiUrl: string = `https://${environment.apiId}.execute-api.us-east-1.amazonaws.com/prod`
+  private xomperApiUrl: string = `https://${environment.apiId}.execute-api.us-east-1.amazonaws.com/dev`
   private readonly apiAuthToken = environment.apiAuthToken
   private authenticated = false
 
@@ -18,7 +18,7 @@ export class AuthService {
   loginUser(
     leagueId: string,
     userId: string,
-    password: string
+    password: string,
   ): Observable<User> {
     const url = `${this.xomperApiUrl}/user/login`
     const body = {
