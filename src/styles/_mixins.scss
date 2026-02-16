@@ -1,0 +1,237 @@
+// ================================================
+// XOMPER Design System - Mixins
+// ================================================
+
+@import 'variables';
+
+// Flexbox shortcuts
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Card styles
+@mixin card {
+  background-color: $bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+}
+
+@mixin card-hover {
+  transition: transform $transition-base, background-color $transition-base;
+  
+  &:hover {
+    transform: translateY(-4px);
+    background-color: $bg-card-hover;
+  }
+}
+
+@mixin glass-card {
+  background: $card-gradient;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+}
+
+// Button styles
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-sm $spacing-md;
+  border: none;
+  border-radius: $radius-xl;
+  font-weight: 600;
+  font-size: $text-base;
+  cursor: pointer;
+  transition: all $transition-base;
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@mixin button-primary {
+  @include button-base;
+  background: $gold-accent;
+  color: $deep-navy;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba($champion-gold, 0.4);
+  }
+}
+
+@mixin button-secondary {
+  @include button-base;
+  background-color: $steel-blue;
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background-color: darken($steel-blue, 10%);
+  }
+}
+
+@mixin button-danger {
+  @include button-base;
+  background-color: $accent-red;
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background-color: darken($accent-red, 10%);
+  }
+}
+
+@mixin button-ghost {
+  @include button-base;
+  background-color: transparent;
+  color: $text-primary;
+  border: 1px solid $surface-light;
+  
+  &:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// Input styles
+@mixin input-base {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-xl;
+  border: 1px solid $surface-light;
+  background-color: $bg-input;
+  color: $text-primary;
+  font-size: $text-base;
+  transition: border-color $transition-fast;
+  
+  &::placeholder {
+    color: $text-muted;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: $champion-gold;
+  }
+}
+
+// Text utilities
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin text-gradient($gradient) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// Responsive breakpoints
+@mixin mobile {
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: $breakpoint-md) and (max-width: #{$breakpoint-lg - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: $breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+// Scrollbar styling
+@mixin custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: $deep-navy;
+    border-radius: $radius-sm;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: $surface-light;
+    border-radius: $radius-sm;
+    
+    &:hover {
+      background: lighten($surface-light, 10%);
+    }
+  }
+}
+
+// Rankings highlight
+@mixin rank-badge($color) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-full;
+  background-color: $color;
+  color: $deep-navy;
+  font-weight: bold;
+  font-size: $text-sm;
+}
+
+// Streak indicators
+@mixin win-streak {
+  color: $success-green;
+  font-weight: bold;
+}
+
+@mixin loss-streak {
+  color: $error-red;
+  font-weight: bold;
+}
+
+// Loading skeleton
+@mixin skeleton {
+  background: linear-gradient(
+    90deg,
+    $bg-card 25%,
+    lighten($bg-card, 5%) 50%,
+    $bg-card 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: $radius-md;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

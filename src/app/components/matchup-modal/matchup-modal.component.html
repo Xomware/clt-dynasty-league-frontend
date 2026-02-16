@@ -2,152 +2,100 @@
 
 <div class="matchup-modal">
   <div class="modal-header">
-    <h2>Week {{ week }} Matchup</h2>
-    <button class="close-btn" (click)="onClose()">✕</button>
+    <h2>Week {{ matchupDetail.week }} <span class="season-label" *ngIf="matchupDetail.season">({{ matchupDetail.season }})</span></h2>
+    <button class="close-btn" (click)="onClose()">&times;</button>
   </div>
 
   <!-- Team headers -->
   <div class="teams-header">
-    <!-- Team A -->
-    <div class="team-header" [ngStyle]="getTeamHeaderStyle(teamA, teamAPoints, teamBPoints)" (click)="goToTeam(teamA)">
-      <img [src]="teamA.avatar || 'assets/img/nfl.png'" alt="{{ teamA.teamName }}" class="team-logo-header">
-      <h3>{{ teamA.teamName }}</h3>
-      <p>{{ teamA.wins }} - {{ teamA.losses }}</p>
-      <h2 class="team-score">{{ teamAPoints ?? 0 }}</h2>
+    <div class="team-header" [class.winner]="isWinner('A')" [class.loser]="isLoser('A')">
+      <img [src]="matchupDetail.teamA.avatar || 'assets/img/nfl.png'" alt="Team A" class="team-logo-header">
+      <h3>{{ matchupDetail.teamA.teamName || matchupDetail.teamA.userName }}</h3>
+      <p class="team-user" *ngIf="matchupDetail.teamA.teamName">{{ matchupDetail.teamA.userName }}</p>
+      <p class="team-record" *ngIf="matchupDetail.teamA.wins || matchupDetail.teamA.losses">{{ matchupDetail.teamA.wins }}-{{ matchupDetail.teamA.losses }}</p>
+      <h2 class="team-score">{{ matchupDetail.teamA.totalPoints?.toFixed(2) }}</h2>
+      <div class="matchup-stamp stamp-winner" *ngIf="isGameComplete() && isWinner('A')">WINNER</div>
+      <div class="matchup-stamp stamp-loser" *ngIf="isGameComplete() && isLoser('A')">LOSER</div>
     </div>
 
-    <div class="mid-divider"></div>
+    <div class="vs-badge">VS</div>
 
-    <!-- Team B -->
-    <div class="team-header" [ngStyle]="getTeamHeaderStyle(teamB, teamBPoints, teamAPoints)" (click)="goToTeam(teamB)">
-      <img [src]="teamB.avatar || 'assets/img/nfl.png'" alt="{{ teamB.teamName }}" class="team-logo-header">
-      <h3>{{ teamB.teamName }}</h3>
-      <p>{{ teamB.wins }} - {{ teamB.losses }}</p>
-      <h2 class="team-score">{{ teamBPoints ?? 0 }}</h2>
+    <div class="team-header" [class.winner]="isWinner('B')" [class.loser]="isLoser('B')">
+      <img [src]="matchupDetail.teamB.avatar || 'assets/img/nfl.png'" alt="Team B" class="team-logo-header">
+      <h3>{{ matchupDetail.teamB.teamName || matchupDetail.teamB.userName }}</h3>
+      <p class="team-user" *ngIf="matchupDetail.teamB.teamName">{{ matchupDetail.teamB.userName }}</p>
+      <p class="team-record" *ngIf="matchupDetail.teamB.wins || matchupDetail.teamB.losses">{{ matchupDetail.teamB.wins }}-{{ matchupDetail.teamB.losses }}</p>
+      <h2 class="team-score">{{ matchupDetail.teamB.totalPoints?.toFixed(2) }}</h2>
+      <div class="matchup-stamp stamp-winner" *ngIf="isGameComplete() && isWinner('B')">WINNER</div>
+      <div class="matchup-stamp stamp-loser" *ngIf="isGameComplete() && isLoser('B')">LOSER</div>
     </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="modal-loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading lineups...</p>
   </div>
 
   <!-- Starters -->
-  <div class="player-group" *ngIf="teamAStarters?.length || teamBStarters?.length">
+  <div class="player-group" *ngIf="!loading && (teamAStarters.length || teamBStarters.length)">
     <h2 class="group-title">Starters</h2>
     <div class="roster two-col">
-      <!-- Team A -->
       <div class="roster-col">
-        <div class="player-card" *ngFor="let player of teamAStarters" [ngStyle]="getTeamStyle(player.team)">
-          <div class="player-row">
-            <img [src]="'https://sleepercdn.com/content/nfl/players/thumb/' + player.player_id + '.jpg'"
-              (error)="player.photoError = true" alt="{{ player.full_name }}" class="player-pic">
-            <div class="player-info">
-              <h2 class="player-name">{{ player.full_name }}</h2>
-              <p class="player-meta">{{ player.position }} • {{ player.team || 'FA' }}</p>
-            </div>
-            <img
-              [src]="'https://sleepercdn.com/images/team_logos/nfl/' + (player.team?.toLowerCase() || 'nfl') + '.png'"
-              alt="{{ player.team || 'FA' }}" class="team-logo">
+        <div class="player-card" *ngFor="let player of teamAStarters">
+          <span class="position-badge" [attr.data-position]="player.position">{{ player.position }}</span>
+          <img [src]="'https://sleepercdn.com/content/nfl/players/thumb/' + player.player_id + '.jpg'"
+            (error)="player.photoError = true" alt="{{ player.full_name }}" class="player-pic">
+          <div class="player-info">
+            <span class="player-name">{{ player.full_name }}</span>
+            <span class="player-meta">{{ player.team || 'FA' }}</span>
           </div>
+          <span class="player-points">{{ getPlayerPoints(player.player_id, 'A').toFixed(1) }}</span>
         </div>
       </div>
 
-      <div class="mid-divider"></div>
+      <div class="col-divider"></div>
 
-      <!-- Team B -->
       <div class="roster-col">
-        <div class="player-card" *ngFor="let player of teamBStarters" [ngStyle]="getTeamStyle(player.team)">
-          <div class="player-row">
-            <img [src]="'https://sleepercdn.com/content/nfl/players/thumb/' + player.player_id + '.jpg'"
-              (error)="player.photoError = true" alt="{{ player.full_name }}" class="player-pic">
-            <div class="player-info">
-              <h2 class="player-name">{{ player.full_name }}</h2>
-              <p class="player-meta">{{ player.position }} • {{ player.team || 'FA' }}</p>
-            </div>
-            <img
-              [src]="'https://sleepercdn.com/images/team_logos/nfl/' + (player.team?.toLowerCase() || 'nfl') + '.png'"
-              alt="{{ player.team || 'FA' }}" class="team-logo">
+        <div class="player-card" *ngFor="let player of teamBStarters">
+          <span class="position-badge" [attr.data-position]="player.position">{{ player.position }}</span>
+          <img [src]="'https://sleepercdn.com/content/nfl/players/thumb/' + player.player_id + '.jpg'"
+            (error)="player.photoError = true" alt="{{ player.full_name }}" class="player-pic">
+          <div class="player-info">
+            <span class="player-name">{{ player.full_name }}</span>
+            <span class="player-meta">{{ player.team || 'FA' }}</span>
           </div>
+          <span class="player-points">{{ getPlayerPoints(player.player_id, 'B').toFixed(1) }}</span>
         </div>
       </div>
     </div>
   </div>
 
-  <hr class="thick-divider">
-
   <!-- Bench -->
-  <div class="player-group" *ngIf="teamABench?.length || teamBBench?.length">
+  <div class="player-group" *ngIf="!loading && (teamABench.length || teamBBench.length)">
     <h2 class="group-title">Bench</h2>
     <div class="roster two-col">
       <div class="roster-col">
-        <div class="player-card" *ngFor="let player of teamABench" [ngStyle]="getTeamStyle(player.team)">
-          <div class="player-row">
-            <img [src]="'https://sleepercdn.com/content/nfl/players/thumb/' + player.player_id + '.jpg'"
-              (error)="player.photoError = true" alt="{{ player.full_name }}" class="player-pic">
-            <div class="player-info">
-              <h2 class="player-name">{{ player.full_name }}</h2>
-              <p class="player-meta">{{ player.position }} • {{ player.team || 'FA' }}</p>
-            </div>
-            <img
-              [src]="'https://sleepercdn.com/images/team_logos/nfl/' + (player.team?.toLowerCase() || 'nfl') + '.png'"
-              alt="{{ player.team || 'FA' }}" class="team-logo">
+        <div class="player-card bench" *ngFor="let player of teamABench">
+          <span class="position-badge" [attr.data-position]="player.position">{{ player.position }}</span>
+          <div class="player-info">
+            <span class="player-name">{{ player.full_name }}</span>
+            <span class="player-meta">{{ player.team || 'FA' }}</span>
           </div>
+          <span class="player-points muted">{{ getPlayerPoints(player.player_id, 'A').toFixed(1) }}</span>
         </div>
       </div>
 
-      <div class="mid-divider"></div>
+      <div class="col-divider"></div>
 
       <div class="roster-col">
-        <div class="player-card" *ngFor="let player of teamBBench" [ngStyle]="getTeamStyle(player.team)">
-          <div class="player-row">
-            <img [src]="'https://sleepercdn.com/content/nfl/players/thumb/' + player.player_id + '.jpg'"
-              (error)="player.photoError = true" alt="{{ player.full_name }}" class="player-pic">
-            <div class="player-info">
-              <h2 class="player-name">{{ player.full_name }}</h2>
-              <p class="player-meta">{{ player.position }} • {{ player.team || 'FA' }}</p>
-            </div>
-            <img
-              [src]="'https://sleepercdn.com/images/team_logos/nfl/' + (player.team?.toLowerCase() || 'nfl') + '.png'"
-              alt="{{ player.team || 'FA' }}" class="team-logo">
+        <div class="player-card bench" *ngFor="let player of teamBBench">
+          <span class="position-badge" [attr.data-position]="player.position">{{ player.position }}</span>
+          <div class="player-info">
+            <span class="player-name">{{ player.full_name }}</span>
+            <span class="player-meta">{{ player.team || 'FA' }}</span>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <hr class="thick-divider">
-
-  <!-- Taxi -->
-  <div class="player-group" *ngIf="teamATaxi?.length || teamBTaxi?.length">
-    <h2 class="group-title">Taxi Squad</h2>
-    <div class="roster two-col">
-      <div class="roster-col">
-        <div class="player-card" *ngFor="let player of teamATaxi" [ngStyle]="getTeamStyle(player.team)">
-          <div class="player-row">
-            <img [src]="'https://sleepercdn.com/content/nfl/players/thumb/' + player.player_id + '.jpg'"
-              (error)="player.photoError = true" alt="{{ player.full_name }}" class="player-pic">
-            <div class="player-info">
-              <h2 class="player-name">{{ player.full_name }}</h2>
-              <p class="player-meta">{{ player.position }} • {{ player.team || 'FA' }}</p>
-            </div>
-            <img
-              [src]="'https://sleepercdn.com/images/team_logos/nfl/' + (player.team?.toLowerCase() || 'nfl') + '.png'"
-              alt="{{ player.team || 'FA' }}" class="team-logo">
-          </div>
-        </div>
-      </div>
-
-      <div class="mid-divider"></div>
-
-      <div class="roster-col">
-        <div class="player-card" *ngFor="let player of teamBTaxi" [ngStyle]="getTeamStyle(player.team)">
-          <div class="player-row">
-            <img [src]="'https://sleepercdn.com/content/nfl/players/thumb/' + player.player_id + '.jpg'"
-              (error)="player.photoError = true" alt="{{ player.full_name }}" class="player-pic">
-            <div class="player-info">
-              <h2 class="player-name">{{ player.full_name }}</h2>
-              <p class="player-meta">{{ player.position }} • {{ player.team || 'FA' }}</p>
-            </div>
-            <img
-              [src]="'https://sleepercdn.com/images/team_logos/nfl/' + (player.team?.toLowerCase() || 'nfl') + '.png'"
-              alt="{{ player.team || 'FA' }}" class="team-logo">
-          </div>
+          <span class="player-points muted">{{ getPlayerPoints(player.player_id, 'B').toFixed(1) }}</span>
         </div>
       </div>
     </div>

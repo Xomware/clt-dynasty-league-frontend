@@ -1,0 +1,98 @@
+// ================================================
+// XOMPER Design System - Midnight Emerald (High Contrast)
+// ================================================
+
+// Primary Colors
+$deep-navy: #050a08; // Primary background (near black)
+$dark-navy: #0c1612; // Card backgrounds (very dark)
+$accent-red: #ff4757; // Primary accent (vibrant red)
+$champion-gold: #00ffab; // Primary accent (bright neon emerald)
+$steel-blue: #00e89d; // Tertiary (links, info — vivid emerald)
+
+// Supporting Colors
+$success-green: #00e676; // Wins, positive changes
+$error-red: #ff5252; // Errors, losses
+$surface-light: #1a2e26; // Dividers, subtle borders
+$text-primary: #f0f5f0; // Primary text (near white, slight green tint)
+$text-secondary: #8fadA0; // Secondary text (brighter sage)
+$text-muted: #4a6b5c; // Muted text (lifted for readability)
+
+// Legacy colors (for backward compatibility during migration)
+$legacy-red: #bf0a0a;
+$legacy-blue: #1b8edc;
+
+// Backgrounds
+$bg-dark: #030706;
+$bg-card: #0a1610;
+$bg-card-hover: #14271e;
+$bg-input: #14271e;
+
+// Gradients
+$bg-gradient: linear-gradient(
+  180deg,
+  $deep-navy 0%,
+  $dark-navy 50%,
+  $deep-navy 100%
+);
+$card-gradient: linear-gradient(
+  135deg,
+  rgba(12, 22, 18, 0.97) 0%,
+  rgba(5, 10, 8, 0.97) 100%
+);
+$gold-accent: linear-gradient(90deg, #00ffab 0%, #00e89d 100%);
+$red-accent: linear-gradient(90deg, $accent-red 0%, #ff6b7a 100%);
+$loader-gradient: linear-gradient(135deg, #00ffab, #00c97a);
+
+// Typography
+$font-display: 'Bebas Neue', sans-serif; // Headlines, stats
+$font-body: 'Plus Jakarta Sans', sans-serif; // Body text
+$font-mono: 'JetBrains Mono', monospace; // Numbers, scores
+
+// Font Sizes
+$text-xs: 0.75rem; // 12px
+$text-sm: 0.875rem; // 14px
+$text-base: 1rem; // 16px
+$text-lg: 1.125rem; // 18px
+$text-xl: 1.25rem; // 20px
+$text-2xl: 1.5rem; // 24px
+$text-3xl: 2rem; // 32px
+$text-4xl: 2.5rem; // 40px
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+
+// Border Radius
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 20px;
+$radius-full: 50%;
+
+// Shadows
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+$shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.6);
+
+// Transitions
+$transition-fast: 150ms ease;
+$transition-base: 200ms ease;
+$transition-slow: 300ms ease;
+
+// Z-Index
+$z-dropdown: 100;
+$z-modal-backdrop: 999;
+$z-modal: 1000;
+$z-toast: 1100;
+$z-loader: 9999;
+
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;

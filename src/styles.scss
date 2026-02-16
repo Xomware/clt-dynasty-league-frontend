@@ -1,0 +1,69 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: $bg-dark;
+  color: $text-primary;
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-md;
+  padding-bottom: 120px;
+}
+
+button {
+  background-color: $bg-card-hover;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  color: $text-primary;
+  font-size: 1.2rem;
+  padding: $spacing-sm $spacing-md;
+  margin: $spacing-sm;
+  transition: all $transition-base;
+
+  &:hover {
+    background-color: $champion-gold;
+    color: $deep-navy;
+  }
+
+  &:disabled {
+    background-color: $bg-card-hover;
+    color: $text-muted;
+    cursor: not-allowed;
+  }
+}
+
+.win-streak {
+  color: $success-green;
+  font-weight: bold;
+}
+
+.loss-streak {
+  color: $error-red;
+  font-weight: bold;
+}
+
+.clickable {
+  cursor: pointer;
+  color: $steel-blue;
+  text-decoration: underline;
+}

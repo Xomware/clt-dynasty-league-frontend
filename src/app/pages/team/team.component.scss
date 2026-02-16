@@ -1,8 +1,12 @@
+@import 'styles/variables';
+@import 'styles/mixins';
+
 .team-page {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  padding: 0 16px;
+  min-height: 100vh;
+  padding: $spacing-md;
+  background: $bg-gradient;
 }
 
 .team-container {
@@ -10,147 +14,269 @@
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
-  padding-top: 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
+// Team Header
 .team-header {
-  background-color: #1e1e1e;
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  background: $card-gradient;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba($surface-light, 0.2);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-md;
 
   .team-header-row {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: $spacing-lg;
   }
 
   .team-pic {
     width: 80px;
     height: 80px;
-    border-radius: 12px;
+    border-radius: $radius-lg;
     object-fit: cover;
-    border: 2px solid #bf0a0a;
+    border: 3px solid $champion-gold;
+    box-shadow: 0 0 20px rgba($champion-gold, 0.3);
   }
 
   .team-name {
-    font-size: 24px;
-    font-weight: bold;
-    margin-right: 10px;
+    font-family: $font-display;
+    font-size: 1.8rem;
+    letter-spacing: 0.03em;
+    color: $text-primary;
+    margin: 0;
+  }
+
+  .user-name {
+    font-size: $text-base;
+    color: $steel-blue;
+    cursor: pointer;
+    
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   .team-record {
-    font-weight: bold;
-    color: #fff;
+    font-weight: 700;
+    font-family: $font-mono;
+    font-size: $text-lg;
+    color: $text-primary;
   }
 
   .team-streak {
-    font-weight: bold;
+    font-weight: 700;
+    font-family: $font-mono;
+    font-size: $text-lg;
+    
     &.win-streak {
-      color: #4caf50;
+      color: $success-green;
     }
     &.loss-streak {
-      color: #f44336;
+      color: $error-red;
     }
   }
 
   .team-place {
-    background-color: #2a2a2a;
-    padding: 4px 8px;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #bbb;
+    background-color: rgba($dark-navy, 0.6);
+    border: 1px solid $surface-light;
+    padding: 6px 12px;
+    border-radius: $radius-md;
+    font-size: $text-sm;
+    color: $text-secondary;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover {
+      border-color: $champion-gold;
+      color: $champion-gold;
+    }
   }
 }
 
-.player-groups {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
+// Player Group Titles
+.group-title {
+  font-family: $font-display;
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  color: $champion-gold;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-xs;
+  border-bottom: 2px solid rgba($champion-gold, 0.3);
 }
 
+// Roster Grid
 .roster {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
+  gap: $spacing-md;
+  justify-content: flex-start;
+  margin-bottom: $spacing-xl;
 }
 
+// Player Cards
 .player-card {
-  background-color: #282828;
-  border-radius: 10px;
-  padding: 20px;
-  width: 280px;
-  min-height: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease-in-out;
+  background: rgba($dark-navy, 0.6);
+  border: 1px solid rgba($surface-light, 0.3);
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  width: 300px;
+  box-shadow: $shadow-md;
+  transition: transform $transition-base, box-shadow $transition-base;
 
   &:hover {
     transform: translateY(-4px);
+    box-shadow: $shadow-lg;
   }
 
   .player-header {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: $spacing-sm;
 
     .player-pic {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      border-radius: $radius-full;
       object-fit: cover;
-      border: 2px solid #bf0a0a;
-      margin-right: 12px;
+      border: 2px solid $champion-gold;
+      margin-right: $spacing-sm;
     }
 
     .player-info {
       flex: 1;
+      min-width: 0;
 
       .name-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: $spacing-sm;
 
         .player-name {
-          font-size: 18px;
-          font-weight: bold;
+          font-size: $text-base;
+          font-weight: 600;
           margin: 0;
+          color: $text-primary;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .team-logo {
-          width: 36px;
-          height: 36px;
-          margin-left: 8px;
+          width: 32px;
+          height: 32px;
+          flex-shrink: 0;
         }
       }
 
       .player-meta {
-        font-size: 14px;
-        color: #aaa;
+        font-size: $text-sm;
+        color: $text-secondary;
         margin-top: 4px;
         text-align: left;
       }
     }
   }
-  .view-more-btn:hover {
-    background-color: var(--secondary-color);
+
+  .view-more-btn {
+    width: 100%;
+    padding: 8px 0;
+    margin: $spacing-sm 0 0 0;
+    font-weight: 600;
+    font-size: $text-sm;
+    border-radius: $radius-xl;
+    border: none;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &:hover {
+      opacity: 0.85;
+      transform: scale(1.02);
+    }
   }
 
   .player-details {
-    margin-top: 12px;
-    font-size: 14px;
-    line-height: 1.4;
-    color: #ddd;
+    margin-top: $spacing-sm;
+    padding-top: $spacing-sm;
+    border-top: 1px solid rgba($surface-light, 0.3);
+    font-size: $text-sm;
+    line-height: 1.6;
+    color: $text-secondary;
+
+    p {
+      margin: 4px 0;
+
+      strong {
+        color: $text-primary;
+      }
+    }
   }
 }
+
+// Clickable elements
 .clickable {
   cursor: pointer;
-  color: #007bff;
-  text-decoration: underline;
+  color: $steel-blue;
+  text-decoration: none;
+  transition: color $transition-fast;
 
   &:hover {
-    color: #0056b3;
+    color: lighten($steel-blue, 15%);
+    text-decoration: underline;
+  }
+}
+
+// Player Group Sections
+.player-group {
+  margin-bottom: $spacing-xl;
+}
+
+// Mobile
+@media (max-width: 768px) {
+  .team-page {
+    padding: $spacing-sm;
+  }
+
+  .team-header {
+    padding: $spacing-md;
+
+    .team-header-row {
+      gap: $spacing-md;
+    }
+
+    .team-pic {
+      width: 60px;
+      height: 60px;
+    }
+
+    .team-name {
+      font-size: 1.4rem;
+    }
+
+    .team-place {
+      font-size: $text-xs;
+      padding: 4px 8px;
+    }
+  }
+
+  .roster {
+    justify-content: center;
+  }
+
+  .player-card {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .group-title {
+    font-size: 1.2rem;
+    text-align: center;
   }
 }

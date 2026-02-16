@@ -10,9 +10,11 @@
     "module": "es2020",
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "ES2019",
-    "lib": ["ES2019", "DOM", "DOM.Iterable"],
-    "typeRoots": ["./node_modules/@types"]
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["node"],
+    "skipLibCheck": true
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

@@ -5,9 +5,16 @@ import {
   EventEmitter,
   HostBinding,
 } from '@angular/core'
+import { forkJoin, take } from 'rxjs'
 import { TEAM_COLORS } from 'src/app/constants/team-colors'
 import { zoomModalAnimation } from 'src/app/animations/zoom-modal.animation'
 import { TaxiSquadPlayerModel } from 'src/app/models/taxi-squad-player.model'
+import { EmailService } from 'src/app/services/email.service'
+import { RulesService } from 'src/app/services/rules.service'
+import { SupabaseService } from 'src/app/services/supabase.service'
+import { TaxiSquadService } from 'src/app/services/taxi-squad.service'
+import { ToastService } from 'src/app/services/toast.service'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'app-taxi-squad-player-modal',
@@ -29,11 +36,28 @@ export class TaxiSquadPlayerModalComponent {
     }
   }
   @Input() player!: TaxiSquadPlayerModel
+  @Input() leagueId = ''
+  @Input() alreadyStolen = false
+  @Input() isOwnPlayer = false
   @Output() close = new EventEmitter<void>()
+  @Output() stealComplete = new EventEmitter<string>()
+
+  showConfirmation = false
+  stealRequested = false
+  stealLoading = false
+
+  constructor(
+    private emailService: EmailService,
+    private rulesService: RulesService,
+    private supabaseService: SupabaseService,
+    private taxiSquadService: TaxiSquadService,
+    private toastService: ToastService,
+  ) {}
 
   onClose() {
     this.close.emit()
   }
+
   getTeamStyle(team: string | undefined) {
     if (!team) {
       return {
@@ -57,16 +81,79 @@ export class TaxiSquadPlayerModalComponent {
       color: '#fff',
     }
   }
+
   getHeightFeetInches(height: number): string {
     if (!height) return ''
     const feet = Math.floor(height / 12)
     const inches = height % 12
     return `${feet}'${inches}"`
   }
+
   onSteal(): void {
-    // Your logic to handle the "steal" action goes here.
-    console.log(`Steal action initiated for ${this.player.getFullName()}!`)
-    // You might want to call a service, emit an event, or close the modal.
+    this.showConfirmation = true
+  }
+
+  confirmSteal(): void {
+    this.stealLoading = true
+    const profile = this.supabaseService.getProfile()
+    const stealerName = profile?.display_name || profile?.email?.split('@')[0] || 'Unknown'
+
+    forkJoin({
+      ownerInfo: this.rulesService.getOwnerEmailByUsername(this.player.ownerUsername),
+      recipients: this.rulesService.getLeagueMemberEmails(),
+    })
+      .pipe(take(1))
+      .subscribe({
+        next: ({ ownerInfo, recipients }) => {
+          const owner = {
+            display_name: ownerInfo?.display_name || this.player.ownerDisplayName,
+            email: ownerInfo?.email || '',
+          }
+
+          const team = this.player.team || ''
+          const teamLower = team.toLowerCase()
+          const playerId = this.player.player_id
+
+          this.emailService.sendTaxiStealEmail(
+            { display_name: stealerName },
+            {
+              first_name: this.player.first_name,
+              last_name: this.player.last_name,
+              position: this.player.position || '',
+              team,
+              player_image_url: `https://sleepercdn.com/content/nfl/players/thumb/${playerId}.jpg`,
+              team_logo_url: !team || team.toUpperCase() === 'FA'
+                ? ''
+                : `https://sleepercdn.com/images/team_logos/nfl/${teamLower}.png`,
+              pick_cost: this.getStealPickText(this.player.draftRound),
+            },
+            owner,
+            recipients,
+            environment.myLeagueName,
+          )
+
+          // Persist steal request to Supabase
+          this.taxiSquadService
+            .createStealRequest(this.leagueId, this.player.player_id, stealerName)
+            .pipe(take(1))
+            .subscribe()
+
+          this.stealRequested = true
+          this.showConfirmation = false
+          this.stealLoading = false
+          this.stealComplete.emit(this.player.player_id)
+          this.toastService.showPositiveToast(`Steal requested for ${this.player.getFullName()}!`)
+          this.close.emit()
+        },
+        error: () => {
+          this.stealLoading = false
+          this.toastService.showNegativeToast('Failed to send steal request. Try again.')
+        },
+      })
+  }
+
+  cancelSteal(): void {
+    this.showConfirmation = false
   }
 
   private getOrdinal(n: number): string {
@@ -75,7 +162,6 @@ export class TaxiSquadPlayerModalComponent {
     return n + (s[(v - 20) % 10] || s[v] || s[0])
   }
 
-  // Method called by the button to determine the text
   getStealPickText(draftRound: number | string): string {
     if (draftRound === 'Undrafted') {
       return '5th Round'

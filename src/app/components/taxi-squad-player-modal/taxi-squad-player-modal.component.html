@@ -81,7 +81,32 @@
     </div>
   </div>
 
-  <button class="steal-btn" (click)="onSteal()">
+  <button
+    class="steal-btn"
+    *ngIf="!stealRequested && !alreadyStolen && !isOwnPlayer"
+    (click)="onSteal()"
+  >
     Steal for {{ getStealPickText(player.draftRound) }} Pick
   </button>
+
+  <div class="steal-requested-stamp" *ngIf="stealRequested || alreadyStolen">
+    STEAL REQUESTED
+  </div>
+
+  <!-- Confirmation Overlay -->
+  <div class="confirm-overlay" *ngIf="showConfirmation">
+    <div class="confirm-box">
+      <p>
+        Are you sure you want to steal
+        <strong>{{ player.getFullName() }}</strong> for a
+        <strong>{{ getStealPickText(player.draftRound) }}</strong> pick?
+      </p>
+      <div class="confirm-actions">
+        <button class="confirm-yes" (click)="confirmSteal()" [disabled]="stealLoading">
+          {{ stealLoading ? 'Sending...' : 'Yes, Steal' }}
+        </button>
+        <button class="confirm-no" (click)="cancelSteal()" [disabled]="stealLoading">No</button>
+      </div>
+    </div>
+  </div>
 </div>

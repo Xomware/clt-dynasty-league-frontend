@@ -8,6 +8,8 @@ export class MatchupModel {
   points: number;
   starters: string[];
   players: string[];
+  startersPoints: number[];
+  playersPoints: Record<string, number>;
 
   // Enriched from StandingsTeamModel
   teamName: string;
@@ -21,6 +23,8 @@ export class MatchupModel {
     this.points = data.points ?? 0;
     this.starters = data.starters ?? [];
     this.players = data.players ?? [];
+    this.startersPoints = data.starters_points ?? [];
+    this.playersPoints = data.players_points ?? {};
 
     if (team) {
       this.teamName = team.getTeamName();

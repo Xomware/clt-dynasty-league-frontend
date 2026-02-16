@@ -5,4 +5,6 @@ export interface Matchup {
   matchup_id: number;
   points: number;
   custom_points: number | null;
+  starters_points: number[];
+  players_points: Record<string, number>;
 }

@@ -161,11 +161,16 @@
 
   <button
     class="view-more-btn"
+    *ngIf="!stolenPlayerIds.has(player.player_id)"
     [ngStyle]="getTeamButtonStyle(player.team)"
     (click)="openPlayerModal(player, $event)"
   >
-    {{ player.showDetails ? 'Hide Details' : 'View More' }}
+    View More
   </button>
+
+  <div class="stolen-stamp" *ngIf="stolenPlayerIds.has(player.player_id)">
+    STEAL REQUESTED
+  </div>
 
   <div class="player-details" *ngIf="player.showDetails">
     <p><strong>Age:</strong> {{ player.age }}</p>
@@ -188,6 +193,10 @@
   *ngIf="selectedPlayer"
   [player]="selectedPlayer"
   [startPos]="modalStart"
+  [leagueId]="league.league_id"
+  [alreadyStolen]="stolenPlayerIds.has(selectedPlayer.player_id)"
+  [isOwnPlayer]="selectedPlayer.ownerUserId === mySleeperUserId"
   (close)="closePlayerModal()"
+  (stealComplete)="onStealComplete($event)"
 >
 </app-taxi-squad-player-modal>

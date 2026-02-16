@@ -23,6 +23,8 @@ export interface League {
     taxi_slots?: number;
     [key: string]: any;
   };
+  scoring_settings?: Record<string, number>;
+  roster_positions?: string[];
   metadata: {
     latest_league_winner_roster_id?: string;
     [key: string]: any;

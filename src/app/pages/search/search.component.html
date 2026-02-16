@@ -1,28 +1,50 @@
 <div class="search-page">
   <app-loader [loading]="loading"></app-loader>
-  <div class="welcome-message">Welcome to Xomper!</div>
+
+  <h1 class="search-title">Search</h1>
 
   <div class="search-box">
-    <div class="search-container">
-      <input 
-        type="text" 
-        class="search-input"
-        placeholder="Search for a Sleeper League..."
-        [(ngModel)]="searchTerm"
-        (focus)="showDropdown()"
-        (input)="filterLeagues()"
-        (blur)="hideDropdown()"  
-      />
-
-      <ul class="dropdown-list" *ngIf="dropdownVisible">
-        <li 
-          *ngFor="let league of filteredLeagues" 
-          (mousedown)="selectLeague(league)"
-          class="dropdown-item"
-        >
-          {{ league.config.display_name }} : {{ league.config.id }}
-        </li>
-      </ul>
+    <!-- Mode Toggle -->
+    <div class="search-mode-toggle">
+      <button
+        class="mode-btn"
+        [class.active]="searchMode === 'user'"
+        (click)="searchMode = 'user'"
+      >
+        User
+      </button>
+      <button
+        class="mode-btn"
+        [class.active]="searchMode === 'league'"
+        (click)="searchMode = 'league'"
+      >
+        League
+      </button>
     </div>
+
+    <!-- Search Input -->
+    <div class="search-container">
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="searchMode === 'user' ? 'Enter a Sleeper username...' : 'Enter a Sleeper league ID...'"
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="search()"
+      />
+      <button
+        class="search-btn"
+        (click)="search()"
+        [disabled]="loading || !searchTerm.trim()"
+      >
+        Search
+      </button>
+    </div>
+
+    <p class="search-hint" *ngIf="searchMode === 'user'">
+      Search by Sleeper username or user ID
+    </p>
+    <p class="search-hint" *ngIf="searchMode === 'league'">
+      Paste a Sleeper league ID to view any league
+    </p>
   </div>
 </div>
