@@ -35,6 +35,11 @@ export class TaxiSquadComponent implements OnInit {
   ]
   selectedTab = 'round'
 
+  // Cached grouped results to prevent change detection re-renders
+  cachedByRound: { round: number; players: TaxiSquadPlayerModel[] }[] = []
+  cachedByPosition: { position: string; players: TaxiSquadPlayerModel[] }[] = []
+  cachedByOwner: { ownerDisplayName: string; ownerTeamName: string | undefined; players: TaxiSquadPlayerModel[] }[] = []
+
   constructor(
     private ToastService: ToastService,
     private LeagueService: LeagueService,
@@ -65,6 +70,7 @@ export class TaxiSquadComponent implements OnInit {
           next: (players) => {
             this.taxiPlayers = players
             this.sortPlayers()
+            this.rebuildGroupCaches()
             this.ToastService.showPositiveToast(
               'Taxi Squad Loaded Successfully.'
             )
@@ -152,9 +158,9 @@ export class TaxiSquadComponent implements OnInit {
       cursor: 'pointer',
     }
   }
-  // Helpers
-  getPlayersGroupedByRound() {
-    // Sort rounds numerically, but put -1 (undrafted) at the end
+  // Rebuild cached groupings (called once after data loads)
+  rebuildGroupCaches() {
+    // By Round
     const rounds = [
       ...new Set(this.taxiPlayers.map((p) => p.draftRound ?? -1)),
     ].sort((a, b) => {
@@ -162,32 +168,29 @@ export class TaxiSquadComponent implements OnInit {
       if (b === -1) return -1
       return a - b
     })
+    this.cachedByRound = rounds.map((r) => ({
+      round: r,
+      players: this.taxiPlayers.filter((p) => (p.draftRound ?? -1) === r),
+    }))
 
-    const grouped: { round: number; players: TaxiSquadPlayerModel[] }[] = []
-    rounds.forEach((r) => {
-      grouped.push({
-        round: r,
-        players: this.taxiPlayers.filter((p) => (p.draftRound ?? -1) === r),
-      })
-    })
-    return grouped
-  }
-
-  getPlayersGroupedByPosition() {
+    // By Position
     const order = ['QB', 'RB', 'WR', 'TE']
-    return order.map((pos) => ({
+    this.cachedByPosition = order.map((pos) => ({
       position: pos,
       players: this.taxiPlayers.filter((p) => p.position === pos),
     }))
-  }
 
-  getPlayersGroupedByOwner() {
+    // By Owner
     const owners = [...new Set(this.taxiPlayers.map((p) => p.ownerDisplayName))]
-    return owners.map((owner) => ({
+    this.cachedByOwner = owners.map((owner) => ({
       ownerDisplayName: owner,
       ownerTeamName: this.taxiPlayers.find((p) => p.ownerDisplayName === owner)
         ?.ownerTeamName,
       players: this.taxiPlayers.filter((p) => p.ownerDisplayName === owner),
     }))
+  }
+
+  trackByPlayerId(index: number, player: TaxiSquadPlayerModel): string {
+    return player.player_id
   }
 }

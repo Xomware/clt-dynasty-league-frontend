@@ -208,7 +208,6 @@
     padding: 6px 12px;
     transform: rotate(-3deg);
     opacity: 0.9;
-    animation: stampSlam 0.3s ease-out;
   }
 
   .player-details {
@@ -242,21 +241,6 @@
   &:hover {
     color: lighten($steel-blue, 15%);
     text-decoration: underline;
-  }
-}
-
-@keyframes stampSlam {
-  0% {
-    transform: rotate(-3deg) scale(2.5);
-    opacity: 0;
-  }
-  60% {
-    transform: rotate(-3deg) scale(0.95);
-    opacity: 1;
-  }
-  100% {
-    transform: rotate(-3deg) scale(1);
-    opacity: 0.9;
   }
 }
 

@@ -45,7 +45,7 @@ Thumbs.db
 **/.terraform/*
 
 # Testing
-src/environments/environment.ts
+src/environments/environment.local.ts
 
 # Claude
 .claude/

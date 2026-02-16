@@ -42,10 +42,10 @@ jobs:
 
       - name: Inject environment variables into Angular
         run: |
-          sed -i "s|apiAuthToken: '---'|apiAuthToken: '$(grep 'API_AUTH_TOKEN' xomper_credentials.env | cut -d'=' -f2)'|g" src/environments/environment.prod.ts
-          sed -i "s|apiId: '---'|apiId: '$(grep 'API_ID' xomper_credentials.env | cut -d'=' -f2)'|g" src/environments/environment.prod.ts
-          sed -i "s|supabaseUrl: '---'|supabaseUrl: '$(grep 'SUPABASE_URL' xomper_credentials.env | cut -d'=' -f2)'|g" src/environments/environment.prod.ts
-          sed -i "s|supabaseAnonKey: '---'|supabaseAnonKey: '$(grep 'SUPABASE_ANON_KEY' xomper_credentials.env | cut -d'=' -f2)'|g" src/environments/environment.prod.ts
+          sed -i "s|apiAuthToken: '---'|apiAuthToken: '$(grep 'API_AUTH_TOKEN' xomper_credentials.env | cut -d'=' -f2)'|g" src/environments/environment.ts
+          sed -i "s|apiId: '---'|apiId: '$(grep 'API_ID' xomper_credentials.env | cut -d'=' -f2)'|g" src/environments/environment.ts
+          sed -i "s|supabaseUrl: '---'|supabaseUrl: '$(grep 'SUPABASE_URL' xomper_credentials.env | cut -d'=' -f2)'|g" src/environments/environment.ts
+          sed -i "s|supabaseAnonKey: '---'|supabaseAnonKey: '$(grep 'SUPABASE_ANON_KEY' xomper_credentials.env | cut -d'=' -f2)'|g" src/environments/environment.ts
 
       - name: Clean up credentials
         if: always()

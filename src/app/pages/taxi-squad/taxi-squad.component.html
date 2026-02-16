@@ -24,7 +24,7 @@
           <div class="roster">
             <div
               class="player-card"
-              *ngFor="let player of taxiPlayers"
+              *ngFor="let player of taxiPlayers; trackBy: trackByPlayerId"
               [ngStyle]="getTeamStyle(player.team)"
             >
               <ng-container
@@ -39,14 +39,14 @@
 
         <!-- Tab: Round -->
         <ng-container *ngSwitchCase="'round'">
-          <ng-container *ngFor="let group of getPlayersGroupedByRound()">
+          <ng-container *ngFor="let group of cachedByRound">
             <h3 class="group-header">
               {{ group.round === -1 ? 'Undrafted' : 'Round ' + group.round }}
             </h3>
             <div class="roster">
               <div
                 class="player-card"
-                *ngFor="let player of group.players"
+                *ngFor="let player of group.players; trackBy: trackByPlayerId"
                 [ngStyle]="getTeamStyle(player.team)"
               >
                 <ng-container
@@ -62,12 +62,12 @@
 
         <!-- Tab: Position -->
         <ng-container *ngSwitchCase="'position'">
-          <ng-container *ngFor="let group of getPlayersGroupedByPosition()">
+          <ng-container *ngFor="let group of cachedByPosition">
             <h3 class="group-header">{{ group.position }}</h3>
             <div class="roster">
               <div
                 class="player-card"
-                *ngFor="let player of group.players"
+                *ngFor="let player of group.players; trackBy: trackByPlayerId"
                 [ngStyle]="getTeamStyle(player.team)"
               >
                 <ng-container
@@ -83,7 +83,7 @@
 
         <!-- Tab: Owner -->
         <ng-container *ngSwitchCase="'owner'">
-          <ng-container *ngFor="let group of getPlayersGroupedByOwner()">
+          <ng-container *ngFor="let group of cachedByOwner">
             <h3 class="group-header">
               {{ group.ownerDisplayName }}
               <small>({{ group.ownerTeamName }})</small>
@@ -91,7 +91,7 @@
             <div class="roster">
               <div
                 class="player-card"
-                *ngFor="let player of group.players"
+                *ngFor="let player of group.players; trackBy: trackByPlayerId"
                 [ngStyle]="getTeamStyle(player.team)"
               >
                 <ng-container
@@ -115,12 +115,12 @@
     <img
       [src]="
         player.photoError
-          ? 'assets/img/luke.PNG'
+          ? 'assets/img/no-image.png'
           : 'https://sleepercdn.com/content/nfl/players/thumb/' +
             player.player_id +
             '.jpg'
       "
-      (error)="player.photoError = true"
+      (error)="!player.photoError && (player.photoError = true)"
       alt="{{ player.full_name }}"
       class="player-pic"
     />
