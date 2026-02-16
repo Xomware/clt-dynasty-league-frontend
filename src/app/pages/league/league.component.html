@@ -37,6 +37,7 @@
         Playoffs
       </button>
       <button
+        *ngIf="mode === 'my'"
         class="tab-button worldcup"
         [ngClass]="{ active: activeTab === 'worldcup' }"
         (click)="setTab('worldcup')"
@@ -44,6 +45,7 @@
         World Cup
       </button>
       <button
+        *ngIf="mode === 'my'"
         class="tab-button"
         [ngClass]="{ active: activeTab === 'rules' }"
         (click)="setTab('rules')"

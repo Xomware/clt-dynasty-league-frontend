@@ -398,19 +398,14 @@ export class LeagueComponent implements OnInit, OnDestroy {
     }
   }
   goToUserProfile(userId: string): void {
-    console.log(`User Selected: ${userId}`)
-    if (userId == this.UserService.getMyUser()?.getUserId()) {
-      console.log('Selected yourself - (conceited, pompous, self centered)')
+    if (!userId) return
+    if (userId === this.UserService.getMyUser()?.getUserId()) {
       this.router.navigate(['/my-profile'], {
-        queryParams: {
-          userId: userId,
-        },
+        queryParams: { userId },
       })
     } else {
       this.router.navigate(['/selected-profile'], {
-        queryParams: {
-          userId: userId,
-        },
+        queryParams: { userId },
       })
     }
   }
@@ -761,19 +756,6 @@ export class LeagueComponent implements OnInit, OnDestroy {
     { name: 'Return TDs', prefixes: ['pr_', 'kr_'] },
     { name: 'Fumbles', prefixes: ['fum'] },
     { name: 'Kicking', prefixes: ['fg_', 'xp'] },
-    {
-      name: 'Defense / ST',
-      prefixes: [
-        'sack',
-        'int',
-        'ff',
-        'def_',
-        'safe',
-        'blk_',
-        'pts_allow',
-        'st_',
-      ],
-    },
   ]
 
   loadRules(): void {
@@ -803,19 +785,6 @@ export class LeagueComponent implements OnInit, OnDestroy {
         .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
       return { name: cat.name, settings }
     }).filter((cat) => cat.settings.length > 0)
-
-    // Bonus category for uncategorized
-    const bonusSettings = Object.entries(scoring)
-      .filter(([key]) => !usedKeys.has(key) && scoring[key] !== 0)
-      .map(([key, value]) => ({
-        key,
-        label:
-          LeagueComponent.SCORING_KEY_LABELS[key] || this.formatScoringKey(key),
-        value,
-      }))
-    if (bonusSettings.length > 0) {
-      this.scoringCategories.push({ name: 'Other', settings: bonusSettings })
-    }
 
     // Parse roster positions
     const positions = this.league.getRosterPositions()

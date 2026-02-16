@@ -26,6 +26,8 @@
   z-index: $z-modal;
   max-width: 800px;
   width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
   background: $card-gradient;
   backdrop-filter: blur(10px);
   border: 1px solid rgba($champion-gold, 0.3);
@@ -151,8 +153,32 @@
 // Mobile
 @media (max-width: 600px) {
   .modal-card {
-    padding: $spacing-lg;
-    width: 95%;
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    height: 100vh;
+    border-radius: 0;
+    padding: $spacing-md;
+    padding-top: 48px;
+    animation: none;
+  }
+
+  .close-btn {
+    position: fixed;
+    top: $spacing-sm;
+    right: $spacing-md;
+    z-index: $z-modal + 1;
+    background: rgba($deep-navy, 0.8);
+    border-radius: $radius-full;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
   }
 
   .player-header {
@@ -161,27 +187,27 @@
     gap: $spacing-md;
 
     .player-pic {
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
     }
 
     .player-basic {
       text-align: center;
 
       h1 {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
       }
 
       .player-meta {
         justify-content: center;
 
         .team-logo {
-          width: 36px;
-          height: 36px;
+          width: 32px;
+          height: 32px;
         }
 
         p {
-          font-size: $text-base;
+          font-size: $text-sm;
         }
       }
     }
@@ -189,5 +215,6 @@
 
   .player-stats-grid {
     grid-template-columns: 1fr;
+    gap: $spacing-sm;
   }
 }
