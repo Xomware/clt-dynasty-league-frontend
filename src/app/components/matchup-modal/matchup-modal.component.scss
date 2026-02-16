@@ -427,23 +427,39 @@
   }
 
   .roster.two-col {
-    flex-direction: column;
+    flex-direction: row;
+    gap: 2px;
 
     .col-divider {
-      width: 100%;
-      height: 1px;
-      margin: $spacing-sm 0;
+      display: none;
     }
   }
 
   .player-card {
+    padding: 3px $spacing-xs;
+    gap: $spacing-xs;
+
     .player-pic {
-      width: 28px;
-      height: 28px;
+      display: none;
     }
 
     .player-info .player-name {
-      font-size: $text-xs;
+      font-size: 10px;
     }
+
+    .player-info .player-meta {
+      font-size: 9px;
+    }
+  }
+
+  .player-points {
+    font-size: 10px;
+    min-width: 28px;
+  }
+
+  .position-badge {
+    width: 24px;
+    height: 18px;
+    font-size: 8px;
   }
 }
