@@ -1,9 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core'
+import { Component, Input, OnInit, OnDestroy } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { forkJoin, switchMap, take } from 'rxjs'
+import { forkJoin, Subscription, switchMap, take } from 'rxjs'
 import { LeagueService } from 'src/app/services/league.service'
 import {
   LeagueHistoryService,
+  MatchupHistoryRecord,
   WorldCupDivision,
 } from 'src/app/services/league-history.service'
 import { RulesService, RuleProposal } from 'src/app/services/rules.service'
@@ -17,9 +18,6 @@ import { UserModel } from 'src/app/models/user.model'
 import { LeagueModel } from 'src/app/models/league.model'
 import { RosterModel } from 'src/app/models/roster.model'
 import { StandingsTeamModel } from 'src/app/models/standings.model'
-import { Matchup } from 'src/app/models/matchup.interface'
-import { MatchupModel } from 'src/app/models/matchup.model'
-import { MatchupDisplay } from 'src/app/models/matchup-display.interface'
 import { MatchupDetailInput } from 'src/app/models/matchup-detail-input.interface'
 import { PlayoffBracketMatch } from 'src/app/models/playoff-bracket.interface'
 
@@ -28,9 +26,10 @@ import { PlayoffBracketMatch } from 'src/app/models/playoff-bracket.interface'
   templateUrl: './league.component.html',
   styleUrls: ['./league.component.scss'],
 })
-export class LeagueComponent implements OnInit {
+export class LeagueComponent implements OnInit, OnDestroy {
   @Input() mode: 'my' | 'selected' = 'selected'
   viewMode: 'league' | 'division' = 'league' // default to full league
+  private queryParamsSub?: Subscription
   league: LeagueModel
   leaguePicture = ''
   leagueName = ''
@@ -43,12 +42,14 @@ export class LeagueComponent implements OnInit {
   loading = false
   activeTab: 'standings' | 'matchups' | 'playoffs' | 'worldcup' | 'rules' =
     'standings'
-  matchups: MatchupModel[] = []
-  matchupsGrouped: MatchupDisplay[] = []
-  private rawMatchupPairs: { teamA: Matchup; teamB: Matchup }[] = []
-  currentWeek: number = -1
-  selectedWeek: number = this.currentWeek
-  weeks: number[] = Array.from({ length: 18 }, (_, i) => i + 1) // e.g., 1–18 weeks
+  // Matchup History (scores)
+  allMatchups: MatchupHistoryRecord[] = []
+  availableSeasons: string[] = []
+  selectedSeason = ''
+  weeklyMatchups: { week: number; matchups: MatchupHistoryRecord[] }[] = []
+  selectedHistoryWeek: number | null = null
+  matchupHistoryLoaded = false
+
   selectedMatchupDetail: MatchupDetailInput | null = null
   modalStart!: {
     top: number
@@ -159,8 +160,8 @@ export class LeagueComponent implements OnInit {
       }
       this.league = myLeague
       this.setupLeague()
-      // Check for tab query param (e.g., from toolbar "Rules" link)
-      this.route.queryParams.pipe(take(1)).subscribe((params) => {
+      // Watch for tab query param changes (e.g., from toolbar dropdown navigation)
+      this.queryParamsSub = this.route.queryParams.subscribe((params) => {
         const tab = params['tab']
         if (
           tab &&
@@ -413,86 +414,162 @@ export class LeagueComponent implements OnInit {
       })
     }
   }
-  setWeek(week: number) {
-    this.selectedWeek = week
-    this.getMatchups()
-  }
+  // ---- MATCHUP HISTORY (SCORES) ----
 
-  getMatchups(): void {
+  loadMatchupHistory(): void {
+    if (this.matchupHistoryLoaded) return
     this.loading = true
-    this.LeagueService.getLeagueMatchups(this.leagueId, this.selectedWeek)
-      .pipe(take(1))
-      .subscribe({
-        next: (rawPairs) => {
-          this.rawMatchupPairs = rawPairs
-          this.matchupsGrouped = rawPairs.map((pair) => {
-            const teamAInfo = this.standings.find(
-              (t) => t.roster.roster_id === pair.teamA.roster_id,
-            )
-            const teamBInfo = this.standings.find(
-              (t) => t.roster.roster_id === pair.teamB.roster_id,
-            )
 
-            // Only highlight if week is in the past
-            const highlightA =
-              this.selectedWeek < this.LeagueService.getNflState().week
-                ? pair.teamA.points > pair.teamB.points
-                  ? 'win'
-                  : 'loss'
-                : ''
-            const highlightB =
-              this.selectedWeek < this.LeagueService.getNflState().week
-                ? pair.teamB.points > pair.teamA.points
-                  ? 'win'
-                  : 'loss'
-                : ''
-            // Set Match Status
-            let matchStatus = 'Future'
-            if (this.currentWeek == this.selectedWeek) {
-              matchStatus = 'In Progress'
-            } else if (this.currentWeek > this.selectedWeek) {
-              matchStatus = 'Complete'
-            }
-            return {
-              teamA: {
-                teamName: teamAInfo.teamName,
-                userName: teamAInfo.userName,
-                avatar: teamAInfo.avatar,
-                wins: teamAInfo.wins,
-                losses: teamAInfo.losses,
-                points: pair.teamA.points,
-                highlight: highlightA,
-                standingsTeam: teamAInfo,
-              },
-              teamB: {
-                teamName: teamBInfo.teamName,
-                userName: teamBInfo.userName,
-                avatar: teamBInfo.avatar,
-                wins: teamBInfo.wins,
-                losses: teamBInfo.losses,
-                points: pair.teamB.points,
-                highlight: highlightB,
-                standingsTeam: teamBInfo,
-              },
-              status: matchStatus,
-            } as MatchupDisplay
-          })
+    this.LeagueService.getLeagueChain(this.leagueId)
+      .pipe(
+        switchMap((chain) =>
+          this.LeagueHistoryService.getMatchupHistoryFromChain(chain),
+        ),
+        take(1),
+      )
+      .subscribe({
+        next: (matchups) => {
+          this.allMatchups = matchups
+          this.availableSeasons = [
+            ...new Set(matchups.map((m) => m.season)),
+          ].sort((a, b) => parseInt(b) - parseInt(a))
+
+          if (this.availableSeasons.length > 0) {
+            this.selectedSeason = this.availableSeasons[0]
+            this.filterBySeason()
+          }
+
+          this.matchupHistoryLoaded = true
+          this.loading = false
         },
         error: (err) => {
-          console.error('Error Getting League Matchups', err)
-          this.ToastService.showNegativeToast('Error Finding League Matchups.')
+          console.error('Error loading matchup history:', err)
+          this.ToastService.showNegativeToast('Error loading matchup history.')
           this.loading = false
         },
-        complete: () => {
-          this.loading = false
+      })
+  }
+
+  filterBySeason(): void {
+    const seasonMatchups = this.allMatchups.filter(
+      (m) => m.season === this.selectedSeason,
+    )
+    this.groupByWeek(seasonMatchups)
+
+    const weeksWithScores = this.weeklyMatchups.filter((w) =>
+      w.matchups.some((m) => m.team_a_points > 0 || m.team_b_points > 0),
+    )
+    this.selectedHistoryWeek =
+      weeksWithScores.length > 0 ? weeksWithScores[0].week : null
+  }
+
+  selectSeason(season: string): void {
+    this.selectedSeason = season
+    this.filterBySeason()
+  }
+
+  private groupByWeek(matchups: MatchupHistoryRecord[]): void {
+    const weekMap = new Map<number, MatchupHistoryRecord[]>()
+    matchups.forEach((m) => {
+      if (!weekMap.has(m.week)) weekMap.set(m.week, [])
+      weekMap.get(m.week)!.push(m)
+    })
+    this.weeklyMatchups = Array.from(weekMap.entries())
+      .map(([week, matchups]) => ({ week, matchups }))
+      .sort((a, b) => b.week - a.week)
+  }
+
+  selectHistoryWeek(week: number): void {
+    this.selectedHistoryWeek = this.selectedHistoryWeek === week ? null : week
+  }
+
+  getMatchupResult(
+    matchup: MatchupHistoryRecord,
+    rosterId: number,
+  ): 'win' | 'loss' | 'tie' {
+    if (matchup.winner_roster_id === rosterId) return 'win'
+    if (matchup.winner_roster_id === null) return 'tie'
+    return 'loss'
+  }
+
+  getPointsDiff(matchup: MatchupHistoryRecord): string {
+    const diff = Math.abs(matchup.team_a_points - matchup.team_b_points)
+    return diff.toFixed(2)
+  }
+
+  openMatchupDetail(record: MatchupHistoryRecord, event: MouseEvent): void {
+    const card = (event.currentTarget as HTMLElement).getBoundingClientRect()
+    this.modalStart = {
+      top: card.top,
+      left: card.left,
+      width: card.width,
+      height: card.height,
+    }
+
+    this.LeagueService.getLeagueMatchups(record.league_id, record.week)
+      .pipe(take(1))
+      .subscribe({
+        next: (pairs) => {
+          const pair = pairs.find(
+            (p) =>
+              p.teamA.matchup_id === record.matchup_id ||
+              p.teamB.matchup_id === record.matchup_id,
+          )
+          if (!pair) {
+            this.ToastService.showNegativeToast('Could not load matchup detail')
+            return
+          }
+
+          let rawA = pair.teamA
+          let rawB = pair.teamB
+          if (rawA.roster_id !== record.team_a_roster_id) {
+            rawA = pair.teamB
+            rawB = pair.teamA
+          }
+
+          this.selectedMatchupDetail = {
+            teamA: {
+              teamName: record.team_a_team_name || record.team_a_username,
+              userName: record.team_a_username,
+              avatar: 'assets/img/nfl.png',
+              wins: 0,
+              losses: 0,
+              totalPoints: record.team_a_points,
+              rosterId: record.team_a_roster_id,
+              starters: rawA.starters || [],
+              players: rawA.players || [],
+              startersPoints: rawA.starters_points || [],
+              playersPoints: rawA.players_points || {},
+            },
+            teamB: {
+              teamName: record.team_b_team_name || record.team_b_username,
+              userName: record.team_b_username,
+              avatar: 'assets/img/nfl.png',
+              wins: 0,
+              losses: 0,
+              totalPoints: record.team_b_points,
+              rosterId: record.team_b_roster_id,
+              starters: rawB.starters || [],
+              players: rawB.players || [],
+              startersPoints: rawB.starters_points || [],
+              playersPoints: rawB.players_points || {},
+            },
+            week: record.week,
+            season: record.season,
+            leagueId: record.league_id,
+            status: 'Complete',
+          }
+        },
+        error: () => {
+          this.ToastService.showNegativeToast('Error loading matchup details')
         },
       })
   }
 
   setTab(tab: 'standings' | 'matchups' | 'playoffs' | 'worldcup' | 'rules') {
     this.activeTab = tab
-    if (tab === 'matchups' && this.matchups.length === 0) {
-      this.getMatchups()
+    if (tab === 'matchups' && !this.matchupHistoryLoaded) {
+      this.loadMatchupHistory()
     }
     if (tab === 'playoffs' && !this.playoffsLoaded) {
       this.loadPlayoffBracket()
@@ -860,7 +937,7 @@ export class LeagueComponent implements OnInit {
   private checkThresholds(): void {
     this.proposals.forEach((p) => {
       if (p.status !== 'open') return
-      if (p.yes_count >= 1) {
+      if (p.yes_count >= this.approvalThreshold) {
         this.recentlyStamped.add(p.id)
         this.RulesService.updateProposalStatus(p.id, 'approved')
           .pipe(take(1))
@@ -875,7 +952,7 @@ export class LeagueComponent implements OnInit {
               }
             },
           })
-      } else if (p.no_count >= 1) {
+      } else if (p.no_count >= this.denialThreshold) {
         this.recentlyStamped.add(p.id)
         this.RulesService.updateProposalStatus(p.id, 'rejected')
           .pipe(take(1))
@@ -948,55 +1025,12 @@ export class LeagueComponent implements OnInit {
     })
   }
 
-  openMatchupModal(index: number, event: MouseEvent) {
-    const card = (event.currentTarget as HTMLElement).getBoundingClientRect()
-    this.modalStart = {
-      top: card.top,
-      left: card.left,
-      width: card.width,
-      height: card.height,
-    }
-
-    const pair = this.rawMatchupPairs[index]
-    const display = this.matchupsGrouped[index]
-    if (!pair || !display) return
-
-    this.selectedMatchupDetail = {
-      teamA: {
-        teamName: display.teamA.teamName,
-        userName: display.teamA['userName'] || '',
-        avatar: display.teamA.avatar || 'assets/img/nfl.png',
-        wins: display.teamA.wins,
-        losses: display.teamA.losses,
-        totalPoints: pair.teamA.points,
-        rosterId: pair.teamA.roster_id,
-        starters: pair.teamA.starters || [],
-        players: pair.teamA.players || [],
-        startersPoints: pair.teamA.starters_points || [],
-        playersPoints: pair.teamA.players_points || {},
-      },
-      teamB: {
-        teamName: display.teamB.teamName,
-        userName: display.teamB['userName'] || '',
-        avatar: display.teamB.avatar || 'assets/img/nfl.png',
-        wins: display.teamB.wins,
-        losses: display.teamB.losses,
-        totalPoints: pair.teamB.points,
-        rosterId: pair.teamB.roster_id,
-        starters: pair.teamB.starters || [],
-        players: pair.teamB.players || [],
-        startersPoints: pair.teamB.starters_points || [],
-        playersPoints: pair.teamB.players_points || {},
-      },
-      week: this.selectedWeek,
-      season: this.league.season,
-      leagueId: this.leagueId,
-      status: display.status,
-    }
-  }
-
   closeMatchupModal() {
     this.selectedMatchupDetail = null
     this.modalStart = null
+  }
+
+  ngOnDestroy(): void {
+    this.queryParamsSub?.unsubscribe()
   }
 }

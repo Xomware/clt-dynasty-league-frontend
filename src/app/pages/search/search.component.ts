@@ -1,93 +1,74 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { take } from 'rxjs';
-import { ToastService } from 'src/app/services/toast.service';
-import { LeagueService } from 'src/app/services/league.service';
-
-interface LeagueConfig {
-  id: string;
-  dynasty: boolean;
-  divisions: number;
-  size: number;
-  taxi: boolean;
-}
+import { Component } from '@angular/core'
+import { Router } from '@angular/router'
+import { take } from 'rxjs'
+import { ToastService } from 'src/app/services/toast.service'
+import { LeagueService } from 'src/app/services/league.service'
+import { UserService } from 'src/app/services/user.service'
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss']
+  styleUrls: ['./search.component.scss'],
 })
-export class SearchComponent implements OnInit {
-  title = 'XOMPER';
-  loading = false;
-
-  searchTerm = '';
-  allLeagues: { key: string; config: LeagueConfig }[] = [];
-  filteredLeagues: { key: string; config: LeagueConfig }[] = [];
-  selectedLeague: { key: string; config: LeagueConfig } | null = null;
-  dropdownVisible = false; // ✅ track visibility
+export class SearchComponent {
+  loading = false
+  searchMode: 'user' | 'league' = 'user'
+  searchTerm = ''
 
   constructor(
     private LeagueService: LeagueService,
+    private UserService: UserService,
     private router: Router,
-    private ToastService: ToastService
+    private ToastService: ToastService,
   ) {}
 
-  ngOnInit(): void {
-    this.allLeagues = Object.entries(this.LeagueService.getLeagueMap())
-      .map(([key, config]) => ({ key, config }));
-  }
+  search(): void {
+    const term = this.searchTerm.trim()
+    if (!term) return
 
-  showDropdown() {
-    this.dropdownVisible = true;
-    this.filteredLeagues = [...this.allLeagues];
-  }
+    this.loading = true
 
-  hideDropdown() {
-    this.dropdownVisible = false;
-  }
-
-  filterLeagues() {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredLeagues = this.allLeagues.filter(l =>
-      l.key.toLowerCase().includes(term)
-    );
-    this.dropdownVisible = this.filteredLeagues.length > 0;
-  }
-
-  selectLeague(league: { key: string; config: LeagueConfig }) {
-    this.selectedLeague = league;
-    this.searchTerm = league.key;
-    this.hideDropdown();
-    this.search();
-  }
-
-  search() {
-    if (!this.selectedLeague) {
-      this.ToastService.showNegativeToast('Please select a league first.');
-      return;
+    if (this.searchMode === 'user') {
+      this.UserService.searchUser(term)
+        .pipe(take(1))
+        .subscribe({
+          next: (user) => {
+            if (!user || !user.user_id) {
+              this.ToastService.showNegativeToast('No user found.')
+              this.loading = false
+              return
+            }
+            this.loading = false
+            this.router.navigate(['/selected-profile'], {
+              queryParams: { userId: user.user_id },
+            })
+          },
+          error: () => {
+            this.ToastService.showNegativeToast('No user found.')
+            this.loading = false
+          },
+        })
+    } else {
+      this.LeagueService.searchLeague(term)
+        .pipe(take(1))
+        .subscribe({
+          next: (league) => {
+            if (!league) {
+              this.ToastService.showNegativeToast('No league found.')
+              this.loading = false
+              return
+            }
+            this.LeagueService.setCurrentLeague(league)
+            this.loading = false
+            this.router.navigate(['/selected-league'], {
+              queryParams: { leagueId: league.getId(), view: 'league' },
+            })
+          },
+          error: () => {
+            this.ToastService.showNegativeToast('No league found.')
+            this.loading = false
+          },
+        })
     }
-
-    this.loading = true;
-    this.LeagueService.reset();
-
-    this.LeagueService.searchLeague(this.selectedLeague.config.id)
-      .pipe(take(1))
-      .subscribe({
-        next: league => {
-          this.LeagueService.setMyLeague(league);
-        },
-        error: err => {
-          console.error('Error Searching League', err);
-          this.ToastService.showNegativeToast('Error Finding League.');
-          this.loading = false;
-        },
-        complete: () => {
-          this.loading = false;
-          this.router.navigate([`/home/${this.selectedLeague.key}`], {
-            queryParams: { leagueId: this.LeagueService.getMyLeague()?.getId() }
-          });
-        }
-      });
   }
 }

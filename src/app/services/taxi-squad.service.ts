@@ -3,10 +3,11 @@ import { Injectable } from '@angular/core'
 import { LeagueService } from './league.service'
 import { DraftService } from './draft.service'
 import { PlayerService } from './player.service'
+import { SupabaseService } from './supabase.service'
 import { TaxiSquadPlayerModel } from '../models/taxi-squad-player.model'
 import { Roster } from '../models/roster.interface'
 import { DraftPick } from '../models/draft.interface'
-import { forkJoin, map, Observable, of, switchMap } from 'rxjs'
+import { forkJoin, from, map, Observable, of, switchMap, catchError } from 'rxjs'
 import { PlayerModel } from '../models/player.model'
 
 @Injectable({ providedIn: 'root' })
@@ -14,7 +15,8 @@ export class TaxiSquadService {
   constructor(
     private LeagueService: LeagueService,
     private DraftService: DraftService,
-    private PlayerService: PlayerService
+    private PlayerService: PlayerService,
+    private supabaseService: SupabaseService,
   ) {}
 
   loadTaxiSquadPlayers(leagueId: string): Observable<TaxiSquadPlayerModel[]> {
@@ -48,6 +50,7 @@ export class TaxiSquadService {
                   rosterId: roster.roster_id,
                   ownerUserId: ownerUser?.user_id ?? '',
                   ownerDisplayName: ownerUser?.display_name ?? '',
+                  ownerUsername: ownerUser?.username ?? '',
                   ownerTeamName: ownerTeam?.teamName ?? '',
                   draftRound: draftPick?.round ?? -1,
                   draftPickNo: draftPick?.draft_slot ?? -1,
@@ -63,6 +66,40 @@ export class TaxiSquadService {
         // wait for all player requests to resolve
         return taxiPlayerRequests.length ? forkJoin(taxiPlayerRequests) : of([])
       })
+    )
+  }
+
+  getStealRequests(leagueId: string): Observable<Set<string>> {
+    return from(
+      this.supabaseService.getClient()
+        .from('taxi_steal_requests')
+        .select('player_id')
+        .eq('league_id', leagueId)
+    ).pipe(
+      map(({ data, error }) => {
+        if (error || !data) return new Set<string>()
+        return new Set<string>((data as any[]).map((r) => r.player_id))
+      }),
+      catchError(() => of(new Set<string>()))
+    )
+  }
+
+  createStealRequest(leagueId: string, playerId: string, requestedByName: string): Observable<boolean> {
+    const userId = this.supabaseService.getUser()?.id
+    if (!userId) return of(false)
+
+    return from(
+      this.supabaseService.getClient()
+        .from('taxi_steal_requests')
+        .insert({
+          league_id: leagueId,
+          player_id: playerId,
+          requested_by: userId,
+          requested_by_name: requestedByName,
+        })
+    ).pipe(
+      map(({ error }) => !error),
+      catchError(() => of(false))
     )
   }
 }

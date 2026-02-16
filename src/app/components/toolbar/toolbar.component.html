@@ -43,8 +43,8 @@
             <a (click)="navigateLeagueFeature('/draft-history')">
               Draft History
             </a>
-            <a (click)="navigateLeagueFeature('/matchup-history')">
-              Scores
+            <a (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId, view: 'league', tab: 'matchups' })">
+              Matchups
             </a>
             <a (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId, view: 'league', tab: 'rules' })">
               Rules
@@ -93,8 +93,8 @@
         <a (click)="navigateLeagueFeature('/draft-history')">
           Draft History
         </a>
-        <a (click)="navigateLeagueFeature('/matchup-history')">
-          Scores
+        <a (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId, view: 'league', tab: 'matchups' })">
+          Matchups
         </a>
         <a (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId, view: 'league', tab: 'rules' })">
           Rules

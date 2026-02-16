@@ -12,7 +12,7 @@ import { MyTeamComponent } from './pages/my-team/my-team.component'
 import { SelectedTeamComponent } from './pages/selected-team/selected-team.component'
 import { TaxiSquadComponent } from './pages/taxi-squad/taxi-squad.component'
 import { DraftHistoryComponent } from './pages/draft-history/draft-history.component'
-import { MatchupHistoryComponent } from './pages/matchup-history/matchup-history.component'
+
 import { LinkSleeperComponent } from './pages/link-sleeper/link-sleeper.component'
 
 const routes: Routes = [
@@ -37,7 +37,6 @@ const routes: Routes = [
 
   // League History (authenticated)
   { path: 'draft-history', component: DraftHistoryComponent, canActivate: [AuthGuard] },
-  { path: 'matchup-history', component: MatchupHistoryComponent, canActivate: [AuthGuard] },
   
   // Catch-all
   { path: '**', redirectTo: '/home' },

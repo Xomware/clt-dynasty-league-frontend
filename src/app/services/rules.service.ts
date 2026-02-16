@@ -204,6 +204,24 @@ export class RulesService {
     )
   }
 
+  getOwnerEmailByUsername(sleeperUsername: string): Observable<{ email: string; display_name: string } | null> {
+    return from(
+      this.supabase
+        .from('whitelisted_users')
+        .select('email, display_name')
+        .eq('sleeper_username', sleeperUsername)
+        .eq('is_active', true)
+        .limit(1)
+        .single()
+    ).pipe(
+      map(({ data, error }) => {
+        if (error || !data) return null
+        return { email: (data as any).email, display_name: (data as any).display_name }
+      }),
+      catchError(() => of(null))
+    )
+  }
+
   getLeagueMemberEmails(): Observable<string[]> {
     return from(
       this.supabase

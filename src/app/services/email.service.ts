@@ -101,6 +101,9 @@ export class EmailService {
       last_name: string
       position: string
       team: string
+      player_image_url: string
+      team_logo_url: string
+      pick_cost: string
     },
     owner: { display_name: string; email: string },
     recipients: string[],

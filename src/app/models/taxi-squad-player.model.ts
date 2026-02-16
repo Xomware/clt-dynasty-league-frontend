@@ -9,6 +9,7 @@ export class TaxiSquadPlayerModel
   rosterId: number
   ownerUserId: string
   ownerDisplayName: string
+  ownerUsername: string
   ownerTeamName: string
   draftRound?: number
   draftPickNo?: number

@@ -102,6 +102,10 @@ export class MatchupModalComponent implements OnChanges {
     return pointsMap?.[playerId] ?? 0
   }
 
+  isGameComplete(): boolean {
+    return this.matchupDetail.status === 'Complete'
+  }
+
   isWinner(team: 'A' | 'B'): boolean {
     const a = this.matchupDetail.teamA.totalPoints
     const b = this.matchupDetail.teamB.totalPoints

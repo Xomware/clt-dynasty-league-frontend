@@ -195,6 +195,22 @@
     }
   }
 
+  .stolen-stamp {
+    margin-top: $spacing-sm;
+    text-align: center;
+    font-family: $font-display;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: $error-red;
+    border: 2px solid $error-red;
+    border-radius: $radius-md;
+    padding: 6px 12px;
+    transform: rotate(-3deg);
+    opacity: 0.9;
+    animation: stampSlam 0.3s ease-out;
+  }
+
   .player-details {
     margin-top: $spacing-sm;
     padding-top: $spacing-sm;
@@ -226,6 +242,21 @@
   &:hover {
     color: lighten($steel-blue, 15%);
     text-decoration: underline;
+  }
+}
+
+@keyframes stampSlam {
+  0% {
+    transform: rotate(-3deg) scale(2.5);
+    opacity: 0;
+  }
+  60% {
+    transform: rotate(-3deg) scale(0.95);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-3deg) scale(1);
+    opacity: 0.9;
   }
 }
 

@@ -31,7 +31,7 @@ import { MyTeamComponent } from './pages/my-team/my-team.component'
 import { SelectedTeamComponent } from './pages/selected-team/selected-team.component'
 import { TaxiSquadComponent } from './pages/taxi-squad/taxi-squad.component'
 import { DraftHistoryComponent } from './pages/draft-history/draft-history.component'
-import { MatchupHistoryComponent } from './pages/matchup-history/matchup-history.component'
+
 import { LinkSleeperComponent } from './pages/link-sleeper/link-sleeper.component'
 
 // Services
@@ -71,7 +71,6 @@ import { LeagueHistoryService } from './services/league-history.service'
     SelectedTeamComponent,
     TaxiSquadComponent,
     DraftHistoryComponent,
-    MatchupHistoryComponent,
     LinkSleeperComponent,
   ],
   imports: [

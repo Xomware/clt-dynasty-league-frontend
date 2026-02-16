@@ -5,6 +5,7 @@ import { TaxiSquadService } from 'src/app/services/taxi-squad.service'
 import { DraftService } from 'src/app/services/draft.service'
 import { TaxiSquadPlayerModel } from 'src/app/models/taxi-squad-player.model'
 import { LeagueModel } from 'src/app/models/league.model'
+import { SupabaseService } from 'src/app/services/supabase.service'
 import { TEAM_COLORS } from 'src/app/constants/team-colors'
 
 @Component({
@@ -17,6 +18,8 @@ export class TaxiSquadComponent implements OnInit {
   taxiPlayers: TaxiSquadPlayerModel[] = []
   loading = false
   selectedPlayer: TaxiSquadPlayerModel | null = null
+  stolenPlayerIds = new Set<string>()
+  mySleeperUserId = ''
   modalStart!: {
     top: number
     left: number
@@ -36,12 +39,15 @@ export class TaxiSquadComponent implements OnInit {
     private ToastService: ToastService,
     private LeagueService: LeagueService,
     private TaxiSquadService: TaxiSquadService,
-    private DraftService: DraftService
+    private DraftService: DraftService,
+    private supabaseService: SupabaseService,
   ) {}
 
   ngOnInit(): void {
     this.league = this.LeagueService.getMyLeague()
+    this.mySleeperUserId = this.supabaseService.getProfile()?.sleeper_user_id || ''
     this.loadTaxiPlayers()
+    this.loadStealRequests()
   }
 
   loadTaxiPlayers(): void {
@@ -80,6 +86,15 @@ export class TaxiSquadComponent implements OnInit {
     })
   }
 
+  loadStealRequests(): void {
+    if (!this.league) return
+    this.TaxiSquadService.getStealRequests(this.league.league_id).subscribe({
+      next: (ids) => {
+        this.stolenPlayerIds = ids
+      },
+    })
+  }
+
   sortPlayers() {
     this.taxiPlayers.sort((a, b) => {
       const aIndex = this.POSITION_ORDER.indexOf(a.position)
@@ -102,6 +117,11 @@ export class TaxiSquadComponent implements OnInit {
   closePlayerModal() {
     this.selectedPlayer = null
     this.modalStart = null
+  }
+
+  onStealComplete(playerId: string) {
+    this.stolenPlayerIds.add(playerId)
+    this.closePlayerModal()
   }
 
   getTeamStyle(team: string | undefined) {

@@ -193,6 +193,126 @@
   }
 }
 
+// Steal Requested Stamp
+.steal-requested-stamp {
+  margin-top: $spacing-xl;
+  align-self: center;
+  font-family: $font-display;
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: $error-red;
+  border: 3px solid $error-red;
+  border-radius: $radius-md;
+  padding: 8px 24px;
+  transform: rotate(-4deg);
+  opacity: 0.9;
+  animation: stampSlam 0.3s ease-out;
+}
+
+@keyframes stampSlam {
+  0% {
+    transform: rotate(-4deg) scale(2.5);
+    opacity: 0;
+  }
+  60% {
+    transform: rotate(-4deg) scale(0.95);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-4deg) scale(1);
+    opacity: 0.9;
+  }
+}
+
+// Confirmation Overlay
+.confirm-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($deep-navy, 0.92);
+  backdrop-filter: blur(4px);
+  border-radius: $radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  animation: fadeIn 150ms ease-out;
+}
+
+.confirm-box {
+  text-align: center;
+  padding: $spacing-xl;
+  max-width: 400px;
+
+  p {
+    font-size: $text-lg;
+    color: $text-primary;
+    margin: 0 0 $spacing-lg 0;
+    line-height: 1.5;
+
+    strong {
+      color: $champion-gold;
+    }
+  }
+}
+
+.confirm-actions {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: center;
+}
+
+.confirm-yes {
+  padding: 12px 28px;
+  border-radius: $radius-xl;
+  border: none;
+  background: $success-green;
+  color: #fff;
+  font-size: $text-base;
+  font-weight: 700;
+  font-family: $font-body;
+  cursor: pointer;
+  transition: all $transition-base;
+  margin: 0;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.confirm-no {
+  padding: 12px 28px;
+  border-radius: $radius-xl;
+  border: 1px solid $surface-light;
+  background: transparent;
+  color: $text-secondary;
+  font-size: $text-base;
+  font-weight: 600;
+  font-family: $font-body;
+  cursor: pointer;
+  transition: all $transition-base;
+  margin: 0;
+
+  &:hover:not(:disabled) {
+    border-color: $error-red;
+    color: $error-red;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
 // Mobile
 @media (max-width: 600px) {
   .modal-card {

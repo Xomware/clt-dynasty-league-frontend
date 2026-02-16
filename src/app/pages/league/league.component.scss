@@ -278,143 +278,222 @@
   color: $champion-gold;
 }
 
-// Week Selector
-.week-selector {
+// Season Selector
+.season-selector {
   display: flex;
   justify-content: center;
-  gap: 6px;
-  margin-bottom: $spacing-lg;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xl;
   flex-wrap: wrap;
 }
 
-.week-bubble {
-  width: 38px;
-  height: 38px;
-  border-radius: $radius-full;
-  border: 2px solid $surface-light;
-  background-color: rgba($dark-navy, 0.6);
+.season-btn {
+  padding: 8px 20px;
+  border-radius: $radius-xl;
+  border: 1px solid $surface-light;
+  background: transparent;
   color: $text-secondary;
-  font-weight: 600;
   font-size: $text-sm;
-  font-family: $font-mono;
+  font-family: $font-body;
+  font-weight: 600;
   cursor: pointer;
-  margin: 0;
-  padding: 0;
   transition: all $transition-base;
 
-  &.selected {
+  &:hover {
     border-color: $champion-gold;
-    background: $gold-accent;
-    color: $deep-navy;
+    color: $champion-gold;
   }
 
-  &:hover:not(.selected) {
-    border-color: $text-secondary;
-    color: $text-primary;
+  &.active {
+    background: $champion-gold;
+    border-color: $champion-gold;
+    color: $deep-navy;
+  }
+}
+
+// Empty State
+.empty-state {
+  text-align: center;
+  padding: $spacing-2xl;
+  background: rgba($dark-navy, 0.4);
+  border-radius: $radius-lg;
+  border: 1px solid rgba($surface-light, 0.2);
+
+  p {
+    font-size: $text-lg;
+    color: $text-secondary;
+    margin: 0;
+  }
+
+  .hint {
+    font-size: $text-sm;
+    color: $text-muted;
+    margin-top: $spacing-sm;
+  }
+}
+
+// Weeks Container
+.weeks-container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.week-section {
+  background: rgba($dark-navy, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba($surface-light, 0.2);
+  border-radius: $radius-lg;
+  overflow: hidden;
+  transition: all $transition-base;
+
+  &.expanded {
+    border-color: rgba($champion-gold, 0.4);
+
+    .week-header {
+      border-bottom: 1px solid rgba($surface-light, 0.3);
+    }
+
+    .expand-icon {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.week-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-lg;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background: rgba($surface-light, 0.1);
+  }
+
+  .week-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  .week-title {
+    font-family: $font-display;
+    font-size: 1.3rem;
+    letter-spacing: 0.03em;
+    color: $champion-gold;
+    margin: 0;
+  }
+
+  .matchup-count {
+    font-size: $text-sm;
+    color: $text-secondary;
+    background: rgba($surface-light, 0.3);
+    padding: 4px 12px;
+    border-radius: $radius-xl;
+  }
+
+  .expand-icon {
+    fill: $text-secondary;
+    transition: transform $transition-base;
   }
 }
 
 // Matchups Grid
 .matchups-grid {
   display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-lg;
-  justify-content: center;
-  width: 100%;
-  padding: $spacing-md;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-lg;
 }
 
-.matchup-card {
+.history-matchup-card {
+  display: flex;
+  align-items: stretch;
+  background: rgba($dark-navy, 0.5);
+  border: 1px solid rgba($surface-light, 0.2);
+  border-radius: $radius-lg;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all $transition-base;
+
+  &:hover {
+    border-color: rgba($champion-gold, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.team-side {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba($dark-navy, 0.6);
-  border: 1px solid rgba($surface-light, 0.3);
-  border-radius: $radius-lg;
-  padding: $spacing-lg;
-  width: 380px;
-  min-height: 180px;
-  box-shadow: $shadow-md;
-  transition: transform $transition-base, box-shadow $transition-base;
-  cursor: pointer;
+  padding: $spacing-md $spacing-lg;
+  transition: background-color $transition-fast;
 
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow: $shadow-xl;
-    border-color: rgba($champion-gold, 0.3);
+  &.winner {
+    background: rgba($success-green, 0.15);
+
+    .team-score {
+      color: $success-green;
+    }
   }
 
-  .team-card {
+  &.loser {
+    background: rgba($error-red, 0.1);
+
+    .team-score {
+      color: $error-red;
+    }
+  }
+
+  .team-info {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    width: 130px;
-    padding: $spacing-sm;
-    border-radius: $radius-md;
-    transition: all $transition-base;
-
-    .team-pic {
-      width: 56px;
-      height: 56px;
-      border-radius: $radius-full;
-      object-fit: cover;
-      border: 2px solid $surface-light;
-      margin-bottom: $spacing-xs;
-    }
-
-    .team-name {
-      font-size: $text-sm;
-      font-weight: 600;
-      color: $text-primary;
-      margin-bottom: 2px;
-    }
-
-    .team-user {
-      font-size: $text-xs;
-      color: $text-secondary;
-      margin-bottom: 4px;
-    }
-
-    .team-record {
-      font-size: $text-xs;
-      color: $text-muted;
-      font-family: $font-mono;
-    }
-
-    .team-points {
-      font-size: $text-xl;
-      font-weight: 700;
-      font-family: $font-mono;
-      color: $champion-gold;
-      margin-top: $spacing-xs;
-    }
-
-    &.win {
-      background: rgba($success-green, 0.15);
-      border: 2px solid $success-green;
-
-      .team-points {
-        color: $success-green;
-      }
-    }
-
-    &.loss {
-      background: rgba($error-red, 0.15);
-      border: 2px solid $error-red;
-
-      .team-points {
-        color: $error-red;
-      }
-    }
+    gap: 2px;
   }
 
-  .vs {
-    font-size: $text-lg;
+  .team-name {
+    font-weight: 600;
+    font-size: $text-base;
+    color: $text-primary;
+  }
+
+  .team-user {
+    font-size: $text-sm;
+    color: $text-secondary;
+  }
+
+  .team-score {
+    font-family: $font-mono;
+    font-size: $text-xl;
+    font-weight: 700;
+    color: $champion-gold;
+  }
+}
+
+.vs-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-sm $spacing-md;
+  background: rgba($deep-navy, 0.8);
+  min-width: 80px;
+
+  .vs-text {
+    font-size: $text-sm;
     font-weight: 700;
     color: $text-muted;
-    margin: 0 $spacing-sm;
+    letter-spacing: 0.1em;
+  }
+
+  .points-diff {
+    font-size: $text-xs;
+    color: $text-secondary;
+    margin-top: 2px;
   }
 }
 
@@ -1388,37 +1467,35 @@
     }
   }
 
-  .matchup-card {
-    width: 100%;
-    min-height: 160px;
+  .week-header {
     padding: $spacing-md;
 
-    .team-card {
-      width: 110px;
-
-      .team-pic {
-        width: 48px;
-        height: 48px;
-      }
-
-      .team-name {
-        font-size: $text-xs;
-      }
-
-      .team-points {
-        font-size: $text-lg;
-      }
-    }
-
-    .vs {
-      font-size: $text-base;
+    .week-title {
+      font-size: 1.1rem;
     }
   }
 
-  .week-bubble {
-    width: 34px;
-    height: 34px;
-    font-size: $text-xs;
+  .matchups-grid {
+    padding: $spacing-md;
+  }
+
+  .history-matchup-card {
+    flex-direction: column;
+  }
+
+  .team-side {
+    padding: $spacing-sm $spacing-md;
+
+    &:first-child {
+      border-bottom: 1px solid rgba($surface-light, 0.2);
+    }
+  }
+
+  .vs-divider {
+    flex-direction: row;
+    gap: $spacing-sm;
+    padding: $spacing-xs $spacing-md;
+    min-width: auto;
   }
 
   .tab-container {
