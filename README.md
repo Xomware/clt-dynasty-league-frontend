@@ -4,15 +4,14 @@ Fantasy football companion app built on the [Sleeper API](https://docs.sleeper.c
 
 **Live:** https://xomper.xomware.com
 
-## Repos
+## Xomware Ecosystem
 
-| Repo                                                                          | Description                                   |
-| ----------------------------------------------------------------------------- | --------------------------------------------- |
-| [xomper-front-end](https://github.com/domgiordano/xomper-front-end)           | Angular 16 SPA (this repo)                    |
-| [xomper-back-end](https://github.com/domgiordano/xomper-back-end)             | Python Lambda functions (email, API handlers) |
-| [xomper-infrastructure](https://github.com/domgiordano/xomper-infrastructure) | Terraform IaC for AWS + Supabase              |
-
-**Terraform Workspace:** https://app.terraform.io/app/Domjgiordano/workspaces/xomper
+| App | URL | Frontend | Backend | Infrastructure |
+|-----|-----|----------|---------|----------------|
+| **Xomware** (Hub) | [xomware.com](https://xomware.com) | [xomware-frontend](https://github.com/domgiordano/xomware-frontend) | - | [xomware-infrastructure](https://github.com/domgiordano/xomware-infrastructure) |
+| **Xomify** | [xomify.xomware.com](https://xomify.xomware.com) | [xomify-frontend](https://github.com/domgiordano/xomify-frontend) | [xomify-backend](https://github.com/domgiordano/xomify-backend) | [xomify-infrastructure](https://github.com/domgiordano/xomify-infrastructure) |
+| **Xomcloud** | [xomcloud.xomware.com](https://xomcloud.xomware.com) | [xomcloud-frontend](https://github.com/domgiordano/xomcloud-frontend) | [xomcloud-backend](https://github.com/domgiordano/xomcloud-backend) | [xomcloud-infrastructure](https://github.com/domgiordano/xomcloud-infrastructure) |
+| **Xomper** | [xomper.xomware.com](https://xomper.xomware.com) | [xomper-front-end](https://github.com/domgiordano/xomper-front-end) | [xomper-back-end](https://github.com/domgiordano/xomper-back-end) | [xomper-infrastructure](https://github.com/domgiordano/xomper-infrastructure) |
 
 ## Tech Stack
 
