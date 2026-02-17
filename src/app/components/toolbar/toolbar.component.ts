@@ -54,10 +54,9 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.router.navigate([route], queryParams ? { queryParams } : undefined)
   }
 
-  selectItem(route: string): void {
+  closeMobileMenu(): void {
     this.dropdownVisible = false
     this.leagueDropdownVisible = false
-    this.router.navigate([route])
   }
 
   @HostListener('document:click', ['$event'])

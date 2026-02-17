@@ -5,6 +5,11 @@ on:
     branches:
       - master
   workflow_dispatch:
+    inputs:
+      skip_cache_invalidation:
+        description: 'Skip CloudFront cache invalidation'
+        required: false
+        default: 'false'
 
 jobs:
   build-and-deploy:

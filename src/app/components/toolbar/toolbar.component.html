@@ -68,16 +68,16 @@
 
   <!-- Mobile Dropdown -->
   <div class="dropdown" *ngIf="dropdownVisible">
-    <a routerLink="/home" (click)="selectItem('/home')">Home</a>
-    <a routerLink="/search" (click)="selectItem('/search')">Search</a>
+    <a routerLink="/home" (click)="closeMobileMenu()">Home</a>
+    <a routerLink="/search" (click)="closeMobileMenu()">Search</a>
 
     <ng-container *ngIf="isLoggedIn()">
       <div class="dropdown-section-header">My Stuff</div>
 
-      <a *ngIf="userId" routerLink="/my-profile" [queryParams]="{ userId: userId }" (click)="selectItem('/my-profile')">
+      <a *ngIf="userId" routerLink="/my-profile" [queryParams]="{ userId: userId }" (click)="closeMobileMenu()">
         My Profile
       </a>
-      <a *ngIf="teamUserName" routerLink="/my-team" [queryParams]="{ user: teamUserName, league: teamLeagueId }" (click)="selectItem('/my-team')">
+      <a *ngIf="teamUserName" routerLink="/my-team" [queryParams]="{ user: teamUserName, league: teamLeagueId }" (click)="closeMobileMenu()">
         My Team
       </a>
 

@@ -8,12 +8,12 @@
       <img
         [src]="
           player.photoError
-            ? 'assets/img/luke.PNG'
+            ? 'assets/img/no-image.png'
             : 'https://sleepercdn.com/content/nfl/players/thumb/' +
               player.player_id +
               '.jpg'
         "
-        (error)="player.photoError = true"
+        (error)="!player.photoError && (player.photoError = true)"
         alt="{{ player.getFullName() }}"
         class="player-pic"
       />

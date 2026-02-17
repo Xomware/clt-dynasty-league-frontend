@@ -164,6 +164,8 @@
     padding: $spacing-md;
     padding-top: 48px;
     animation: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .close-btn {
@@ -171,7 +173,7 @@
     top: $spacing-sm;
     right: $spacing-md;
     z-index: $z-modal + 1;
-    background: rgba($deep-navy, 0.8);
+    background: rgba($deep-navy, 0.9);
     border-radius: $radius-full;
     width: 36px;
     height: 36px;
@@ -182,28 +184,27 @@
   }
 
   .player-header {
-    flex-direction: column;
-    text-align: center;
-    gap: $spacing-md;
+    flex-direction: row;
+    text-align: left;
+    gap: $spacing-sm;
 
     .player-pic {
-      width: 80px;
-      height: 80px;
+      width: 64px;
+      height: 64px;
+      border-width: 2px;
     }
 
     .player-basic {
-      text-align: center;
+      text-align: left;
 
       h1 {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
       }
 
       .player-meta {
-        justify-content: center;
-
         .team-logo {
-          width: 32px;
-          height: 32px;
+          width: 28px;
+          height: 28px;
         }
 
         p {
@@ -214,7 +215,12 @@
   }
 
   .player-stats-grid {
-    grid-template-columns: 1fr;
-    gap: $spacing-sm;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-xs;
+
+    .stat-box {
+      padding: $spacing-sm;
+      font-size: $text-sm;
+    }
   }
 }
