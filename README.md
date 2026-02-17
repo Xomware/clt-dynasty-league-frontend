@@ -2,15 +2,15 @@
 
 Fantasy football companion app built on the [Sleeper API](https://docs.sleeper.com). Provides league management, matchup history, team analysis, taxi squad management, and rule proposals for dynasty leagues.
 
-**Live:** https://xomper.com
+**Live:** https://xomper.xomware.com
 
 ## Repos
 
-| Repo | Description |
-|------|-------------|
-| [xomper-front-end](https://github.com/domgiordano/xomper-front-end) | Angular 16 SPA (this repo) |
-| [xomper-back-end](https://github.com/domgiordano/xomper-back-end) | Python Lambda functions (email, API handlers) |
-| [xomper-infrastructure](https://github.com/domgiordano/xomper-infrastructure) | Terraform IaC for AWS + Supabase |
+| Repo                                                                          | Description                                   |
+| ----------------------------------------------------------------------------- | --------------------------------------------- |
+| [xomper-front-end](https://github.com/domgiordano/xomper-front-end)           | Angular 16 SPA (this repo)                    |
+| [xomper-back-end](https://github.com/domgiordano/xomper-back-end)             | Python Lambda functions (email, API handlers) |
+| [xomper-infrastructure](https://github.com/domgiordano/xomper-infrastructure) | Terraform IaC for AWS + Supabase              |
 
 **Terraform Workspace:** https://app.terraform.io/app/Domjgiordano/workspaces/xomper
 

@@ -64,7 +64,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-east-1
-        run: aws s3 sync ./dist/angular-sleeper s3://xomper.com --delete
+        run: aws s3 sync ./dist/angular-sleeper s3://xomper.xomware.com --delete
 
       - name: Invalidate CloudFront cache
         env:
@@ -72,10 +72,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-east-1
         run: |
-          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items[?contains(@, 'xomper.com')]].Id" --output text)
+          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items[?contains(@, 'xomper.xomware.com')]].Id" --output text)
           if [ -n "$DISTRIBUTION_ID" ]; then
             aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths "/*"
             echo "CloudFront cache invalidated for distribution $DISTRIBUTION_ID"
           else
-            echo "No CloudFront distribution found for xomper.com, skipping invalidation"
+            echo "No CloudFront distribution found for xomper.xomware.com, skipping invalidation"
           fi
