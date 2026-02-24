@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
-import { HttpClientModule } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { FormsModule } from '@angular/forms'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { SwiperModule } from 'swiper/angular'
@@ -46,53 +46,47 @@ import { DraftService } from './services/draft.service'
 import { SupabaseService } from './services/supabase.service'
 import { LeagueHistoryService } from './services/league-history.service'
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    // Components
-    ToolbarComponent,
-    LoaderComponent,
-    ToastComponent,
-    FooterComponent,
-    PlayerModalComponent,
-    MatchupModalComponent,
-    TaxiSquadPlayerModalComponent,
-    // Pages
-    HomeComponent,
-    SearchComponent,
-    MyLeagueComponent,
-    LeagueComponent,
-    MyProfileComponent,
-    ProfileComponent,
-    SelectedProfileComponent,
-    SelectedLeagueComponent,
-    TeamComponent,
-    MyTeamComponent,
-    SelectedTeamComponent,
-    TaxiSquadComponent,
-    DraftHistoryComponent,
-    LinkSleeperComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    HttpClientModule,
-    SwiperModule,
-    BrowserAnimationsModule,
-  ],
-  providers: [
-    LeagueService,
-    UserService,
-    AuthService,
-    StandingsService,
-    TeamService,
-    PlayerService,
-    TaxiSquadService,
-    DraftService,
-    SupabaseService,
-    LeagueHistoryService,
-  ],
-  bootstrap: [AppComponent],
-})
+@NgModule({ declarations: [
+        AppComponent,
+        // Components
+        ToolbarComponent,
+        LoaderComponent,
+        ToastComponent,
+        FooterComponent,
+        PlayerModalComponent,
+        MatchupModalComponent,
+        TaxiSquadPlayerModalComponent,
+        // Pages
+        HomeComponent,
+        SearchComponent,
+        MyLeagueComponent,
+        LeagueComponent,
+        MyProfileComponent,
+        ProfileComponent,
+        SelectedProfileComponent,
+        SelectedLeagueComponent,
+        TeamComponent,
+        MyTeamComponent,
+        SelectedTeamComponent,
+        TaxiSquadComponent,
+        DraftHistoryComponent,
+        LinkSleeperComponent,
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        SwiperModule,
+        BrowserAnimationsModule], providers: [
+        LeagueService,
+        UserService,
+        AuthService,
+        StandingsService,
+        TeamService,
+        PlayerService,
+        TaxiSquadService,
+        DraftService,
+        SupabaseService,
+        LeagueHistoryService,
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule {}
