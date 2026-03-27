@@ -1,8 +1,6 @@
-// toast.component.ts
-
-import { Component, Input, OnInit } from '@angular/core';
-import { trigger, state, style, animate, transition } from '@angular/animations';
-import { ToastService } from 'src/app/services/toast.service';
+import { Component, Input, OnInit } from '@angular/core'
+import { trigger, state, style, animate, transition } from '@angular/animations'
+import { ToastService, ToastHandler } from 'src/app/services/toast.service'
 
 @Component({
   selector: 'app-toast',
@@ -11,29 +9,29 @@ import { ToastService } from 'src/app/services/toast.service';
   animations: [
     trigger('fade', [
       state('void', style({ opacity: 0 })),
-      transition(':enter', [animate('500ms ease-in')]), // Fade in over 500ms
-      transition(':leave', [animate('500ms ease-out')]), // Fade out over 500ms
+      transition(':enter', [animate('500ms ease-in')]),
+      transition(':leave', [animate('500ms ease-out')]),
     ]),
   ],
 })
-export class ToastComponent implements OnInit {
-  @Input() toastType: 'positive' | 'negative' = 'positive';
-  message: string = '';
-  isVisible: boolean = false;
+export class ToastComponent implements OnInit, ToastHandler {
+  @Input() toastType: 'positive' | 'negative' = 'positive'
+  message = ''
+  isVisible = false
 
-  constructor(private ToastService: ToastService) {}
+  constructor(private toastService: ToastService) {}
 
-  ngOnInit() {
-    this.ToastService.registerToast(this);
+  ngOnInit(): void {
+    this.toastService.registerToast(this)
   }
 
-  showToast(msg: string) {
-    this.message = msg;
-    this.isVisible = true;
+  showToast(msg: string): void {
+    this.message = msg
+    this.isVisible = true
 
     setTimeout(() => {
-      this.isVisible = false;
-      this.message = '';
-    }, 3000); // The toast will disappear after 3 seconds
+      this.isVisible = false
+      this.message = ''
+    }, 3000)
   }
 }

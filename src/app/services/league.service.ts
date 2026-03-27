@@ -10,7 +10,29 @@ import { LeagueConfig } from '../models/league-config.interface'
 import { Matchup } from '../models/matchup.interface'
 import { NflStateModel } from '../models/nfl-state.model'
 import { NflState } from '../models/nfl-state.interface'
+import { PlayoffBracketMatch } from '../models/playoff-bracket.interface'
 import { environment } from 'src/environments/environment'
+import { getCurrentSeason } from '../constants/season'
+
+export interface Transaction {
+  type: string
+  status: string
+  transaction_id: string
+  roster_ids: number[]
+  adds: Record<string, number> | null
+  drops: Record<string, number> | null
+  created: number
+  [key: string]: unknown
+}
+
+export interface TradedPick {
+  season: string
+  round: number
+  roster_id: number
+  previous_owner_id: number
+  owner_id: number
+  [key: string]: unknown
+}
 
 @Injectable({
   providedIn: 'root',
@@ -59,12 +81,13 @@ export class LeagueService {
   }
 
   findUserLeagues(
-    season: string = '2025',
+    season?: string,
     userId?: string,
   ): Observable<LeagueModel[]> {
     if (!userId) throw new Error('User ID required to fetch leagues')
+    const effectiveSeason = season || getCurrentSeason()
     return this.http
-      .get<League[]>(`${this.baseUrl}/user/${userId}/leagues/nfl/${season}`)
+      .get<League[]>(`${this.baseUrl}/user/${userId}/leagues/nfl/${effectiveSeason}`)
       .pipe(map((leagues) => leagues.map((l) => new LeagueModel(l))))
   }
 
@@ -76,8 +99,7 @@ export class LeagueService {
       .get<Matchup[]>(`${this.baseUrl}/league/${leagueId}/matchups/${week}`)
       .pipe(
         map((matchups) => {
-          // Group by matchup_id
-          const grouped: { [key: number]: Matchup[] } = {}
+          const grouped: Record<number, Matchup[]> = {}
           matchups.forEach((m) => {
             if (!grouped[m.matchup_id]) {
               grouped[m.matchup_id] = []
@@ -85,7 +107,6 @@ export class LeagueService {
             grouped[m.matchup_id].push(m)
           })
 
-          // Return simple pairs of raw Matchups
           return Object.values(grouped).map((pair) => ({
             teamA: pair[0],
             teamB: pair[1],
@@ -100,38 +121,26 @@ export class LeagueService {
       .pipe(map((state) => new NflStateModel(state)))
   }
 
-  /**
-   * Get transactions for a league
-   */
-  getLeagueTransactions(leagueId: string, week: number): Observable<any[]> {
-    return this.http.get<any[]>(
+  getLeagueTransactions(leagueId: string, week: number): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(
       `${this.baseUrl}/league/${leagueId}/transactions/${week}`,
     )
   }
 
-  /**
-   * Get traded picks for a league
-   */
-  getTradedPicks(leagueId: string): Observable<any[]> {
-    return this.http.get<any[]>(
+  getTradedPicks(leagueId: string): Observable<TradedPick[]> {
+    return this.http.get<TradedPick[]>(
       `${this.baseUrl}/league/${leagueId}/traded_picks`,
     )
   }
 
-  /**
-   * Get winners bracket
-   */
-  getWinnersBracket(leagueId: string): Observable<any[]> {
-    return this.http.get<any[]>(
+  getWinnersBracket(leagueId: string): Observable<PlayoffBracketMatch[]> {
+    return this.http.get<PlayoffBracketMatch[]>(
       `${this.baseUrl}/league/${leagueId}/winners_bracket`,
     )
   }
 
-  /**
-   * Get losers bracket
-   */
-  getLosersBracket(leagueId: string): Observable<any[]> {
-    return this.http.get<any[]>(
+  getLosersBracket(leagueId: string): Observable<PlayoffBracketMatch[]> {
+    return this.http.get<PlayoffBracketMatch[]>(
       `${this.baseUrl}/league/${leagueId}/losers_bracket`,
     )
   }
@@ -140,30 +149,18 @@ export class LeagueService {
   // WHITELISTED LEAGUE
   // =========================================
 
-  /**
-   * Get the whitelisted league ID from config
-   */
   getWhitelistedLeagueId(): string {
     return this.whitelistedLeagueId
   }
 
-  /**
-   * Get the whitelisted league name from config
-   */
   getWhitelistedLeagueName(): string {
     return this.whitelistedLeagueName
   }
 
-  /**
-   * Check if a league ID is the whitelisted league
-   */
   isWhitelistedLeague(leagueId: string): boolean {
     return leagueId === this.whitelistedLeagueId
   }
 
-  /**
-   * Load the whitelisted league as "My League"
-   */
   loadWhitelistedLeague(): Observable<LeagueModel> {
     return this.searchLeague(this.whitelistedLeagueId)
   }

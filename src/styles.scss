@@ -12,7 +12,7 @@
 body {
   background-color: $bg-dark;
   color: $text-primary;
-  font-family: Arial, sans-serif;
+  font-family: $font-body;
   margin: 0;
 }
 
@@ -50,6 +50,16 @@ button {
     color: $text-muted;
     cursor: not-allowed;
   }
+
+  &:focus-visible {
+    outline: 2px solid $champion-gold;
+    outline-offset: 2px;
+  }
+}
+
+a:focus-visible {
+  outline: 2px solid $champion-gold;
+  outline-offset: 2px;
 }
 
 .win-streak {

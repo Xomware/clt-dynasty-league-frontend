@@ -1,7 +1,6 @@
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core'
 import { Router } from '@angular/router'
 import { Subject } from 'rxjs'
-import { AuthService } from 'src/app/services/auth.service'
 import { SupabaseService } from 'src/app/services/supabase.service'
 import { LeagueService } from 'src/app/services/league.service'
 import { TeamService } from 'src/app/services/team.service'
@@ -15,27 +14,29 @@ import { UserService } from 'src/app/services/user.service'
 export class ToolbarComponent implements OnInit, OnDestroy {
   dropdownVisible = false
   leagueDropdownVisible = false
-  isMobile: boolean
+  isMobile = false
 
   private destroy$ = new Subject<void>()
+  private resizeHandler = this.checkIfMobile.bind(this)
 
   constructor(
     private router: Router,
     private leagueService: LeagueService,
     private userService: UserService,
     private teamService: TeamService,
-    private authService: AuthService,
     private supabaseService: SupabaseService
   ) {
     this.checkIfMobile()
-    window.addEventListener('resize', this.checkIfMobile.bind(this))
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    window.addEventListener('resize', this.resizeHandler)
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next()
     this.destroy$.complete()
+    window.removeEventListener('resize', this.resizeHandler)
   }
 
   toggleDropdown(): void {
@@ -83,32 +84,28 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     return url.includes('/my-league') || url.includes('/taxi-squad') || url.includes('/draft-history') || url.includes('/matchup-history')
   }
 
-  get leagueId(): string {
+  get leagueId(): string | undefined {
     return this.leagueService.getMyLeague()?.getId()
   }
 
-  get userId(): string {
+  get userId(): string | undefined {
     return this.userService.getMyUser()?.getUserId()
   }
 
-  get teamUserName(): string {
+  get teamUserName(): string | undefined {
     return this.teamService.getMyTeam()?.getUserName()
   }
 
-  get teamLeagueId(): string {
+  get teamLeagueId(): string | undefined {
     return this.teamService.getMyTeam()?.getLeague()?.getId()
   }
 
   isLoggedIn(): boolean {
-    return this.supabaseService.isAuthenticated() || this.authService.isLoggedIn()
+    return this.supabaseService.isAuthenticated()
   }
 
   signOut(): void {
     this.supabaseService.signOut().subscribe(() => {
-      if (this.authService.isLoggedIn()) {
-        this.authService.toggleAuthentication()
-      }
-
       this.leagueService.reset()
       this.userService.reset()
       this.teamService.reset()

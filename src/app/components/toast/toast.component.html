@@ -1,3 +1,10 @@
-<div *ngIf="isVisible" class="toast" [ngClass]="toastType" @fade>
-    {{ message }}
+<div
+  *ngIf="isVisible"
+  class="toast"
+  [ngClass]="toastType"
+  @fade
+  role="alert"
+  aria-live="polite"
+>
+  {{ message }}
 </div>

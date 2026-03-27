@@ -73,8 +73,7 @@ export class DraftHistoryComponent implements OnInit {
 
         this.loading = false
       },
-      error: (err) => {
-        console.error('Error loading draft history:', err)
+      error: () => {
         this.toastService.showNegativeToast('Error loading draft history')
         this.loading = false
       }

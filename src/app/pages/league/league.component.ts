@@ -30,15 +30,15 @@ export class LeagueComponent implements OnInit, OnDestroy {
   @Input() mode: 'my' | 'selected' = 'selected'
   viewMode: 'league' | 'division' = 'league' // default to full league
   private queryParamsSub?: Subscription
-  league: LeagueModel
+  league!: LeagueModel
   leaguePicture = ''
   leagueName = ''
   leagueId = ''
   leaguePlayoffTeams: number = 0
-  leagueUsers
+  leagueUsers: UserModel[] = []
   leagueRosters: RosterModel[] = []
   standings: StandingsTeamModel[] = []
-  standingsByDivision: { [division: string]: StandingsTeamModel[] }
+  standingsByDivision: Record<string, StandingsTeamModel[]> = {}
   loading = false
   activeTab: 'standings' | 'matchups' | 'playoffs' | 'worldcup' | 'rules' =
     'standings'
@@ -129,15 +129,15 @@ export class LeagueComponent implements OnInit, OnDestroy {
   ]
 
   constructor(
-    private LeagueService: LeagueService,
-    private LeagueHistoryService: LeagueHistoryService,
-    private RulesService: RulesService,
-    private EmailService: EmailService,
+    private leagueService: LeagueService,
+    private leagueHistoryService: LeagueHistoryService,
+    private rulesService: RulesService,
+    private emailService: EmailService,
     private router: Router,
-    private ToastService: ToastService,
-    private StandingsService: StandingsService,
-    private TeamService: TeamService,
-    private UserService: UserService,
+    private toastService: ToastService,
+    private standingsService: StandingsService,
+    private teamService: TeamService,
+    private userService: UserService,
     private supabaseService: SupabaseService,
     private route: ActivatedRoute,
   ) {}
@@ -147,14 +147,12 @@ export class LeagueComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log('League Init.')
     this.loading = true
 
     // If mode is 'my', just use myLeague (already set at login)
     if (this.mode === 'my') {
-      const myLeague = this.LeagueService.getMyLeague()
+      const myLeague = this.leagueService.getMyLeague()
       if (!myLeague) {
-        console.warn('No myLeague set!')
         this.loading = false
         return
       }
@@ -179,25 +177,22 @@ export class LeagueComponent implements OnInit, OnDestroy {
         const queryLeagueId = params['leagueId']
         this.viewMode = params['view']
 
-        console.log('LeagueId from query:', queryLeagueId)
 
-        const currentLeague = this.LeagueService.getCurrentLeague()
+        const currentLeague = this.leagueService.getCurrentLeague()
 
         // Only fetch if we don't already have it or ID differs
         if (!currentLeague || currentLeague.league_id !== queryLeagueId) {
-          this.LeagueService.searchLeague(queryLeagueId)
+          this.leagueService.searchLeague(queryLeagueId)
             .pipe(take(1))
             .subscribe({
               next: (league) => {
-                console.log('League Found from query param:', league)
-                this.LeagueService.setCurrentLeague(league)
-                this.league = this.LeagueService.getCurrentLeague()
-                this.ToastService.showPositiveToast('League Loaded.')
+                this.leagueService.setCurrentLeague(league)
+                this.league = this.leagueService.getCurrentLeague()!
+                this.toastService.showPositiveToast('League Loaded.')
                 this.setupLeague()
               },
-              error: (err) => {
-                console.error('Error loading league from query param', err)
-                this.ToastService.showNegativeToast('Error loading league.')
+              error: () => {
+                this.toastService.showNegativeToast('Error loading league.')
               },
               complete: () => {
                 this.loading = false
@@ -224,26 +219,23 @@ export class LeagueComponent implements OnInit, OnDestroy {
   }
   getLeagueUsers(): void {
     this.loading = true
-    console.log('Getting League Users.')
-    this.LeagueService.findLeagueUsers(this.leagueId)
+    this.leagueService.findLeagueUsers(this.leagueId)
       .pipe(take(1))
       .subscribe({
         next: (users) => {
-          console.log('League Users Found------')
           const userModels = users.map((user) => new UserModel(user))
           this.league.setUsers(userModels)
           if (this.mode == 'my') {
-            this.LeagueService.setMyLeague(this.league)
+            this.leagueService.setMyLeague(this.league)
           } else {
-            this.LeagueService.setCurrentLeague(this.league)
+            this.leagueService.setCurrentLeague(this.league)
           }
           this.leagueUsers = this.league.getUsers()
-          //this.ToastService.showPositiveToast("Users Found.")
+          //this.toastService.showPositiveToast("Users Found.")
           this.getLeagueRosters()
         },
         error: (err) => {
-          console.error('Error Getting League Users', err)
-          this.ToastService.showNegativeToast('Error Finding League Users.')
+          this.toastService.showNegativeToast('Error Finding League Users.')
           this.loading = false
         },
         complete: () => {
@@ -253,30 +245,28 @@ export class LeagueComponent implements OnInit, OnDestroy {
   }
   getLeagueRosters(): void {
     this.loading = true
-    console.log('Getting League Rosters.')
-    this.LeagueService.findLeagueRosters(this.leagueId)
+    this.leagueService.findLeagueRosters(this.leagueId)
       .pipe(take(1))
       .subscribe({
         next: (rosters) => {
-          console.log('League Rosters Found------', rosters)
           const rosterModels = rosters.map((roster) => new RosterModel(roster))
           this.league.setRosters(rosterModels)
           if (this.mode == 'my') {
-            this.LeagueService.setMyLeague(this.league)
+            this.leagueService.setMyLeague(this.league)
           } else {
-            this.LeagueService.setCurrentLeague(this.league)
+            this.leagueService.setCurrentLeague(this.league)
           }
           this.leagueRosters = this.league.getRosters()
 
           this.leagueTaxiSquadIds = this.leagueRosters.reduce(
-            (acc: string[], roster) => acc.concat(roster.taxi),
+            (acc: string[], roster) => acc.concat(roster.taxi || []),
             [],
           )
           this.league.setTaxiSquadIds(this.leagueTaxiSquadIds)
           if (this.mode == 'my') {
-            this.LeagueService.setMyLeague(this.league)
+            this.leagueService.setMyLeague(this.league)
           } else {
-            this.LeagueService.setCurrentLeague(this.league)
+            this.leagueService.setCurrentLeague(this.league)
           }
 
           // Build standings view model
@@ -289,24 +279,24 @@ export class LeagueComponent implements OnInit, OnDestroy {
             // Parse streak from metadata.streak (example: "1W" or "2L")
             let streakTotal = 0
             let streakType: '' | 'win' | 'loss' = ''
-            if (roster.metadata?.streak) {
-              const match = roster.metadata.streak.match(/(\d+)([WL])/)
+            const streakStr = roster.metadata?.streak as string | undefined
+            if (streakStr) {
+              const match = streakStr.match(/(\d+)([WL])/)
               if (match) {
                 streakTotal = parseInt(match[1], 10)
                 streakType = match[2] === 'W' ? 'win' : 'loss'
               }
             }
 
-            //const divisionIndex = roster.settings?.division - 1;
             const divisionIndex =
               roster.settings?.division != null
                 ? `division_${roster.settings.division}`
                 : null
             const divisionName = divisionIndex
-              ? (this.league.metadata?.[divisionIndex] ?? 'Unknown Division')
+              ? String(this.league.metadata?.[divisionIndex] ?? 'Unknown Division')
               : 'Unknown Division'
             const divisionAvatar = divisionIndex
-              ? (this.league.metadata?.[`${divisionIndex}_avatar`] ??
+              ? String(this.league.metadata?.[`${divisionIndex}_avatar`] ??
                 'assets/img/nfl.png')
               : 'assets/img/nfl.png'
 
@@ -317,10 +307,10 @@ export class LeagueComponent implements OnInit, OnDestroy {
               user: new UserModel(user!),
               league: this.league!, // wrap in LeagueModel if needed
               teamName:
-                user?.metadata?.team_name || `${user?.display_name}'s Team`,
+                (user?.metadata?.team_name as string) || `${user?.display_name}'s Team`,
               userName: user?.display_name || 'Unknown User',
               avatar: user?.avatar
-                ? this.UserService.buildAvatar(user.avatar)
+                ? this.userService.buildAvatar(user.avatar)
                 : 'assets/img/nfl.png',
               wins: roster.settings?.wins ?? 0,
               losses: roster.settings?.losses ?? 0,
@@ -345,53 +335,47 @@ export class LeagueComponent implements OnInit, OnDestroy {
           })
         },
         error: (err) => {
-          console.error('Error Getting League Rosters', err)
-          this.ToastService.showNegativeToast('Error Finding League Rosters.')
+          this.toastService.showNegativeToast('Error Finding League Rosters.')
           this.loading = false
         },
         complete: () => {
           // Sort league
-          this.standings = this.StandingsService.buildStandings(this.standings)
+          this.standings = this.standingsService.buildStandings(this.standings)
           this.league.setStandingsTeams(this.standings)
 
           if (this.mode == 'my') {
-            console.log('Setting My Team.')
             // Get My Team
-            const myUserName = this.UserService.getMyUser().getUserName()
+            const myUserName = this.userService.getMyUser()?.getUserName()
             const myTeam = this.standings.find(
               (team) => team.userName === myUserName,
             )
-            this.LeagueService.setMyLeague(this.league)
-            this.TeamService.setMyTeam(myTeam)
+            this.leagueService.setMyLeague(this.league)
+            if (myTeam) this.teamService.setMyTeam(myTeam)
           } else {
-            this.LeagueService.setCurrentLeague(this.league)
-            console.log('Not my league bro.')
+            this.leagueService.setCurrentLeague(this.league)
           }
 
           // dynamically build division -> teams map
           this.standingsByDivision =
-            this.StandingsService.buildDivisionStandings(this.standings)
+            this.standingsService.buildDivisionStandings(this.standings)
 
-          console.log('Standings by division:', this.standingsByDivision)
           this.loading = false
         },
       })
   }
   selectCurrentTeam(team: StandingsTeamModel): void {
-    console.log(`Team Selected: ${team.getTeamName()}`)
-    if (team.getTeamName() == this.TeamService.getMyTeam()?.getTeamName()) {
-      console.log('Selected yourself - (conceited, pompous, self centered)')
+    if (team.getTeamName() == this.teamService.getMyTeam()?.getTeamName()) {
       this.router.navigate(['/my-team'], {
         queryParams: {
-          user: this.TeamService.getMyTeam().getUserName(),
+          user: this.teamService.getMyTeam()?.getUserName(),
           league: this.league.getId(),
         },
       })
     } else {
-      this.TeamService.setCurrentTeam(team)
+      this.teamService.setCurrentTeam(team)
       this.router.navigate(['/selected-team'], {
         queryParams: {
-          user: this.TeamService.getCurrentTeam().getUserName(),
+          user: this.teamService.getCurrentTeam()?.getUserName(),
           league: this.league.getId(),
         },
       })
@@ -399,7 +383,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
   }
   goToUserProfile(userId: string): void {
     if (!userId) return
-    if (userId === this.UserService.getMyUser()?.getUserId()) {
+    if (userId === this.userService.getMyUser()?.getUserId()) {
       this.router.navigate(['/my-profile'], {
         queryParams: { userId },
       })
@@ -415,10 +399,10 @@ export class LeagueComponent implements OnInit, OnDestroy {
     if (this.matchupHistoryLoaded) return
     this.loading = true
 
-    this.LeagueService.getLeagueChain(this.leagueId)
+    this.leagueService.getLeagueChain(this.leagueId)
       .pipe(
         switchMap((chain) =>
-          this.LeagueHistoryService.getMatchupHistoryFromChain(chain),
+          this.leagueHistoryService.getMatchupHistoryFromChain(chain),
         ),
         take(1),
       )
@@ -438,8 +422,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
           this.loading = false
         },
         error: (err) => {
-          console.error('Error loading matchup history:', err)
-          this.ToastService.showNegativeToast('Error loading matchup history.')
+          this.toastService.showNegativeToast('Error loading matchup history.')
           this.loading = false
         },
       })
@@ -501,7 +484,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
       height: card.height,
     }
 
-    this.LeagueService.getLeagueMatchups(record.league_id, record.week)
+    this.leagueService.getLeagueMatchups(record.league_id, record.week)
       .pipe(take(1))
       .subscribe({
         next: (pairs) => {
@@ -511,7 +494,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
               p.teamB.matchup_id === record.matchup_id,
           )
           if (!pair) {
-            this.ToastService.showNegativeToast('Could not load matchup detail')
+            this.toastService.showNegativeToast('Could not load matchup detail')
             return
           }
 
@@ -556,7 +539,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
           }
         },
         error: () => {
-          this.ToastService.showNegativeToast('Error loading matchup details')
+          this.toastService.showNegativeToast('Error loading matchup details')
         },
       })
   }
@@ -582,8 +565,8 @@ export class LeagueComponent implements OnInit, OnDestroy {
   loadPlayoffBracket(): void {
     this.loading = true
     forkJoin({
-      winners: this.LeagueService.getWinnersBracket(this.leagueId),
-      losers: this.LeagueService.getLosersBracket(this.leagueId),
+      winners: this.leagueService.getWinnersBracket(this.leagueId),
+      losers: this.leagueService.getLosersBracket(this.leagueId),
     })
       .pipe(take(1))
       .subscribe({
@@ -596,7 +579,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
           this.loading = false
         },
         error: () => {
-          this.ToastService.showNegativeToast('Error loading playoff bracket.')
+          this.toastService.showNegativeToast('Error loading playoff bracket.')
           this.loading = false
         },
       })
@@ -638,14 +621,14 @@ export class LeagueComponent implements OnInit, OnDestroy {
 
   loadWorldCup(): void {
     this.loading = true
-    this.LeagueService.getLeagueChain(this.leagueId)
+    this.leagueService.getLeagueChain(this.leagueId)
       .pipe(
         switchMap((chain) =>
-          this.LeagueHistoryService.getMatchupHistoryFromChain(chain).pipe(
+          this.leagueHistoryService.getMatchupHistoryFromChain(chain).pipe(
             take(1),
             switchMap((matchups) => {
               this.worldCupDivisions =
-                this.LeagueHistoryService.getWorldCupStandings(chain, matchups)
+                this.leagueHistoryService.getWorldCupStandings(chain, matchups)
               // Gather unique seasons
               this.worldCupSeasons = [
                 ...new Set(matchups.map((m) => m.season)),
@@ -666,7 +649,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
           this.loading = false
         },
         error: () => {
-          this.ToastService.showNegativeToast(
+          this.toastService.showNegativeToast(
             'Error loading World Cup standings.',
           )
           this.loading = false
@@ -812,7 +795,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
   }
 
   loadProposals(): void {
-    this.RulesService.getProposals(this.leagueId)
+    this.rulesService.getProposals(this.leagueId)
       .pipe(take(1))
       .subscribe({
         next: (proposals) => {
@@ -827,7 +810,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
     this.submittingProposal = true
     const title = this.proposalTitle.trim()
     const description = this.proposalDescription.trim()
-    this.RulesService.createProposal(this.leagueId, title, description)
+    this.rulesService.createProposal(this.leagueId, title, description)
       .pipe(take(1))
       .subscribe({
         next: (success) => {
@@ -835,7 +818,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
             this.proposalTitle = ''
             this.proposalDescription = ''
             this.showProposalForm = false
-            this.ToastService.showPositiveToast('Proposal submitted!')
+            this.toastService.showPositiveToast('Proposal submitted!')
             this.loadProposals()
 
             // Fire-and-forget email notification
@@ -845,11 +828,11 @@ export class LeagueComponent implements OnInit, OnDestroy {
               profile?.sleeper_username ||
               profile?.email?.split('@')[0] ||
               'A league member'
-            this.RulesService.getLeagueMemberEmails()
+            this.rulesService.getLeagueMemberEmails()
               .pipe(take(1))
               .subscribe((recipients) => {
                 if (recipients.length > 0) {
-                  this.EmailService.sendRuleProposalEmail(
+                  this.emailService.sendRuleProposalEmail(
                     {
                       title,
                       description,
@@ -861,26 +844,26 @@ export class LeagueComponent implements OnInit, OnDestroy {
                 }
               })
           } else {
-            this.ToastService.showNegativeToast('Failed to submit proposal.')
+            this.toastService.showNegativeToast('Failed to submit proposal.')
           }
           this.submittingProposal = false
         },
         error: () => {
-          this.ToastService.showNegativeToast('Failed to submit proposal.')
+          this.toastService.showNegativeToast('Failed to submit proposal.')
           this.submittingProposal = false
         },
       })
   }
 
   castVote(proposalId: string, vote: 'yes' | 'no'): void {
-    this.RulesService.castVote(proposalId, vote)
+    this.rulesService.castVote(proposalId, vote)
       .pipe(take(1))
       .subscribe({
         next: (success) => {
           if (success) {
             this.loadProposals()
           } else {
-            this.ToastService.showNegativeToast('Failed to cast vote.')
+            this.toastService.showNegativeToast('Failed to cast vote.')
           }
         },
       })
@@ -908,13 +891,13 @@ export class LeagueComponent implements OnInit, OnDestroy {
       if (p.status !== 'open') return
       if (p.yes_count >= this.approvalThreshold) {
         this.recentlyStamped.add(p.id)
-        this.RulesService.updateProposalStatus(p.id, 'approved')
+        this.rulesService.updateProposalStatus(p.id, 'approved')
           .pipe(take(1))
           .subscribe({
             next: (success) => {
               if (success) {
                 p.status = 'approved'
-                this.ToastService.showPositiveToast(
+                this.toastService.showPositiveToast(
                   `"${p.title}" has been APPROVED!`,
                 )
                 this.sendRuleStatusEmail(p, 'approved')
@@ -923,13 +906,13 @@ export class LeagueComponent implements OnInit, OnDestroy {
           })
       } else if (p.no_count >= this.denialThreshold) {
         this.recentlyStamped.add(p.id)
-        this.RulesService.updateProposalStatus(p.id, 'rejected')
+        this.rulesService.updateProposalStatus(p.id, 'rejected')
           .pipe(take(1))
           .subscribe({
             next: (success) => {
               if (success) {
                 p.status = 'rejected'
-                this.ToastService.showNegativeToast(
+                this.toastService.showNegativeToast(
                   `"${p.title}" has been DENIED.`,
                 )
                 this.sendRuleStatusEmail(p, 'rejected')
@@ -945,14 +928,14 @@ export class LeagueComponent implements OnInit, OnDestroy {
     status: 'approved' | 'rejected',
   ): void {
     forkJoin({
-      voters: this.RulesService.getVoterNames(proposal.id),
-      recipients: this.RulesService.getLeagueMemberEmails(),
+      voters: this.rulesService.getVoterNames(proposal.id),
+      recipients: this.rulesService.getLeagueMemberEmails(),
     })
       .pipe(take(1))
       .subscribe(({ voters, recipients }) => {
         if (recipients.length === 0) return
         if (status === 'approved') {
-          this.EmailService.sendRuleAcceptedEmail(
+          this.emailService.sendRuleAcceptedEmail(
             proposal,
             voters.approved_by,
             voters.rejected_by,
@@ -960,7 +943,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
             this.leagueName,
           )
         } else {
-          this.EmailService.sendRuleDeniedEmail(
+          this.emailService.sendRuleDeniedEmail(
             proposal,
             voters.approved_by,
             voters.rejected_by,
@@ -972,15 +955,15 @@ export class LeagueComponent implements OnInit, OnDestroy {
   }
 
   deleteProposal(proposalId: string): void {
-    this.RulesService.deleteProposal(proposalId)
+    this.rulesService.deleteProposal(proposalId)
       .pipe(take(1))
       .subscribe({
         next: (success) => {
           if (success) {
-            this.ToastService.showPositiveToast('Proposal deleted.')
+            this.toastService.showPositiveToast('Proposal deleted.')
             this.loadProposals()
           } else {
-            this.ToastService.showNegativeToast('Failed to delete proposal.')
+            this.toastService.showNegativeToast('Failed to delete proposal.')
           }
         },
       })

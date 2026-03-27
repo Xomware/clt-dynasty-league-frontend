@@ -1,34 +1,33 @@
-import { LeagueConfig } from './league-config.interface'
 import { League } from './league.interface'
 import { RosterModel } from './roster.model'
 import { StandingsTeamModel } from './standings.model'
 import { UserModel } from './user.model'
 
 export class LeagueModel implements League {
-  league_id: string
-  name: string
-  season: string
-  users: UserModel[]
-  rosters: RosterModel[]
-  season_type: string // "regular" | "post" | "off"
-  sport: string
-  status: string // "in_season" | "pre_draft" | "complete"
-  total_rosters: number
-  shard: number
-  draft_id: string
-  previous_league_id: string | null
+  league_id!: string
+  name!: string
+  season!: string
+  users: UserModel[] = []
+  rosters: RosterModel[] = []
+  season_type!: string
+  sport!: string
+  status!: string
+  total_rosters!: number
+  shard!: number
+  draft_id!: string
+  previous_league_id!: string | null
   bracket_id?: string | null
   group_id?: string | null
-  avatar: string | null
+  avatar!: string | null
   divisions: string[] = []
   divisionAvatars: string[] = []
   taxiSquadIds: string[] = []
   standingsTeams: StandingsTeamModel[] = []
 
-  scoring_settings: Record<string, number>
-  roster_positions: string[]
+  scoring_settings!: Record<string, number>
+  roster_positions!: string[]
 
-  settings: {
+  settings!: {
     daily_waivers?: number
     daily_waiver_hour?: number
     playoff_round_type?: number
@@ -41,27 +40,28 @@ export class LeagueModel implements League {
     max_keepers?: number
     draft_rounds?: number
     num_teams?: number
-    [key: string]: any
+    [key: string]: unknown
   }
 
-  metadata: {
+  metadata!: {
     latest_league_winner_roster_id?: string
-    [key: string]: any
+    [key: string]: unknown
   } | null
 
   constructor(data: League) {
     Object.assign(this, data)
   }
 
-  // ---- Helpers ---
   getProfilePicture(): string {
     return this.avatar
       ? `https://sleepercdn.com/avatars/${this.avatar}`
       : 'assets/img/nfl.png'
   }
+
   getId(): string {
     return this.league_id
   }
+
   getDisplayName(): string {
     return this.name || `League ${this.league_id}`
   }
@@ -71,14 +71,15 @@ export class LeagueModel implements League {
       return
     }
     const divisionKeys = Object.keys(this.metadata).filter((key) =>
-      key.startsWith('division_')
+      key.startsWith('division_') && !key.endsWith('_avatar')
     )
-    this.divisions = divisionKeys.map((key) => this.metadata![key])
+    this.divisions = divisionKeys.map((key) => this.metadata![key] as string)
     const divisionAvatarKeys = Object.keys(this.metadata).filter(
       (key) => key.startsWith('division_') && key.endsWith('_avatar')
     )
-    this.divisionAvatars = divisionAvatarKeys.map((key) => this.metadata![key])
+    this.divisionAvatars = divisionAvatarKeys.map((key) => this.metadata![key] as string)
   }
+
   getDivisions(): string[] {
     return this.divisions
   }
@@ -88,7 +89,7 @@ export class LeagueModel implements League {
   }
 
   isDynasty(): boolean {
-    return this.settings?.type === 2 || this.metadata?.dynasty === '1' || false
+    return (this.settings as Record<string, unknown>)?.['type'] === 2 || this.metadata?.['dynasty'] === '1' || false
   }
 
   getPlayoffTeams(): number {
@@ -115,32 +116,34 @@ export class LeagueModel implements League {
     return this.metadata?.latest_league_winner_roster_id ?? null
   }
 
-  // ---- USERS & ROSTERS ----
   setUsers(users: UserModel[]): void {
     this.users = users
   }
+
   getUsers(): UserModel[] {
     return this.users
   }
+
   setRosters(rosters: RosterModel[]): void {
     this.rosters = rosters
   }
+
   getRosters(): RosterModel[] {
     return this.rosters
   }
 
-  // Taxi Squad
   setTaxiSquadIds(ids: string[]): void {
     this.taxiSquadIds = ids
   }
+
   getTaxiSquadIds(): string[] {
     return this.taxiSquadIds
   }
 
-  // ------- TEAMS ---------
   setStandingsTeams(standingsTeams: StandingsTeamModel[]): void {
     this.standingsTeams = standingsTeams
   }
+
   getStandingsTeams(): StandingsTeamModel[] {
     return this.standingsTeams
   }

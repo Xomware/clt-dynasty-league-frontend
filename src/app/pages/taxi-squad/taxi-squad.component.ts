@@ -20,12 +20,12 @@ export class TaxiSquadComponent implements OnInit {
   selectedPlayer: TaxiSquadPlayerModel | null = null
   stolenPlayerIds = new Set<string>()
   mySleeperUserId = ''
-  modalStart!: {
+  modalStart: {
     top: number
     left: number
     width: number
     height: number
-  } | null
+  } | null = null
 
   POSITION_ORDER = ['QB', 'RB', 'WR', 'TE', 'K', 'DEF']
   tabs = [
@@ -35,21 +35,20 @@ export class TaxiSquadComponent implements OnInit {
   ]
   selectedTab = 'round'
 
-  // Cached grouped results to prevent change detection re-renders
   cachedByRound: { round: number; players: TaxiSquadPlayerModel[] }[] = []
   cachedByPosition: { position: string; players: TaxiSquadPlayerModel[] }[] = []
   cachedByOwner: { ownerDisplayName: string; ownerTeamName: string | undefined; players: TaxiSquadPlayerModel[] }[] = []
 
   constructor(
-    private ToastService: ToastService,
-    private LeagueService: LeagueService,
-    private TaxiSquadService: TaxiSquadService,
-    private DraftService: DraftService,
+    private toastService: ToastService,
+    private leagueService: LeagueService,
+    private taxiSquadService: TaxiSquadService,
+    private draftService: DraftService,
     private supabaseService: SupabaseService,
   ) {}
 
   ngOnInit(): void {
-    this.league = this.LeagueService.getMyLeague()
+    this.league = this.leagueService.getMyLeague()!
     this.mySleeperUserId = this.supabaseService.getProfile()?.sleeper_user_id || ''
     this.loadTaxiPlayers()
     this.loadStealRequests()
@@ -60,33 +59,29 @@ export class TaxiSquadComponent implements OnInit {
 
     this.loading = true
 
-    // Step 1: Ensure all drafts + picks for this league are loaded
-    this.DraftService.loadDraftsAndPicks(this.league.league_id).subscribe({
+    this.draftService.loadDraftsAndPicks(this.league.league_id).subscribe({
       next: () => {
-        // Step 2: Build Taxi Squad players from service
-        this.TaxiSquadService.loadTaxiSquadPlayers(
+        this.taxiSquadService.loadTaxiSquadPlayers(
           this.league.league_id
         ).subscribe({
           next: (players) => {
             this.taxiPlayers = players
             this.sortPlayers()
             this.rebuildGroupCaches()
-            this.ToastService.showPositiveToast(
+            this.toastService.showPositiveToast(
               'Taxi Squad Loaded Successfully.'
             )
           },
-          error: (err) => {
-            console.error('Error building Taxi Squad:', err)
-            this.ToastService.showNegativeToast('Failed to build Taxi Squad.')
+          error: () => {
+            this.toastService.showNegativeToast('Failed to build Taxi Squad.')
           },
           complete: () => {
             this.loading = false
           },
         })
       },
-      error: (err) => {
-        console.error('Error loading drafts:', err)
-        this.ToastService.showNegativeToast('Failed to load draft data.')
+      error: () => {
+        this.toastService.showNegativeToast('Failed to load draft data.')
         this.loading = false
       },
     })
@@ -94,14 +89,14 @@ export class TaxiSquadComponent implements OnInit {
 
   loadStealRequests(): void {
     if (!this.league) return
-    this.TaxiSquadService.getStealRequests(this.league.league_id).subscribe({
+    this.taxiSquadService.getStealRequests(this.league.league_id).subscribe({
       next: (ids) => {
         this.stolenPlayerIds = ids
       },
     })
   }
 
-  sortPlayers() {
+  sortPlayers(): void {
     this.taxiPlayers.sort((a, b) => {
       const aIndex = this.POSITION_ORDER.indexOf(a.position)
       const bIndex = this.POSITION_ORDER.indexOf(b.position)
@@ -109,7 +104,7 @@ export class TaxiSquadComponent implements OnInit {
     })
   }
 
-  openPlayerModal(player: TaxiSquadPlayerModel, event: MouseEvent) {
+  openPlayerModal(player: TaxiSquadPlayerModel, event: MouseEvent): void {
     const card = (event.currentTarget as HTMLElement).getBoundingClientRect()
     this.modalStart = {
       top: card.top,
@@ -120,17 +115,17 @@ export class TaxiSquadComponent implements OnInit {
     this.selectedPlayer = player
   }
 
-  closePlayerModal() {
+  closePlayerModal(): void {
     this.selectedPlayer = null
     this.modalStart = null
   }
 
-  onStealComplete(playerId: string) {
+  onStealComplete(playerId: string): void {
     this.stolenPlayerIds.add(playerId)
     this.closePlayerModal()
   }
 
-  getTeamStyle(team: string | undefined) {
+  getTeamStyle(team: string | undefined): Record<string, string> {
     if (!team) return { backgroundColor: '#2a2a2a', border: '2px solid #444' }
 
     const colors = TEAM_COLORS[team.toLowerCase()]
@@ -142,7 +137,7 @@ export class TaxiSquadComponent implements OnInit {
     }
   }
 
-  getTeamButtonStyle(team: string | undefined) {
+  getTeamButtonStyle(team: string | undefined): Record<string, string> {
     if (!team) return { background: '#444', color: '#fff' }
 
     const colors = TEAM_COLORS[team.toLowerCase()]
@@ -158,9 +153,8 @@ export class TaxiSquadComponent implements OnInit {
       cursor: 'pointer',
     }
   }
-  // Rebuild cached groupings (called once after data loads)
-  rebuildGroupCaches() {
-    // By Round
+
+  rebuildGroupCaches(): void {
     const rounds = [
       ...new Set(this.taxiPlayers.map((p) => p.draftRound ?? -1)),
     ].sort((a, b) => {
@@ -173,14 +167,12 @@ export class TaxiSquadComponent implements OnInit {
       players: this.taxiPlayers.filter((p) => (p.draftRound ?? -1) === r),
     }))
 
-    // By Position
     const order = ['QB', 'RB', 'WR', 'TE']
     this.cachedByPosition = order.map((pos) => ({
       position: pos,
       players: this.taxiPlayers.filter((p) => p.position === pos),
     }))
 
-    // By Owner
     const owners = [...new Set(this.taxiPlayers.map((p) => p.ownerDisplayName))]
     this.cachedByOwner = owners.map((owner) => ({
       ownerDisplayName: owner,
@@ -190,7 +182,7 @@ export class TaxiSquadComponent implements OnInit {
     }))
   }
 
-  trackByPlayerId(index: number, player: TaxiSquadPlayerModel): string {
+  trackByPlayerId(_index: number, player: TaxiSquadPlayerModel): string {
     return player.player_id
   }
 }

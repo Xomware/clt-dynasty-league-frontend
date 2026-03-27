@@ -21,12 +21,12 @@ export interface League {
     waiver_type?: number;
     reserve_slots?: number;
     taxi_slots?: number;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   scoring_settings?: Record<string, number>;
   roster_positions?: string[];
   metadata: {
     latest_league_winner_roster_id?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   } | null;
 }

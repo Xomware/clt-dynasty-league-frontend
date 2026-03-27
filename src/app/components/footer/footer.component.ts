@@ -1,29 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable, take } from 'rxjs';
-import { ToastService } from 'src/app/services/toast.service';
+import { Component } from '@angular/core'
 
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss']
 })
-export class FooterComponent implements OnInit {
-  showDynamicButton: boolean = false;
-  footerButtonText: string = '';
-  githubRepoUrl: string = 'https://github.com/domgiordano/xomper-front-end';
-  userId: string;
+export class FooterComponent {
+  showDynamicButton = false
+  footerButtonText = ''
+  githubRepoUrl = 'https://github.com/domgiordano/xomper-front-end'
 
-
-  constructor(
-    private router: Router,
-    private ToastService: ToastService,
-  ) {}
-
-  ngOnInit() {
-  }
-
-  openGitHubRepo() {
-    window.open(this.githubRepoUrl, '_blank');
+  openGitHubRepo(): void {
+    window.open(this.githubRepoUrl, '_blank')
   }
 }

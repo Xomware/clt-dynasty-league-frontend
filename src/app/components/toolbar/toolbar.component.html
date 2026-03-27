@@ -1,10 +1,12 @@
-<div class="toolbar" [ngClass]="{ 'show-dropdown': dropdownVisible }">
+<nav class="toolbar" [ngClass]="{ 'show-dropdown': dropdownVisible }" role="navigation" aria-label="Main navigation">
   <h2 class="app-title">
     <img
       class="banner-icon"
       src="assets/img/xomper-banner.jpg"
-      alt="XOMPER"
+      alt="XOMPER - Go to home"
       (click)="goHome()"
+      (keydown.enter)="goHome()"
+      tabindex="0"
       style="cursor: pointer;"
     />
   </h2>
@@ -29,24 +31,29 @@
             class="league-trigger"
             [class.active]="isLeagueRouteActive()"
             (click)="toggleLeagueDropdown($event)"
+            (keydown.enter)="toggleLeagueDropdown($event)"
+            tabindex="0"
+            role="button"
+            [attr.aria-expanded]="leagueDropdownVisible"
+            aria-haspopup="true"
           >
             My League
-            <span class="dropdown-arrow" [class.open]="leagueDropdownVisible">&#9662;</span>
+            <span class="dropdown-arrow" [class.open]="leagueDropdownVisible" aria-hidden="true">&#9662;</span>
           </a>
-          <div class="league-dropdown" *ngIf="leagueDropdownVisible">
-            <a (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId, view: 'league' })">
+          <div class="league-dropdown" *ngIf="leagueDropdownVisible" role="menu">
+            <a role="menuitem" (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId!, view: 'league' })">
               League Home
             </a>
-            <a (click)="navigateLeagueFeature('/taxi-squad', { league: leagueId })">
+            <a role="menuitem" (click)="navigateLeagueFeature('/taxi-squad', { league: leagueId! })">
               Taxi Squad
             </a>
-            <a (click)="navigateLeagueFeature('/draft-history')">
+            <a role="menuitem" (click)="navigateLeagueFeature('/draft-history')">
               Draft History
             </a>
-            <a (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId, view: 'league', tab: 'matchups' })">
+            <a role="menuitem" (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId!, view: 'league', tab: 'matchups' })">
               Matchups
             </a>
-            <a (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId, view: 'league', tab: 'rules' })">
+            <a role="menuitem" (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId!, view: 'league', tab: 'rules' })">
               Rules
             </a>
           </div>
@@ -58,50 +65,56 @@
       </ng-container>
     </div>
 
-    <button *ngIf="isLoggedIn()" class="sign-out-btn" (click)="signOut()">
+    <button *ngIf="isLoggedIn()" class="sign-out-btn" (click)="signOut()" aria-label="Sign out">
       Sign Out
     </button>
   </div>
 
   <!-- Mobile Menu Button -->
-  <div class="dropdown-button" (click)="toggleDropdown()">&#9776;</div>
+  <button
+    class="dropdown-button"
+    (click)="toggleDropdown()"
+    [attr.aria-expanded]="dropdownVisible"
+    aria-label="Toggle navigation menu"
+    aria-controls="mobile-menu"
+  >&#9776;</button>
 
   <!-- Mobile Dropdown -->
-  <div class="dropdown" *ngIf="dropdownVisible">
-    <a routerLink="/home" (click)="closeMobileMenu()">Home</a>
-    <a routerLink="/search" (click)="closeMobileMenu()">Search</a>
+  <div class="dropdown" id="mobile-menu" *ngIf="dropdownVisible" role="menu">
+    <a role="menuitem" routerLink="/home" (click)="closeMobileMenu()">Home</a>
+    <a role="menuitem" routerLink="/search" (click)="closeMobileMenu()">Search</a>
 
     <ng-container *ngIf="isLoggedIn()">
       <div class="dropdown-section-header">My Stuff</div>
 
-      <a *ngIf="userId" routerLink="/my-profile" [queryParams]="{ userId: userId }" (click)="closeMobileMenu()">
+      <a role="menuitem" *ngIf="userId" routerLink="/my-profile" [queryParams]="{ userId: userId }" (click)="closeMobileMenu()">
         My Profile
       </a>
-      <a *ngIf="teamUserName" routerLink="/my-team" [queryParams]="{ user: teamUserName, league: teamLeagueId }" (click)="closeMobileMenu()">
+      <a role="menuitem" *ngIf="teamUserName" routerLink="/my-team" [queryParams]="{ user: teamUserName, league: teamLeagueId }" (click)="closeMobileMenu()">
         My Team
       </a>
 
       <ng-container *ngIf="leagueId">
         <div class="dropdown-section-header">My League</div>
 
-        <a (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId, view: 'league' })">
+        <a role="menuitem" (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId!, view: 'league' })">
           League Home
         </a>
-        <a (click)="navigateLeagueFeature('/taxi-squad', { league: leagueId })">
+        <a role="menuitem" (click)="navigateLeagueFeature('/taxi-squad', { league: leagueId! })">
           Taxi Squad
         </a>
-        <a (click)="navigateLeagueFeature('/draft-history')">
+        <a role="menuitem" (click)="navigateLeagueFeature('/draft-history')">
           Draft History
         </a>
-        <a (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId, view: 'league', tab: 'matchups' })">
+        <a role="menuitem" (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId!, view: 'league', tab: 'matchups' })">
           Matchups
         </a>
-        <a (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId, view: 'league', tab: 'rules' })">
+        <a role="menuitem" (click)="navigateLeagueFeature('/my-league', { leagueId: leagueId!, view: 'league', tab: 'rules' })">
           Rules
         </a>
       </ng-container>
 
-      <a class="sign-out-link" (click)="signOut()">Sign Out</a>
+      <a role="menuitem" class="sign-out-link" (click)="signOut()">Sign Out</a>
     </ng-container>
   </div>
-</div>
+</nav>

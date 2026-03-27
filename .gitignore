@@ -49,3 +49,11 @@ src/environments/environment.local.ts
 
 # Claude
 .claude/
+
+# Claude Code session memory (personal, not shared)
+.claude/memory/
+# Claude setup backups
+.claude/.backups/
+# Personal Claude overrides (not shared)
+CLAUDE.local.md
+.claude/settings.local.json

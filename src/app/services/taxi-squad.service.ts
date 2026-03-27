@@ -1,4 +1,3 @@
-// taxi-squad.service.ts
 import { Injectable } from '@angular/core'
 import { LeagueService } from './league.service'
 import { DraftService } from './draft.service'
@@ -6,23 +5,28 @@ import { PlayerService } from './player.service'
 import { SupabaseService } from './supabase.service'
 import { TaxiSquadPlayerModel } from '../models/taxi-squad-player.model'
 import { Roster } from '../models/roster.interface'
-import { DraftPick } from '../models/draft.interface'
 import { forkJoin, from, map, Observable, of, switchMap, catchError } from 'rxjs'
 import { PlayerModel } from '../models/player.model'
+
+interface StealRequest {
+  player_id: string
+}
 
 @Injectable({ providedIn: 'root' })
 export class TaxiSquadService {
   constructor(
-    private LeagueService: LeagueService,
-    private DraftService: DraftService,
-    private PlayerService: PlayerService,
+    private leagueService: LeagueService,
+    private draftService: DraftService,
+    private playerService: PlayerService,
     private supabaseService: SupabaseService,
   ) {}
 
   loadTaxiSquadPlayers(leagueId: string): Observable<TaxiSquadPlayerModel[]> {
-    return this.DraftService.getDraftsForLeague(leagueId).pipe(
+    return this.draftService.getDraftsForLeague(leagueId).pipe(
       switchMap((drafts) => {
-        const league = this.LeagueService.getMyLeague()
+        const league = this.leagueService.getMyLeague()
+        if (!league) return of([])
+
         const picks = drafts.map((draft) => draft.picks)
         const combinedPicks = picks.flat()
 
@@ -33,12 +37,11 @@ export class TaxiSquadService {
             (u) => u.user_id === roster.owner_id
           )
           const ownerTeam = league.standingsTeams.find(
-            (st) => st.user.user_id === ownerUser.user_id
+            (st) => st.user.user_id === ownerUser?.user_id
           )
 
           roster.taxi?.forEach((playerId) => {
-            // now async
-            const player$ = this.PlayerService.getPlayerById(playerId).pipe(
+            const player$ = this.playerService.getPlayerById(playerId).pipe(
               map((playerData) => {
                 const draftPick = combinedPicks.find(
                   (p) => p.player_id === playerId
@@ -46,7 +49,7 @@ export class TaxiSquadService {
 
                 const basePlayer = new PlayerModel(playerData)
 
-                const taxiModel = new TaxiSquadPlayerModel(basePlayer, {
+                return new TaxiSquadPlayerModel(basePlayer, {
                   rosterId: roster.roster_id,
                   ownerUserId: ownerUser?.user_id ?? '',
                   ownerDisplayName: ownerUser?.display_name ?? '',
@@ -55,7 +58,6 @@ export class TaxiSquadService {
                   draftRound: draftPick?.round ?? -1,
                   draftPickNo: draftPick?.draft_slot ?? -1,
                 })
-                return taxiModel
               })
             )
 
@@ -63,7 +65,6 @@ export class TaxiSquadService {
           })
         })
 
-        // wait for all player requests to resolve
         return taxiPlayerRequests.length ? forkJoin(taxiPlayerRequests) : of([])
       })
     )
@@ -78,7 +79,7 @@ export class TaxiSquadService {
     ).pipe(
       map(({ data, error }) => {
         if (error || !data) return new Set<string>()
-        return new Set<string>((data as any[]).map((r) => r.player_id))
+        return new Set<string>((data as StealRequest[]).map((r) => r.player_id))
       }),
       catchError(() => of(new Set<string>()))
     )

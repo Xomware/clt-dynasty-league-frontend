@@ -45,6 +45,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run tests
+        run: npx ng test --no-watch --browsers=ChromeHeadless
+
       - name: Inject environment variables into Angular
         run: |
           sed -i "s|apiAuthToken: '---'|apiAuthToken: '$(grep 'API_AUTH_TOKEN' xomper_credentials.env | cut -d'=' -f2)'|g" src/environments/environment.ts

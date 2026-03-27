@@ -1,4 +1,4 @@
-<footer class="footer">
+<footer class="footer" role="contentinfo">
   <div class="left-section">
     <span>&#64;domgiordano on Github</span>
   </div>
@@ -6,10 +6,10 @@
     <button class="footer-button">
       {{ footerButtonText }}
     </button>
-  <div class="spacer" *ngIf="!showDynamicButton"></div>
   </div>
+  <div class="spacer" *ngIf="!showDynamicButton"></div>
   <div class="right-section">
-    <button class="footer-button" (click)="openGitHubRepo()">
+    <button class="footer-button" (click)="openGitHubRepo()" aria-label="View source code on GitHub">
       Check the code out
     </button>
   </div>

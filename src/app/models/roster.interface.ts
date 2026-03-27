@@ -8,7 +8,7 @@ export interface Roster {
     allow_pn_scoring?: string;
     record?: string; // W, L, or T
     restrict_pn_scoring_starters_only?: string;
-    [key: string]: any; // catch any other sleeper metadata fields
+    [key: string]: unknown; // catch any other sleeper metadata fields
   } | null;
   owner_id: string | null;    // user ID of roster owner
   player_map: Record<string, any> | null; // mapping player_id -> ?
@@ -27,7 +27,7 @@ export interface Roster {
     waiver_position?: number;
     waiver_budget_used?: number;
     total_moves?: number;
-    [key: string]: any;       // allow unknown Sleeper fields
+    [key: string]: unknown;       // allow unknown Sleeper fields
   };
   starters: string[] | null;  // starting lineup player IDs
   taxi: string[] | null;      // taxi squad player IDs

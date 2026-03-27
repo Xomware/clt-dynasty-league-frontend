@@ -8,8 +8,20 @@
   align-items: center;
   min-height: 100vh;
   padding: $spacing-lg;
-  background: $bg-gradient;
+  background: transparent;
   color: $text-primary;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 // Loading

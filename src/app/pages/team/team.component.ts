@@ -20,74 +20,68 @@ import { PlayerService } from 'src/app/services/player.service'
 })
 export class TeamComponent implements OnInit {
   @Input() mode: 'my' | 'selected' = 'selected'
-  team: StandingsTeamModel
+  team!: StandingsTeamModel
   teamPicture = ''
   teamName = ''
-  teamRoster: RosterModel
-  teamPlayers: PlayerModel[]
+  teamRoster!: RosterModel
+  teamPlayers: PlayerModel[] = []
   starters: PlayerModel[] = []
   bench: PlayerModel[] = []
   taxi: PlayerModel[] = []
-  teamLeague: LeagueModel
+  teamLeague!: LeagueModel
   loading = false
   selectedPlayer: PlayerModel | null = null
-  modalStart!: {
+  modalStart: {
     top: number
     left: number
     width: number
     height: number
-  } | null
+  } | null = null
   POSITION_ORDER = ['QB', 'RB', 'WR', 'TE', 'K', 'DEF']
 
   constructor(
-    private ToastService: ToastService,
-    private TeamService: TeamService,
-    private PlayerService: PlayerService,
-    private UserService: UserService,
-    private LeagueService: LeagueService,
+    private toastService: ToastService,
+    private teamService: TeamService,
+    private playerService: PlayerService,
+    private userService: UserService,
+    private leagueService: LeagueService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     if (this.mode === 'my') {
-      this.team = this.TeamService.getMyTeam()
+      this.team = this.teamService.getMyTeam()!
     } else {
-      this.team = this.TeamService.getCurrentTeam()
+      this.team = this.teamService.getCurrentTeam()!
     }
-    //this.team = this.TeamService.getCurrentTeam();
     this.teamPicture = this.team.getProfilePicture()
     this.teamName = this.team.getTeamName()
     this.teamRoster = this.team.getRoster()
     this.teamLeague = this.team.getLeague()
     this.teamPlayers = this.team.getPlayers()
-    // Always load roster
-    console.log('Need the roster rq.')
     this.loadRosters()
   }
 
   loadRosters(): void {
     this.loading = true
-    const playerCalls = this.teamRoster.players.map((playerId: string) =>
-      this.PlayerService.getPlayerById(playerId)
+    const playerCalls = (this.teamRoster.players || []).map((playerId: string) =>
+      this.playerService.getPlayerById(playerId)
     )
-    // Call at once
     forkJoin(playerCalls).subscribe({
       next: (players: Player[]) => {
         const playerModels = players.map((player) => new PlayerModel(player))
         this.team.setPlayers(playerModels)
-        if (this.mode == 'my') {
-          this.TeamService.setMyTeam(this.team)
+        if (this.mode === 'my') {
+          this.teamService.setMyTeam(this.team)
         } else {
-          this.TeamService.setCurrentTeam(this.team)
+          this.teamService.setCurrentTeam(this.team)
         }
         this.teamPlayers = this.team.getPlayers()
         this.sortPlayersIntoGroups()
-        console.log('Loaded players:', this.teamPlayers)
-        this.ToastService.showPositiveToast('Successfully Loaded Team Players.')
+        this.toastService.showPositiveToast('Successfully Loaded Team Players.')
       },
-      error: (err) => {
-        console.error('Error loading players:', err)
-        this.ToastService.showNegativeToast('Failed to Load Team Players.')
+      error: () => {
+        this.toastService.showNegativeToast('Failed to Load Team Players.')
         this.loading = false
       },
       complete: () => {
@@ -96,14 +90,12 @@ export class TeamComponent implements OnInit {
     })
   }
 
-  sortPlayersIntoGroups() {
-    console.log('Sorting da players.')
+  sortPlayersIntoGroups(): void {
     if (!this.teamPlayers || !this.teamRoster) return
 
-    const startersSet = new Set(this.teamRoster.starters)
-    const taxiSet = new Set(this.teamRoster.taxi)
+    const startersSet = new Set(this.teamRoster.starters || [])
+    const taxiSet = new Set(this.teamRoster.taxi || [])
 
-    // Clear arrays in case of re-sort
     this.starters = []
     this.bench = []
     this.taxi = []
@@ -120,8 +112,7 @@ export class TeamComponent implements OnInit {
       }
     })
 
-    // Sort each group by position
-    const sortByPosition = (a: PlayerModel, b: PlayerModel) => {
+    const sortByPosition = (a: PlayerModel, b: PlayerModel): number => {
       const aIndex =
         this.POSITION_ORDER.indexOf(a.position) >= 0
           ? this.POSITION_ORDER.indexOf(a.position)
@@ -136,62 +127,34 @@ export class TeamComponent implements OnInit {
     this.bench.sort(sortByPosition)
     this.taxi.sort(sortByPosition)
   }
-  //////////////////////
-  ////// ROUTING //////
-  ////////////////////
-  goToUserProfile(userId: string) {
+
+  goToUserProfile(userId: string): void {
     if (!userId) return
-    console.log(`User Selected: ${userId}`)
-    if (userId == this.UserService.getMyUser()?.getUserId()) {
-      console.log('Selected yourself - (conceited, pompous, self centered)')
+    if (userId === this.userService.getMyUser()?.getUserId()) {
       this.router.navigate(['/my-profile'], {
-        queryParams: {
-          userId: userId,
-        },
+        queryParams: { userId: userId },
       })
     } else {
       this.router.navigate(['/selected-profile'], {
-        queryParams: {
-          userId: userId,
-        },
+        queryParams: { userId: userId },
       })
     }
   }
 
-  goToStandings(leagueId: string, view: string) {
+  goToStandings(leagueId: string, view: string): void {
     if (!leagueId) return
-    console.log(`League Selected: ${leagueId}`)
-    if (leagueId == this.LeagueService.getMyLeague()?.getId()) {
-      console.log(
-        'Selected your own league - (conceited, pompous, self centered)'
-      )
+    if (leagueId === this.leagueService.getMyLeague()?.getId()) {
       this.router.navigate(['/my-league'], {
-        queryParams: {
-          leagueId: leagueId,
-          view: view,
-        },
+        queryParams: { leagueId: leagueId, view: view },
       })
     } else {
       this.router.navigate(['/selected-league'], {
-        queryParams: {
-          leagueId: leagueId,
-          view: view,
-        },
+        queryParams: { leagueId: leagueId, view: view },
       })
     }
   }
 
-  goToPlayer(player: PlayerModel) {
-    console.log('Player selected-----', player)
-    this.PlayerService.setCurrentPlayer(player)
-    this.router.navigate(['/player'], {
-      queryParams: {
-        playerId: player.player_id,
-      },
-    })
-  }
-
-  openPlayerModal(player: PlayerModel, event: MouseEvent) {
+  openPlayerModal(player: PlayerModel, event: MouseEvent): void {
     const card = (event.currentTarget as HTMLElement).getBoundingClientRect()
     this.modalStart = {
       top: card.top,
@@ -202,11 +165,12 @@ export class TeamComponent implements OnInit {
     this.selectedPlayer = player
   }
 
-  closePlayerModal() {
+  closePlayerModal(): void {
     this.selectedPlayer = null
     this.modalStart = null
   }
-  getTeamStyle(team: string | undefined) {
+
+  getTeamStyle(team: string | undefined): Record<string, string> {
     if (!team) {
       return {
         backgroundColor: '#2a2a2a',
@@ -229,7 +193,8 @@ export class TeamComponent implements OnInit {
       color: '#fff',
     }
   }
-  getTeamButtonStyle(team: string | undefined) {
+
+  getTeamButtonStyle(team: string | undefined): Record<string, string> {
     if (!team) return { background: '#444', color: '#fff' }
 
     const key = team.toLowerCase()
