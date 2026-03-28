@@ -9,11 +9,11 @@ export interface User {
   metadata: {
     team_name?: string;
     location?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   } | null;
   settings?: {
     theme?: string;
     notifications?: boolean;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }

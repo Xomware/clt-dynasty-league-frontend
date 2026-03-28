@@ -58,8 +58,8 @@ export interface Draft {
   last_picked: number
   last_message_time: number
   last_message_id: string
-  draft_order: any
-  creators: any
+  draft_order: Record<string, number> | null
+  creators: string[] | null
   created: number
   picks?: DraftPick[] // populated after fetching picks
 }

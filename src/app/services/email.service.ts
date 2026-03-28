@@ -34,8 +34,7 @@ export class EmailService {
         headers: this.headers,
       })
       .subscribe({
-        error: (err) =>
-          console.error('Failed to send rule proposal email:', err),
+        error: () => { /* Failed to send rule proposal email */ },
       })
   }
 
@@ -62,8 +61,7 @@ export class EmailService {
         headers: this.headers,
       })
       .subscribe({
-        error: (err) =>
-          console.error('Failed to send rule accepted email:', err),
+        error: () => { /* Failed to send rule accepted email */ },
       })
   }
 
@@ -90,7 +88,7 @@ export class EmailService {
         headers: this.headers,
       })
       .subscribe({
-        error: (err) => console.error('Failed to send rule denied email:', err),
+        error: () => { /* Failed to send rule denied email */ },
       })
   }
 
@@ -113,7 +111,7 @@ export class EmailService {
     this.http
       .post(`${this.xomperApiUrl}/email/taxi`, body, { headers: this.headers })
       .subscribe({
-        error: (err) => console.error('Failed to send taxi steal email:', err),
+        error: () => { /* Failed to send taxi steal email */ },
       })
   }
 }

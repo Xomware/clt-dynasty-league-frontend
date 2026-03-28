@@ -82,8 +82,8 @@ export class MatchupModalComponent implements OnChanges {
           .filter((p): p is PlayerModel => !!p)
           .sort(this.sortByPosition.bind(this))
       },
-      error: (err) => {
-        console.error('Failed to load matchup players:', err)
+      error: () => {
+        // Failed to load matchup players
       },
       complete: () => (this.loading = false)
     })

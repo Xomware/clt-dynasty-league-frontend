@@ -50,8 +50,7 @@ export class SupabaseService {
       }
     )
 
-    this.supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth event:', event)
+    this.supabase.auth.onAuthStateChange((_event, session) => {
       this.currentUser.next(session?.user ?? null)
 
       if (session?.user) {
@@ -68,16 +67,16 @@ export class SupabaseService {
     this.initSession()
   }
 
-  private async initSession() {
+  private async initSession(): Promise<void> {
     try {
       const { data: { session } } = await this.supabase.auth.getSession()
       this.currentUser.next(session?.user ?? null)
-      
+
       if (session?.user) {
         this.loadProfile(session.user.id)
       }
-    } catch (err) {
-      console.error('Session init error:', err)
+    } catch {
+      // Session init failed silently
     } finally {
       this.initialized.next(true)
     }
@@ -96,7 +95,6 @@ export class SupabaseService {
       })
   }
 
-  // Sign in with Google
   signInWithGoogle(): Observable<boolean> {
     return from(
       this.supabase.auth.signInWithOAuth({
@@ -111,7 +109,6 @@ export class SupabaseService {
     )
   }
 
-  // Sign up with email/password
   signUpWithEmail(email: string, password: string): Observable<{ success: boolean; message: string }> {
     return from(
       this.supabase.auth.signUp({
@@ -135,12 +132,11 @@ export class SupabaseService {
     )
   }
 
-  // Sign in with email/password
   signInWithEmail(email: string, password: string): Observable<{ success: boolean; message: string }> {
     return from(
       this.supabase.auth.signInWithPassword({ email, password })
     ).pipe(
-      map(({ data, error }) => {
+      map(({ error }) => {
         if (error) {
           return { success: false, message: error.message }
         }
@@ -150,7 +146,6 @@ export class SupabaseService {
     )
   }
 
-  // Sign out
   signOut(): Observable<boolean> {
     return from(this.supabase.auth.signOut()).pipe(
       map(({ error }) => {
@@ -164,10 +159,6 @@ export class SupabaseService {
     )
   }
 
-  /**
-   * Get whitelisted user data including sleeper_username
-   * Returns null if user is not whitelisted
-   */
   getWhitelistedUser(): Observable<WhitelistedUser | null> {
     const user = this.currentUser.value
     if (!user?.email) return of(null)
@@ -182,7 +173,6 @@ export class SupabaseService {
     ).pipe(
       map(({ data, error }) => {
         if (error || !data) {
-          console.log('User not whitelisted:', user.email)
           return null
         }
         return data as WhitelistedUser
@@ -191,17 +181,13 @@ export class SupabaseService {
     )
   }
 
-  // Simple check if whitelisted (no data returned)
   isUserWhitelisted(): Observable<boolean> {
     return this.getWhitelistedUser().pipe(
       map(user => !!user)
     )
   }
 
-  /**
-   * Link a Sleeper account to the current user's profile
-   */
-  linkSleeperAccount(sleeperUserId: string, sleeperUsername: string, sleeperAvatar?: string): Observable<boolean> {
+  linkSleeperAccount(sleeperUserId: string, sleeperUsername: string, sleeperAvatar?: string | null): Observable<boolean> {
     const user = this.currentUser.value
     if (!user) return of(false)
 
@@ -218,7 +204,6 @@ export class SupabaseService {
         }, { onConflict: 'id' })
     ).pipe(
       tap(() => {
-        // Update local profile
         const profile = this.currentProfile.value
         if (profile) {
           this.currentProfile.next({
@@ -234,9 +219,6 @@ export class SupabaseService {
     )
   }
 
-  /**
-   * Update profile display name
-   */
   updateDisplayName(displayName: string): Observable<boolean> {
     const user = this.currentUser.value
     if (!user) return of(false)
@@ -258,7 +240,6 @@ export class SupabaseService {
     )
   }
 
-  // Getters
   isAuthenticated(): boolean {
     return !!this.currentUser.value
   }
@@ -275,7 +256,6 @@ export class SupabaseService {
     return this.initialized.value
   }
 
-  // Direct Supabase client access for advanced queries
   getClient(): SupabaseClient {
     return this.supabase
   }

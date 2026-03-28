@@ -16,10 +16,10 @@ export class SearchComponent {
   searchTerm = ''
 
   constructor(
-    private LeagueService: LeagueService,
-    private UserService: UserService,
+    private leagueService: LeagueService,
+    private userService: UserService,
     private router: Router,
-    private ToastService: ToastService,
+    private toastService: ToastService,
   ) {}
 
   search(): void {
@@ -29,12 +29,12 @@ export class SearchComponent {
     this.loading = true
 
     if (this.searchMode === 'user') {
-      this.UserService.searchUser(term)
+      this.userService.searchUser(term)
         .pipe(take(1))
         .subscribe({
           next: (user) => {
             if (!user || !user.user_id) {
-              this.ToastService.showNegativeToast('No user found.')
+              this.toastService.showNegativeToast('No user found.')
               this.loading = false
               return
             }
@@ -44,28 +44,28 @@ export class SearchComponent {
             })
           },
           error: () => {
-            this.ToastService.showNegativeToast('No user found.')
+            this.toastService.showNegativeToast('No user found.')
             this.loading = false
           },
         })
     } else {
-      this.LeagueService.searchLeague(term)
+      this.leagueService.searchLeague(term)
         .pipe(take(1))
         .subscribe({
           next: (league) => {
             if (!league) {
-              this.ToastService.showNegativeToast('No league found.')
+              this.toastService.showNegativeToast('No league found.')
               this.loading = false
               return
             }
-            this.LeagueService.setCurrentLeague(league)
+            this.leagueService.setCurrentLeague(league)
             this.loading = false
             this.router.navigate(['/selected-league'], {
               queryParams: { leagueId: league.getId(), view: 'league' },
             })
           },
           error: () => {
-            this.ToastService.showNegativeToast('No league found.')
+            this.toastService.showNegativeToast('No league found.')
             this.loading = false
           },
         })

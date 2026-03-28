@@ -17,6 +17,32 @@ export interface RuleProposal {
   created_at: string
 }
 
+interface SupabaseProposalRow {
+  id: string
+  league_id: string
+  proposed_by: string
+  title: string
+  description: string
+  status: string
+  created_at: string
+  profiles?: { display_name?: string; sleeper_username?: string; email?: string }
+}
+
+interface SupabaseVoteRow {
+  proposal_id: string
+  vote?: string
+}
+
+interface SupabaseEmailRow {
+  email: string
+  display_name: string
+}
+
+interface SupabaseVoteWithProfileRow {
+  vote: string
+  profiles?: { display_name?: string; sleeper_username?: string; email?: string }
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -43,7 +69,7 @@ export class RulesService {
       switchMap(({ data, error }) => {
         if (error || !data) return of([])
 
-        const proposals = data as any[]
+        const proposals = data as SupabaseProposalRow[]
         if (proposals.length === 0) return of([])
 
         // Get vote counts for all proposals
@@ -51,7 +77,7 @@ export class RulesService {
         return forkJoin({
           yesCounts: this.getVoteCounts(proposalIds, 'yes'),
           noCounts: this.getVoteCounts(proposalIds, 'no'),
-          myVotes: userId ? this.getMyVotes(proposalIds, userId) : of({})
+          myVotes: userId ? this.getMyVotes(proposalIds, userId) : of({} as Record<string, string>)
         }).pipe(
           map(({ yesCounts, noCounts, myVotes }) => {
             return proposals.map(p => ({
@@ -90,7 +116,7 @@ export class RulesService {
     ).pipe(
       map(({ data }) => {
         const counts: Record<string, number> = {}
-        ;(data || []).forEach((v: any) => {
+        ;((data || []) as SupabaseVoteRow[]).forEach((v) => {
           counts[v.proposal_id] = (counts[v.proposal_id] || 0) + 1
         })
         return counts
@@ -109,8 +135,8 @@ export class RulesService {
     ).pipe(
       map(({ data }) => {
         const votes: Record<string, string> = {}
-        ;(data || []).forEach((v: any) => {
-          votes[v.proposal_id] = v.vote
+        ;((data || []) as SupabaseVoteRow[]).forEach((v) => {
+          if (v.vote) votes[v.proposal_id] = v.vote
         })
         return votes
       }),
@@ -193,7 +219,7 @@ export class RulesService {
         if (error || !data) return { approved_by: [], rejected_by: [] }
         const approved_by: string[] = []
         const rejected_by: string[] = []
-        ;(data as any[]).forEach((v) => {
+        ;(data as SupabaseVoteWithProfileRow[]).forEach((v) => {
           const name = v.profiles?.display_name || v.profiles?.sleeper_username || v.profiles?.email?.split('@')[0] || 'Unknown'
           if (v.vote === 'yes') approved_by.push(name)
           else rejected_by.push(name)
@@ -216,7 +242,8 @@ export class RulesService {
     ).pipe(
       map(({ data, error }) => {
         if (error || !data) return null
-        return { email: (data as any).email, display_name: (data as any).display_name }
+        const row = data as SupabaseEmailRow
+        return { email: row.email, display_name: row.display_name }
       }),
       catchError(() => of(null))
     )
@@ -231,7 +258,7 @@ export class RulesService {
     ).pipe(
       map(({ data, error }) => {
         if (error || !data) return []
-        return (data as any[]).map((u) => u.email).filter(Boolean)
+        return (data as { email: string }[]).map((u) => u.email).filter(Boolean)
       }),
       catchError(() => of([]))
     )

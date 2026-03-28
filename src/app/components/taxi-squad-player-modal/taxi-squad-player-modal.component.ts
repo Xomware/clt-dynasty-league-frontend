@@ -162,8 +162,8 @@ export class TaxiSquadPlayerModalComponent {
     return n + (s[(v - 20) % 10] || s[v] || s[0])
   }
 
-  getStealPickText(draftRound: number | string): string {
-    if (draftRound === 'Undrafted') {
+  getStealPickText(draftRound: number | string | undefined): string {
+    if (draftRound === undefined || draftRound === 'Undrafted') {
       return '5th Round'
     }
 

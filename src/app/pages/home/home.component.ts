@@ -5,13 +5,13 @@ import { takeUntil, filter, take, switchMap } from 'rxjs/operators'
 import { SupabaseService } from 'src/app/services/supabase.service'
 import { UserService } from 'src/app/services/user.service'
 import { LeagueService } from 'src/app/services/league.service'
-import { AuthService } from 'src/app/services/auth.service'
 import { TeamService } from 'src/app/services/team.service'
 import { StandingsService } from 'src/app/services/standings.service'
 import { ToastService } from 'src/app/services/toast.service'
 import { UserModel } from 'src/app/models/user.model'
 import { RosterModel } from 'src/app/models/roster.model'
 import { StandingsTeamModel } from 'src/app/models/standings.model'
+import { LeagueModel } from 'src/app/models/league.model'
 
 @Component({
   selector: 'app-home',
@@ -36,7 +36,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     private supabaseService: SupabaseService,
     private userService: UserService,
     private leagueService: LeagueService,
-    private authService: AuthService,
     private teamService: TeamService,
     private standingsService: StandingsService,
     private router: Router,
@@ -44,7 +43,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Wait for Supabase to initialize
     this.supabaseService.initialized$
       .pipe(
         filter(init => init),
@@ -60,7 +58,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       })
 
-    // Fallback timeout
     setTimeout(() => {
       if (this.checkingAuth) {
         this.checkingAuth = false
@@ -76,21 +73,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   private handleAuthenticatedUser(): void {
     this.loading = true
 
-    // Get whitelisted user data (includes sleeper_username)
     this.supabaseService.getWhitelistedUser()
       .pipe(take(1))
       .subscribe(whitelistedUser => {
         if (whitelistedUser && whitelistedUser.sleeper_username) {
-          // Look up Sleeper user by username
           this.userService.searchUser(whitelistedUser.sleeper_username)
             .pipe(take(1))
             .subscribe({
               next: (sleeperUser) => {
                 if (sleeperUser) {
                   this.userService.setMyUser(sleeperUser)
-                  this.authService.toggleAuthentication()
-                  
-                  // Load the whitelisted league as "My League"
                   this.loadMyLeague(sleeperUser.user_id)
                 } else {
                   this.toastService.showNegativeToast('Sleeper user not found')
@@ -98,20 +90,17 @@ export class HomeComponent implements OnInit, OnDestroy {
                   this.loading = false
                 }
               },
-              error: (err) => {
-                console.error('Error loading Sleeper user:', err)
+              error: () => {
                 this.toastService.showNegativeToast('Error loading profile')
                 this.supabaseService.signOut().subscribe()
                 this.loading = false
               }
             })
         } else if (whitelistedUser && !whitelistedUser.sleeper_username) {
-          // Whitelisted but no Sleeper username set
           this.toastService.showNegativeToast('Sleeper username not configured. Contact admin.')
           this.supabaseService.signOut().subscribe()
           this.loading = false
         } else {
-          // Not whitelisted
           this.toastService.showNegativeToast('Your email is not authorized.')
           this.supabaseService.signOut().subscribe()
           this.loading = false
@@ -119,13 +108,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       })
   }
 
-  /**
-   * Load the whitelisted league and set up My Team
-   */
   private loadMyLeague(userId: string): void {
     const whitelistedLeagueId = this.leagueService.getWhitelistedLeagueId()
-    
-    // Load league, users, and rosters in parallel
+
     this.leagueService.loadWhitelistedLeague()
       .pipe(
         take(1),
@@ -133,7 +118,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.leagueService.setMyLeague(league)
           league.setDivisions()
 
-          // Load users and rosters
           return forkJoin({
             users: this.leagueService.findLeagueUsers(whitelistedLeagueId),
             rosters: this.leagueService.findLeagueRosters(whitelistedLeagueId),
@@ -144,47 +128,38 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe({
         next: ({ users, rosters, nflState }) => {
           const league = this.leagueService.getMyLeague()!
-          
-          // Set NFL state
+
           this.leagueService.setNflState(nflState)
-          
-          // Set users
+
           const userModels = users.map(user => new UserModel(user))
           league.setUsers(userModels)
-          
-          // Set rosters
+
           const rosterModels = rosters.map(roster => new RosterModel(roster))
           league.setRosters(rosterModels)
 
-          // Build standings
           const standings = this.buildStandings(league, userModels, rosterModels)
           league.setStandingsTeams(standings)
-          
-          // Find and set My Team
+
           const myUser = this.userService.getMyUser()
           const myTeam = standings.find(team => team.user?.user_id === myUser?.getUserId())
-          
+
           if (myTeam) {
             this.teamService.setMyTeam(myTeam)
           }
 
-          // Update league in service
           this.leagueService.setMyLeague(league)
 
           this.toastService.showPositiveToast('Welcome back!')
           this.loading = false
 
-          // Navigate to My Profile
           this.router.navigate(['/my-profile'], {
             queryParams: { userId: userId }
           })
         },
-        error: (err) => {
-          console.error('Error loading league:', err)
+        error: () => {
           this.toastService.showNegativeToast('Error loading league data')
           this.loading = false
-          
-          // Still navigate to profile even if league fails
+
           this.router.navigate(['/my-profile'], {
             queryParams: { userId: userId }
           })
@@ -192,33 +167,29 @@ export class HomeComponent implements OnInit, OnDestroy {
       })
   }
 
-  /**
-   * Build standings from rosters and users
-   */
-  private buildStandings(league: any, users: UserModel[], rosters: RosterModel[]): StandingsTeamModel[] {
+  private buildStandings(league: LeagueModel, users: UserModel[], rosters: RosterModel[]): StandingsTeamModel[] {
     const standings = rosters.map(roster => {
       const user = users.find(u => u.user_id === roster.owner_id)
 
-      // Parse streak from metadata
       let streakTotal = 0
       let streakType: '' | 'win' | 'loss' = ''
-      if (roster.metadata?.streak) {
-        const match = roster.metadata.streak.match(/(\d+)([WL])/)
+      const streakStr = roster.metadata?.streak as string | undefined
+      if (streakStr) {
+        const match = streakStr.match(/(\d+)([WL])/)
         if (match) {
           streakTotal = parseInt(match[1], 10)
           streakType = match[2] === 'W' ? 'win' : 'loss'
         }
       }
 
-      // Get division info
       const divisionIndex = roster.settings?.division != null
         ? `division_${roster.settings.division}`
         : null
       const divisionName = divisionIndex
-        ? (league.metadata?.[divisionIndex] ?? 'Unknown Division')
+        ? (String(league.metadata?.[divisionIndex] ?? 'Unknown Division'))
         : 'Unknown Division'
       const divisionAvatar = divisionIndex
-        ? (league.metadata?.[`${divisionIndex}_avatar`] ?? 'assets/img/nfl.png')
+        ? (String(league.metadata?.[`${divisionIndex}_avatar`] ?? 'assets/img/nfl.png'))
         : 'assets/img/nfl.png'
 
       return new StandingsTeamModel({
@@ -226,7 +197,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         players: [],
         user: user ? new UserModel(user) : null!,
         league: league,
-        teamName: user?.metadata?.team_name || `${user?.display_name}'s Team`,
+        teamName: (user?.metadata?.team_name as string) || `${user?.display_name}'s Team`,
         userName: user?.display_name || 'Unknown User',
         avatar: user?.avatar
           ? this.userService.buildAvatar(user.avatar)
@@ -243,7 +214,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       })
     })
 
-    // Sort and assign ranks
     return this.standingsService.buildStandings(standings)
   }
 
@@ -306,7 +276,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           if (result.success) {
             this.toastService.showPositiveToast(result.message)
             if (result.message.includes('Check your email')) {
-              // Email confirmation required - stay on the form
               this.emailMode = 'signin'
               this.password = ''
               this.confirmPassword = ''
@@ -321,7 +290,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         .pipe(take(1))
         .subscribe(result => {
           if (result.success) {
-            // Auth state change listener will trigger handleAuthenticatedUser
             this.handleAuthenticatedUser()
           } else {
             this.loading = false

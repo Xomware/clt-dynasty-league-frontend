@@ -76,8 +76,7 @@ export class MatchupHistoryComponent implements OnInit {
 
         this.loading = false
       },
-      error: (err) => {
-        console.error('Error loading matchup history:', err)
+      error: () => {
         this.toastService.showNegativeToast('Error loading matchup history')
         this.loading = false
       }

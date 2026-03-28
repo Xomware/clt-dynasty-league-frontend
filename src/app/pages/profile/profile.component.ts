@@ -14,48 +14,40 @@ import { LeagueModel } from 'src/app/models/league.model'
 })
 export class ProfileComponent implements OnInit {
   @Input() mode: 'my' | 'selected' = 'selected'
-  private user: UserModel
+  private user: UserModel | null = null
   profilePicture = ''
   userName = ''
   userLeagues: LeagueModel[] = []
   loading = false
-  // ordered fallback extensions
-  private fallbackExtensions = ['jpg', 'png', 'webp']
 
   constructor(
-    private UserService: UserService,
-    private LeagueService: LeagueService,
+    private userService: UserService,
+    private leagueService: LeagueService,
     private router: Router,
-    private ToastService: ToastService,
+    private toastService: ToastService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    console.log('Profile Init.')
     if (this.mode === 'my') {
-      this.user = this.UserService.getMyUser()
+      this.user = this.userService.getMyUser()
     } else {
-      this.user = this.UserService.getCurrentUser()
+      this.user = this.userService.getCurrentUser()
     }
     this.loading = true
-    // Always check query params
     this.route.queryParams.pipe(take(1)).subscribe((params) => {
       const queryUserId = params['userId']
-      console.log('UserId from query:', queryUserId)
-      // Load user from query param
-      this.UserService.searchUser(queryUserId)
+      this.userService.searchUser(queryUserId)
         .pipe(take(1))
         .subscribe({
           next: (user) => {
-            console.log('User Found from query param:', user)
-            this.UserService.setCurrentUser(user)
-            this.ToastService.showPositiveToast('User Loaded.')
-            this.user = this.UserService.getCurrentUser()
+            this.userService.setCurrentUser(user)
+            this.toastService.showPositiveToast('User Loaded.')
+            this.user = this.userService.getCurrentUser()
             this.setupUser()
           },
-          error: (err) => {
-            console.error('Error loading user from query param', err)
-            this.ToastService.showNegativeToast('Error loading user.')
+          error: () => {
+            this.toastService.showNegativeToast('Error loading user.')
             this.loading = false
           },
           complete: () => {
@@ -66,6 +58,7 @@ export class ProfileComponent implements OnInit {
   }
 
   private setupUser(): void {
+    if (!this.user) return
     this.profilePicture = this.user.getProfilePicture()
     this.userName = this.user.getUserName()
     this.userLeagues = this.user.getUserLeagues()
@@ -73,37 +66,30 @@ export class ProfileComponent implements OnInit {
     if (Object.keys(this.userLeagues).length === 0) {
       this.loading = true
       this.getUserLeagues()
-    } else {
-      console.log('Already have user leagues.')
     }
   }
 
   getUserLeagues(): void {
-    console.log('Getting User Leagues.')
-    this.UserService.findUserLeagues(
-      this.UserService.getCurrentUser()?.getUserId()
-    )
+    const currentUser = this.userService.getCurrentUser()
+    if (!currentUser) return
+
+    this.userService.findUserLeagues(currentUser.getUserId())
       .pipe(take(1))
       .subscribe({
         next: (leagues) => {
-          console.log('Leagues Found------', leagues)
-          // Convert each raw User to a UserModel
           const leagueModels = leagues.map((league) => new LeagueModel(league))
 
-          this.user.setUserLeagues(leagueModels)
-          if (this.mode == 'my') {
-            this.UserService.setMyUser(this.user)
+          this.user!.setUserLeagues(leagueModels)
+          if (this.mode === 'my') {
+            this.userService.setMyUser(this.user!)
           } else {
-            this.UserService.setCurrentUser(this.user)
+            this.userService.setCurrentUser(this.user!)
           }
-          this.userLeagues = this.user.getUserLeagues()
-          console.log('USER LEAGUES AFTER LOADING ------------')
-          console.log(this.userLeagues)
-          this.ToastService.showPositiveToast('Leagues Found.')
+          this.userLeagues = this.user!.getUserLeagues()
+          this.toastService.showPositiveToast('Leagues Found.')
         },
-        error: (err) => {
-          console.error('Error Getting User Leagues', err)
-          this.ToastService.showNegativeToast('Error Finding Leagues.')
+        error: () => {
+          this.toastService.showNegativeToast('Error Finding Leagues.')
           this.loading = false
         },
         complete: () => {
@@ -111,14 +97,10 @@ export class ProfileComponent implements OnInit {
         },
       })
   }
+
   selectCurrentLeague(league: LeagueModel): void {
     const leagueId = league.getId()
-    const leagueName = league.getDisplayName()
-    console.log(`League Selected: ${leagueName}`)
-    if (leagueId == this.LeagueService.getMyLeague()?.getId()) {
-      console.log(
-        'Selected your own league - (conceited, pompous, self centered)'
-      )
+    if (leagueId === this.leagueService.getMyLeague()?.getId()) {
       this.router.navigate(['/my-league'], {
         queryParams: {
           leagueId: leagueId,

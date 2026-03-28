@@ -1,86 +1,86 @@
-import { Player } from "./player.interface";
+import { Player } from './player.interface'
 
 export class PlayerModel implements Player {
-  hashtag: string;
-  depth_chart_position: number;
-  status: string;
-  sport: string;
-  fantasy_positions: string[];
-  number: number;
-  search_last_name: string;
-  injury_start_date: string | null;
-  weight: string;
-  position: string;
-  practice_participation: string | null;
-  sportradar_id: string;
-  team: string;
-  last_name: string;
-  college: string;
-  fantasy_data_id: number;
-  injury_status: string | null;
-  player_id: string;
-  height: number;
-  search_full_name: string;
-  age: number;
-  stats_id: string;
-  birth_country: string;
-  espn_id: string;
-  search_rank: number;
-  first_name: string;
-  depth_chart_order: number;
-  years_exp: number;
-  rotowire_id: number | null;
-  rotoworld_id: number | null;
-  search_first_name: string;
-  yahoo_id: string | null;
+  hashtag!: string
+  depth_chart_position!: number
+  status!: string
+  sport!: string
+  fantasy_positions!: string[]
+  number!: number
+  search_last_name!: string
+  injury_start_date!: string | null
+  weight!: string
+  position!: string
+  practice_participation!: string | null
+  sportradar_id!: string
+  team!: string
+  last_name!: string
+  college!: string
+  fantasy_data_id!: number
+  injury_status!: string | null
+  player_id!: string
+  height!: number
+  search_full_name!: string
+  age!: number
+  stats_id!: string
+  birth_country!: string
+  espn_id!: string
+  search_rank!: number
+  first_name!: string
+  depth_chart_order!: number
+  years_exp!: number
+  rotowire_id!: number | null
+  rotoworld_id!: number | null
+  search_first_name!: string
+  yahoo_id!: string | null
+  full_name?: string
+  photoError?: boolean
 
-  constructor(raw: any) {
-    const player = raw.data ?? raw; // unwrap if needed
-    Object.assign(this, player);
+  constructor(raw: Player | { data: Player }) {
+    const player = 'data' in raw && raw.data ? raw.data : raw
+    Object.assign(this, player)
   }
 
-  // ---- HELPERS ----
   getFullName(): string {
-    return `${this.first_name} ${this.last_name}`;
+    return `${this.first_name} ${this.last_name}`
   }
 
   getDisplayPosition(): string {
-    return this.position || (this.fantasy_positions?.[0] ?? "N/A");
+    return this.position || (this.fantasy_positions?.[0] ?? 'N/A')
   }
 
   getTeam(): string {
-    return this.team || "FA"; // FA = Free Agent
+    return this.team || 'FA'
   }
 
   getAge(): string {
-    return this.age ? `${this.age} yrs` : "N/A";
+    return this.age ? `${this.age} yrs` : 'N/A'
   }
 
   getCollege(): string {
-    return this.college || "Unknown";
+    return this.college || 'Unknown'
   }
 
   isInjured(): boolean {
-    return this.injury_status !== null;
+    return this.injury_status !== null
   }
 
   getDepthChartInfo(): string {
     if (!this.depth_chart_order) {
-      return this.getDisplayPosition();
+      return this.getDisplayPosition()
     }
-    return `${this.getDisplayPosition()}${this.depth_chart_order}`;
+    return `${this.getDisplayPosition()}${this.depth_chart_order}`
   }
 
   getProfilePicture(): string {
-    // Sleeper player pics sometimes are stored under player_id
-    return `https://sleepercdn.com/content/nfl/players/${this.player_id}.jpg`;
+    return `https://sleepercdn.com/content/nfl/players/${this.player_id}.jpg`
   }
-  
+
   getThumbPicture(): string {
     return `https://sleepercdn.com/content/nfl/players/thumb/${this.player_id}.jpg`
-
   }
+
   getTeamPicture(): string {
-    return `https://sleepercdn.com/images/team_logos/nfl/${this.team.toLowerCase()}.png`;
+    return `https://sleepercdn.com/images/team_logos/nfl/${this.team.toLowerCase()}.png`
   }
 }

@@ -11,6 +11,9 @@ import { DraftPick } from '../models/draft.interface'
 import { LeagueModel } from '../models/league.model'
 import { User } from '../models/user.interface'
 import { Roster } from '../models/roster.interface'
+import { Matchup } from '../models/matchup.interface'
+
+type MatchupPair = { teamA: Matchup; teamB: Matchup }
 
 export interface DraftHistoryRecord {
   league_id: string
@@ -45,7 +48,7 @@ export interface MatchupHistoryRecord {
   team_b_username: string
   team_b_team_name: string
   team_b_points: number
-  winner_roster_id: number
+  winner_roster_id: number | null
   is_playoff: boolean
   is_championship: boolean
   team_a_division: number
@@ -171,8 +174,8 @@ export class LeagueHistoryService {
         // Not in cache, fetch from Sleeper API and sync
         return this.syncDraftHistoryFromSleeper(leagueId)
       }),
-      catchError(err => {
-        console.error('Error getting draft history:', err)
+      catchError(() => {
+        // Error:'Error getting draft history:', err)
         return of([])
       })
     )
@@ -213,7 +216,7 @@ export class LeagueHistoryService {
               picked_by_user_id: pick.picked_by || '',
               picked_by_roster_id: parseInt(pick.roster_id) || 0,
               picked_by_username: user?.username || '',
-              picked_by_team_name: team?.teamName || user?.metadata?.team_name || '',
+              picked_by_team_name: team?.teamName || (user?.metadata?.team_name as string) || '',
               is_keeper: pick.is_keeper || false
             })
           })
@@ -328,7 +331,7 @@ export class LeagueHistoryService {
               picked_by_user_id: pick.picked_by || roster?.owner_id || '',
               picked_by_roster_id: parseInt(pick.roster_id) || 0,
               picked_by_username: user?.username || '',
-              picked_by_team_name: user?.metadata?.team_name || '',
+              picked_by_team_name: (user?.metadata?.team_name as string) || '',
               is_keeper: pick.is_keeper || false
             })
           })
@@ -371,7 +374,7 @@ export class LeagueHistoryService {
       this.leagueService.loadLeagueContext(league).pipe(
         switchMap(ctx => {
           const totalWeeks = 17
-          const weekCalls: Observable<{ week: number; pairs: any[] }>[] = []
+          const weekCalls: Observable<{ week: number; pairs: MatchupPair[] }>[] = []
 
           for (let week = 1; week <= totalWeeks; week++) {
             weekCalls.push(
@@ -409,7 +412,7 @@ export class LeagueHistoryService {
   private convertMatchupResults(
     leagueId: string,
     season: string,
-    weekResults: { week: number; pairs: any[] }[],
+    weekResults: { week: number; pairs: MatchupPair[] }[],
     users: User[],
     rosters: Roster[]
   ): MatchupHistoryRecord[] {
@@ -441,12 +444,12 @@ export class LeagueHistoryService {
           team_a_roster_id: pair.teamA.roster_id,
           team_a_user_id: userA?.user_id || '',
           team_a_username: userA?.username || '',
-          team_a_team_name: userA?.metadata?.team_name || userA?.display_name || '',
+          team_a_team_name: (userA?.metadata?.team_name as string) || userA?.display_name || '',
           team_a_points: pointsA,
           team_b_roster_id: pair.teamB.roster_id,
           team_b_user_id: userB?.user_id || '',
           team_b_username: userB?.username || '',
-          team_b_team_name: userB?.metadata?.team_name || userB?.display_name || '',
+          team_b_team_name: (userB?.metadata?.team_name as string) || userB?.display_name || '',
           team_b_points: pointsB,
           winner_roster_id: winnerId,
           is_playoff: week > 14,
@@ -494,8 +497,8 @@ export class LeagueHistoryService {
         // If no cached data, return empty (sync happens separately)
         return of([])
       }),
-      catchError(err => {
-        console.error('Error getting matchup history:', err)
+      catchError(() => {
+        // Error:'Error getting matchup history:', err)
         return of([])
       })
     )
@@ -525,7 +528,7 @@ export class LeagueHistoryService {
         const records: MatchupHistoryRecord[] = []
 
         weekResults.forEach(({ week, pairs }) => {
-          pairs.forEach((pair: any, idx: number) => {
+          pairs.forEach((pair: MatchupPair, idx: number) => {
             const teamAStanding = standings.find(s => s.roster.roster_id === pair.teamA.roster_id)
             const teamBStanding = standings.find(s => s.roster.roster_id === pair.teamB.roster_id)
             const userA = users.find(u => u.user_id === teamAStanding?.user?.user_id)
@@ -639,8 +642,8 @@ export class LeagueHistoryService {
         }
         return []
       }),
-      catchError(err => {
-        console.error('Error getting standings history:', err)
+      catchError(() => {
+        // Error:'Error getting standings history:', err)
         return of([])
       })
     )
@@ -673,8 +676,8 @@ export class LeagueHistoryService {
         }
         return []
       }),
-      catchError(err => {
-        console.error('Error getting champions:', err)
+      catchError(() => {
+        // Error:'Error getting champions:', err)
         return of([])
       })
     )
@@ -701,7 +704,7 @@ export class LeagueHistoryService {
       for (const key of Object.keys(currentLeague.metadata)) {
         const match = key.match(/^division_(\d+)$/)
         if (match && !key.endsWith('_avatar')) {
-          divisionNameMap.set(parseInt(match[1]), currentLeague.metadata[key])
+          divisionNameMap.set(parseInt(match[1]), String(currentLeague.metadata[key]))
         }
       }
     }
