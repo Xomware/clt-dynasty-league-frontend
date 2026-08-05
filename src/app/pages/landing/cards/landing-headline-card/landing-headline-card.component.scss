@@ -51,13 +51,13 @@
 
 .headline-card__period {
   font-size: $text-xs;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-secondary;
 }
 
 .headline-card__title {
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: $text-base;
+  font-weight: $font-weight-bold;
   color: $champion-gold;
   line-height: 1.35;
   margin: 0 0 $spacing-sm 0;
@@ -83,7 +83,7 @@
   align-items: center;
   gap: 4px;
   font-size: $text-xs;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $champion-gold;
 }
 
@@ -93,15 +93,15 @@
 }
 
 .headline-card__placeholder-label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-size: $text-3xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: $tracking-wide;
   color: $text-muted;
 }
 
 .headline-card__placeholder-heading {
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: $text-base;
+  font-weight: $font-weight-bold;
   color: $text-primary;
   margin: 0 0 $spacing-xs 0;
 }

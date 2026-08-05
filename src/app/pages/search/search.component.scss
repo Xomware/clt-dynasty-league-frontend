@@ -15,8 +15,8 @@
 
 .search-title {
   font-family: $font-display;
-  font-size: 2.5rem;
-  letter-spacing: 0.05em;
+  font-size: $text-4xl;
+  letter-spacing: $tracking-wide;
   margin-bottom: $spacing-lg;
   text-align: center;
   color: $champion-gold;
@@ -47,7 +47,7 @@
   cursor: pointer;
   font-size: $text-sm;
   font-family: $font-body;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   transition: all $transition-base;
 
   &:hover:not(.active) {
@@ -97,7 +97,7 @@
   background: $champion-gold;
   color: $deep-navy;
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-family: $font-body;
   cursor: pointer;
   transition: all $transition-base;
@@ -195,7 +195,7 @@
 
   &__name {
     font-size: $text-sm;
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
     color: $text-primary;
   }
 
@@ -218,7 +218,7 @@
   }
 
   .search-title {
-    font-size: 2rem;
+    font-size: $text-3xl;
   }
 
   .search-box {

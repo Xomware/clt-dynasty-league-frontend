@@ -1,3 +1,5 @@
+@import 'tokens';
+
 @import '../../../styles/variables';
 @import '../../../styles/mixins';
 @import '../../../styles/theme';
@@ -39,7 +41,7 @@
   border-radius: $radius-full;
   padding: $spacing-xs $spacing-md;
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   cursor: pointer;
 }
 
@@ -65,13 +67,13 @@
   cursor: pointer;
   color: $text-secondary;
   font-size: $text-sm;
-  font-weight: 400;
+  font-weight: $font-weight-regular;
   font-family: $font-body;
   transition: color $transition-fast;
 
   &--active {
     color: $champion-gold;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
   }
 }
 
@@ -107,16 +109,16 @@
 
 .section-label {
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-secondary;
   flex-shrink: 0;
 }
 
 .section-eyebrow {
   font-size: $text-xs;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: $tracking-wide;
   color: $text-muted;
   padding: 0 $spacing-md;
   margin-top: $spacing-xs;
@@ -142,7 +144,7 @@
   align-items: center;
   gap: $spacing-xs;
   font-size: $text-xs;
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   color: $text-primary;
 
   &::before {
@@ -183,7 +185,7 @@
   border-radius: $radius-xl;
   color: $text-primary;
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   font-family: $font-body;
   padding: $spacing-xs $spacing-md;
   cursor: pointer;
@@ -208,7 +210,7 @@
 
 .avg-card-title {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $champion-gold;
   margin-bottom: $spacing-sm;
 }
@@ -229,14 +231,14 @@
 
 .avg-axis-label {
   font-size: $text-xs;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-muted;
   text-transform: uppercase;
 }
 
 .avg-axis-value {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $text-primary;
   font-family: $font-mono;
 }
@@ -254,14 +256,14 @@
 
 .avg-total-label {
   font-size: $text-xs;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-secondary;
   flex: 1;
 }
 
 .avg-total-value {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $champion-gold;
   font-family: $font-mono;
 }
@@ -291,7 +293,7 @@
 
 .rank {
   font-size: $text-lg;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $text-secondary;
   font-family: $font-mono;
   width: 28px;
@@ -304,7 +306,7 @@
 
 .team-name {
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-primary;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -312,7 +314,7 @@
 
   &--mine {
     color: $champion-gold;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
   }
 }
 
@@ -324,7 +326,7 @@
 
 .total-val {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $text-primary;
   font-family: $font-mono;
   flex-shrink: 0;
@@ -345,8 +347,8 @@
 }
 
 .axis-bar-label {
-  font-size: 10px;
-  font-weight: 600;
+  font-size: $text-3xs;
+  font-weight: $font-weight-semibold;
   color: $text-muted;
   text-transform: uppercase;
   text-align: center;
@@ -370,8 +372,8 @@
 }
 
 .axis-bar-val {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: $text-3xs;
+  font-weight: $font-weight-bold;
   color: $text-primary;
   font-family: $font-mono;
   text-align: center;
@@ -404,7 +406,7 @@
 
 .explainer-title {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $champion-gold;
 }
 
@@ -442,15 +444,15 @@
 
 .eval-col-label {
   font-size: $text-xs;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-muted;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: $tracking-wide;
 }
 
 .eval-col-val {
   font-size: $text-xl;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $champion-gold;
   font-family: $font-mono;
 }
@@ -462,9 +464,9 @@
 
 .verdict-pill {
   font-size: $text-xs;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: $tracking-wide;
   padding: $spacing-xs $spacing-md;
   border-radius: $radius-full;
 
@@ -508,21 +510,21 @@
 
 .side-direction {
   font-size: $text-xs;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-muted;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: $tracking-wide;
 }
 
 .side-team {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $text-primary;
 }
 
 .side-val {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $champion-gold;
   font-family: $font-mono;
 }
@@ -543,7 +545,7 @@
 
 .trade-item-name {
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-primary;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -553,7 +555,7 @@
 
 .trade-item-badge {
   font-size: $text-xs;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $text-secondary;
   background: rgba($surface-light, 0.4);
   padding: 2px $spacing-xs;
@@ -563,7 +565,7 @@
 
 .trade-item-val {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $champion-gold;
   font-family: $font-mono;
   flex-shrink: 0;
@@ -592,7 +594,7 @@
 
 .add-btn {
   font-size: $text-xs;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-family: $font-body;
   padding: $spacing-xs $spacing-md;
   border-radius: $radius-full;
@@ -630,7 +632,7 @@
 
 .balance-title {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $champion-gold;
 }
 
@@ -663,20 +665,20 @@
 
 .balance-item-name {
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-primary;
   transition: color $transition-fast;
 }
 
 .balance-item-pos {
   font-size: $text-xs;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $text-secondary;
 }
 
 .balance-item-val {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $champion-gold;
   font-family: $font-mono;
 }
@@ -684,7 +686,7 @@
 .balance-item-plus {
   color: $champion-gold;
   font-size: $text-lg;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
 }
 
 // Clear trade
@@ -694,7 +696,7 @@
   background: none;
   border: none;
   font-size: $text-xs;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $error-red;
   cursor: pointer;
   padding: $spacing-sm $spacing-md;
@@ -756,7 +758,7 @@
 
 .picker-title {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $text-primary;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -815,7 +817,7 @@
 
 .picker-item-name {
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-primary;
   flex: 1;
   overflow: hidden;
@@ -825,7 +827,7 @@
 
 .picker-item-badge {
   font-size: $text-xs;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $text-secondary;
   background: rgba($surface-light, 0.4);
   padding: 2px $spacing-xs;
@@ -835,7 +837,7 @@
 
 .picker-item-val {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $champion-gold;
   font-family: $font-mono;
   flex-shrink: 0;

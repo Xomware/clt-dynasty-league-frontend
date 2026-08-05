@@ -14,7 +14,7 @@
   gap: $spacing-md;
   margin-bottom: 28px;
 
-  h2 { margin: 0; font-size: 1.4rem; font-weight: 600; color: $text-primary; }
+  h2 { margin: 0; font-size: $text-xl; font-weight: $font-weight-semibold; color: $text-primary; }
 }
 
 .btn-back {
@@ -22,7 +22,7 @@
   border: none;
   color: $champion-gold;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: $text-base;
   padding: 0;
   &:hover { text-decoration: underline; }
 }
@@ -37,7 +37,7 @@
   gap: $spacing-sm;
 }
 
-.readonly-row { display: flex; gap: 12px; font-size: 0.85rem; }
+.readonly-row { display: flex; gap: 12px; font-size: $text-sm; }
 .readonly-label { color: $text-muted; min-width: 100px; }
 .readonly-value { color: $text-secondary; font-family: $font-mono; word-break: break-all; }
 
@@ -55,7 +55,7 @@
     label { margin-bottom: 0; }
   }
 
-  label { font-size: $text-sm; font-weight: 500; color: $text-secondary; }
+  label { font-size: $text-sm; font-weight: $font-weight-medium; color: $text-secondary; }
 }
 
 input[type="text"] {
@@ -105,7 +105,7 @@ input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-colo
     border-radius: $radius-md;
     padding: 10px;
     font-size: $text-sm;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     font-family: $font-body;
     cursor: pointer;
     display: flex;

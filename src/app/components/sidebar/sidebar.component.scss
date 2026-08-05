@@ -1,3 +1,5 @@
+@import 'tokens';
+
 @import 'src/styles/variables';
 
 .sidebar {
@@ -30,7 +32,7 @@
   flex-shrink: 0;
   border-radius: $radius-sm;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: $text-base;
   color: var(--xomper-text-primary, #{$text-primary});
   transition: background $transition-fast;
 
@@ -75,13 +77,13 @@
 
 .avatar-initials {
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: var(--xomper-champion-gold, #{$champion-gold});
 }
 
 .profile-name {
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -101,8 +103,8 @@
 
 .section-title {
   font-size: $text-xs;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: $font-weight-bold;
+  letter-spacing: $tracking-wide;
   text-transform: uppercase;
   color: var(--xomper-text-muted, #{$text-muted});
   padding: $spacing-xs $spacing-sm;
@@ -138,7 +140,7 @@ ul {
   &.entry--active {
     background: var(--xomper-bg-card-hover, #{$bg-card-hover});
     color: var(--xomper-champion-gold, #{$champion-gold});
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
 
     &::before {
       content: '';

@@ -40,8 +40,8 @@
 
 .round-title {
   font-family: $font-display;
-  font-size: 1.5rem;
-  letter-spacing: 0.05em;
+  font-size: $text-xl;
+  letter-spacing: $tracking-wide;
   color: $champion-gold;
   margin-bottom: $spacing-lg;
   padding-bottom: $spacing-sm;
@@ -82,7 +82,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-size: $text-sm;
   font-family: $font-mono;
 }
@@ -109,7 +109,7 @@
 
   .player-name {
     font-size: $text-base;
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
     margin: 0;
     color: $text-primary;
     white-space: nowrap;
@@ -127,7 +127,7 @@
 
 .position-badge {
   font-size: $text-xs;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   padding: 2px 8px;
   border-radius: $radius-sm;
   text-transform: uppercase;
@@ -169,7 +169,7 @@
   .team-name {
     font-size: $text-sm;
     color: $text-primary;
-    font-weight: 500;
+    font-weight: $font-weight-medium;
   }
 }
 
@@ -180,7 +180,7 @@
   background: $steel-blue;
   color: white;
   font-size: $text-xs;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   padding: 2px 8px;
   border-radius: $radius-sm;
   text-transform: uppercase;

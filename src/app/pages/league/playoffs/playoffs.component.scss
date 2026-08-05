@@ -7,8 +7,8 @@
 
 .bracket-title {
   font-family: $font-display;
-  font-size: 1.8rem;
-  letter-spacing: 0.05em;
+  font-size: $text-2xl;
+  letter-spacing: $tracking-wide;
   color: $champion-gold;
   text-align: center;
   margin-bottom: $spacing-lg;
@@ -36,8 +36,8 @@
 
 .round-label {
   font-family: $font-display;
-  font-size: 1rem;
-  letter-spacing: 0.05em;
+  font-size: $text-base;
+  letter-spacing: $tracking-wide;
   color: $text-secondary;
   text-transform: uppercase;
   text-align: center;
@@ -68,7 +68,7 @@
   text-align: center;
   font-family: $font-display;
   font-size: $text-sm;
-  letter-spacing: 0.05em;
+  letter-spacing: $tracking-wide;
   color: $champion-gold;
   padding: 4px;
   background: rgba($champion-gold, 0.1);
@@ -90,7 +90,7 @@
 
     .bracket-team-name {
       color: $success-green;
-      font-weight: 700;
+      font-weight: $font-weight-bold;
     }
   }
 
@@ -110,7 +110,7 @@
 
 .bracket-team-name {
   font-size: $text-sm;
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   color: $text-primary;
   flex: 1;
   overflow: hidden;

@@ -10,7 +10,7 @@
 
 .list-header {
   margin-bottom: $spacing-lg;
-  h2 { margin: 0; font-family: $font-display; font-size: 1.5rem; font-weight: 600; color: $text-primary; }
+  h2 { margin: 0; font-family: $font-display; font-size: $text-xl; font-weight: $font-weight-semibold; color: $text-primary; }
 }
 
 .state-empty {
@@ -64,8 +64,8 @@
 }
 
 .row-name {
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: $font-weight-semibold;
+  font-size: $text-base;
   color: $text-primary;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -73,7 +73,7 @@
 }
 
 .row-email {
-  font-size: 0.8rem;
+  font-size: $text-xs;
   color: $text-muted;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -91,7 +91,7 @@
   font-size: $text-xs;
   padding: 2px $spacing-sm;
   border-radius: 9999px;
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   white-space: nowrap;
 
   &.chip-admin    { background: rgba($champion-gold, 0.2); color: $champion-gold; }

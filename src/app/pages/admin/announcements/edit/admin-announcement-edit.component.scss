@@ -16,8 +16,8 @@
 
   h2 {
     margin: 0;
-    font-size: 1.4rem;
-    font-weight: 600;
+    font-size: $text-xl;
+    font-weight: $font-weight-semibold;
     color: $text-primary;
   }
 }
@@ -27,7 +27,7 @@
   border: none;
   color: $champion-gold;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: $text-base;
   padding: 0;
 
   &:hover { text-decoration: underline; }
@@ -54,7 +54,7 @@
 
   label {
     font-size: $text-sm;
-    font-weight: 500;
+    font-weight: $font-weight-medium;
     color: $text-secondary;
   }
 }
@@ -146,7 +146,7 @@ input[type="checkbox"] {
     border-radius: $radius-md;
     padding: 10px;
     font-size: $text-sm;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     font-family: $font-body;
     cursor: pointer;
     display: flex;

@@ -14,15 +14,15 @@
 .ai-review-list__title {
   // s10: --color-text-primary → --xomper-text-primary; fallback updated
   color: var(--xomper-text-primary, #{$text-primary});
-  font-size: 1.6rem;
-  font-weight: 700;
+  font-size: $text-2xl;
+  font-weight: $font-weight-bold;
   margin: 0 0 4px;
 }
 
 .ai-review-list__subtitle {
   // s10: --color-text-secondary → --xomper-text-secondary; fallback updated
   color: var(--xomper-text-secondary, #{$text-secondary});
-  font-size: 0.85rem;
+  font-size: $text-sm;
   margin: 0;
 }
 
@@ -66,8 +66,8 @@
   padding: 8px 20px;
   border-radius: $radius-md;
   cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: $text-sm;
+  font-weight: $font-weight-semibold;
   background: transparent;
   border: 1px solid rgba($champion-gold, 0.5);
   color: $champion-gold;
@@ -83,7 +83,7 @@
   text-align: center;
   padding: 48px 0;
   color: var(--xomper-text-secondary, #{$text-secondary});
-  font-size: 0.9rem;
+  font-size: $text-sm;
 }
 
 // Row list
@@ -131,6 +131,6 @@
 .ai-review-list__end {
   text-align: center;
   color: var(--xomper-text-muted, #{$text-muted});
-  font-size: 0.75rem;
+  font-size: $text-2xs;
   margin-top: 16px;
 }

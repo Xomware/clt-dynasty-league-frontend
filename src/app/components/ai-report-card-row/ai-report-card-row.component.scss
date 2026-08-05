@@ -40,20 +40,20 @@
 .card-row__period {
   // s10: --color-text-secondary → --xomper-text-secondary
   color: var(--xomper-text-secondary, #{$text-secondary});
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-size: $text-xs;
+  font-weight: $font-weight-medium;
 }
 
 .card-row__date {
   margin-left: auto;
   color: var(--xomper-text-muted, #{$text-muted});
-  font-size: 0.75rem;
+  font-size: $text-2xs;
 }
 
 .card-row__snippet {
   // s10: --color-text-primary → --xomper-text-primary
   color: var(--xomper-text-primary, #{$text-primary});
-  font-size: 0.85rem;
+  font-size: $text-sm;
   line-height: 1.45;
   margin: 0 0 8px;
   display: -webkit-box;

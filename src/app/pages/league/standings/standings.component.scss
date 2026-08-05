@@ -60,12 +60,12 @@
 }
 
 .standings-header {
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   font-size: $text-sm;
   color: $text-secondary;
   border-bottom: 2px solid $surface-light;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: $tracking-wide;
 }
 
 .standings-row {
@@ -82,7 +82,7 @@
 
   .rank-number {
     text-align: center;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     font-size: $text-lg;
     font-family: $font-mono;
 
@@ -117,7 +117,7 @@
 
 .team-name {
   font-size: $text-sm;
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   color: $text-primary;
 }
 
@@ -149,7 +149,7 @@
   border-radius: $radius-xl;
   padding: 6px 16px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   font-size: $text-sm;
   margin: 0;
   transition: all $transition-base;
@@ -162,13 +162,13 @@
 
 .win-streak {
   color: $success-green !important;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-family: $font-mono;
 }
 
 .loss-streak {
   color: $error-red !important;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-family: $font-mono;
 }
 
@@ -192,8 +192,8 @@
 
 .division-title {
   font-family: $font-display;
-  font-size: 1.5rem;
-  letter-spacing: 0.03em;
+  font-size: $text-xl;
+  letter-spacing: $tracking-normal;
   color: $champion-gold;
 }
 
@@ -229,6 +229,6 @@
 
   .team-more-btn {
     padding: 4px 8px;
-    font-size: 10px;
+    font-size: $text-3xs;
   }
 }

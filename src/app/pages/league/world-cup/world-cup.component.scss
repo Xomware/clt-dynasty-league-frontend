@@ -12,8 +12,8 @@
 
 .worldcup-title {
   font-family: $font-display;
-  font-size: 2rem;
-  letter-spacing: 0.05em;
+  font-size: $text-3xl;
+  letter-spacing: $tracking-wide;
   color: $champion-gold;
   margin: 0;
 }
@@ -27,7 +27,7 @@
 .worldcup-rule {
   font-size: $text-sm;
   color: $success-green;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   margin-top: $spacing-xs;
 }
 
@@ -52,8 +52,8 @@
 
 .wc-division-name {
   font-family: $font-display;
-  font-size: 1.5rem;
-  letter-spacing: 0.05em;
+  font-size: $text-xl;
+  letter-spacing: $tracking-wide;
   color: $champion-gold;
   margin: 0;
 }
@@ -68,11 +68,11 @@
 }
 
 .wc-standings-header {
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   font-size: $text-xs;
   color: $text-secondary;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: $tracking-wide;
   border-bottom: 1px solid rgba($surface-light, 0.3);
 }
 
@@ -93,7 +93,7 @@
 
 .wc-rank {
   text-align: center;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-family: $font-mono;
   font-size: $text-base;
 
@@ -115,7 +115,7 @@
 
 .wc-team-name {
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-primary;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -129,7 +129,7 @@
 
 .wc-record {
   font-family: $font-mono;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-size: $text-base;
   text-align: center;
 
@@ -165,10 +165,10 @@
 
   .qualify-tag {
     font-size: $text-xs;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     color: $success-green;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: $tracking-wide;
     white-space: nowrap;
   }
 

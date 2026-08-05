@@ -64,10 +64,13 @@
   h2,
   .section-title {
     color: $accent-red;
-    font-size: 1.05rem;
-    font-weight: 900;
+    font-size: $text-base;
+    // Was 900. index.html loads Bebas Neue (single weight), JetBrains Mono
+  // and Plus Jakarta Sans at wght@400..700 — there is no 900 face, so the
+  // browser was synthesising faux-bold. 700 is the heaviest real weight.
+  font-weight: $font-weight-bold;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: $tracking-wider;
     margin: 12px 0 0;
     line-height: 1.2;
   }
@@ -80,8 +83,8 @@
 // ------------------------------------------------------------------
 @mixin xomper-subheader {
   color: $champion-gold;
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: $text-base;
+  font-weight: $font-weight-bold;
   margin: 14px 0 4px;
   line-height: 1.3;
 }
@@ -95,9 +98,9 @@
   align-items: center;
   background: $champion-gold;
   color: $deep-navy;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-size: $text-3xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: $tracking-wide;
   padding: 3px $spacing-sm;
   border-radius: 999px;
   font-family: $font-body;
@@ -114,9 +117,9 @@
   background: transparent;
   color: $champion-gold;
   border: 1px solid rgba($champion-gold, 0.5);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-size: $text-3xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: $tracking-wide;
   padding: 3px $spacing-sm;
   border-radius: 999px;
   font-family: $font-body;

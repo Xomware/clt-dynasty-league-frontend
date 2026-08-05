@@ -17,9 +17,9 @@
 }
 
 .standings-scroll__label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-size: $text-3xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: $tracking-wide;
   color: $text-secondary;
 }
 
@@ -94,7 +94,7 @@
       background: $surface-light;
       color: $text-secondary;
       font-size: $text-xs;
-      font-weight: 700;
+      font-weight: $font-weight-bold;
     }
   }
 
@@ -107,7 +107,7 @@
 
   &__name {
     font-size: $text-xs;
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
     color: $text-primary;
     white-space: nowrap;
     overflow: hidden;
@@ -115,7 +115,7 @@
   }
 
   &__record {
-    font-size: 0.65rem;
+    font-size: $text-3xs;
     color: $text-secondary;
     font-variant-numeric: tabular-nums;
 

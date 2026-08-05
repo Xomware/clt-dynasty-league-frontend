@@ -10,7 +10,7 @@
 
 .list-header {
   margin-bottom: $spacing-lg;
-  h2 { margin: 0; font-family: $font-display; font-size: 1.5rem; font-weight: 600; color: $text-primary; }
+  h2 { margin: 0; font-family: $font-display; font-size: $text-xl; font-weight: $font-weight-semibold; color: $text-primary; }
 }
 
 .state-empty {
@@ -62,8 +62,8 @@
   min-width: 0;
 }
 
-.row-name { font-weight: 600; font-size: 0.95rem; color: $text-primary; }
-.row-meta { font-size: 0.78rem; color: $text-muted; }
+.row-name { font-weight: $font-weight-semibold; font-size: $text-base; color: $text-primary; }
+.row-meta { font-size: $text-2xs; color: $text-muted; }
 
 .row-chips {
   display: flex;
@@ -78,7 +78,7 @@
   font-size: $text-xs;
   padding: 2px $spacing-sm;
   border-radius: 9999px;
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   white-space: nowrap;
 
   &.chip-active   { background: rgba($success-green, 0.2); color: $success-green; }

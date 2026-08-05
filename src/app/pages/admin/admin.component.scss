@@ -14,8 +14,8 @@
 
 .admin-title {
   font-family: $font-display;
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-size: $text-2xl;
+  font-weight: $font-weight-bold;
   color: $text-primary;
   margin: 0 0 4px;
 }
@@ -56,13 +56,13 @@
 }
 
 .tile-icon {
-  font-size: 1.5rem;
+  font-size: $text-xl;
   line-height: 1;
 }
 
 .tile-label {
-  font-size: 0.9375rem;
-  font-weight: 600;
+  font-size: $text-sm;
+  font-weight: $font-weight-semibold;
   color: $text-primary;
   line-height: 1.2;
 }

@@ -9,8 +9,8 @@
 .rules-section-title {
   @include xomper-subheader;
   font-family: $font-display;
-  font-size: 1.5rem;
-  letter-spacing: 0.05em;
+  font-size: $text-xl;
+  letter-spacing: $tracking-wide;
   margin: 0 0 $spacing-md;
 }
 
@@ -44,7 +44,7 @@
 .slot-position {
   font-family: $font-mono;
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $text-primary;
 }
 
@@ -71,16 +71,16 @@
 
 .setting-label {
   font-size: $text-xs;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: $tracking-wide;
   color: $text-secondary;
 }
 
 .setting-value {
   font-family: $font-mono;
   font-size: $text-lg;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $text-primary;
 }
 

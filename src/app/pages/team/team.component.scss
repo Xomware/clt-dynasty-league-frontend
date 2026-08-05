@@ -44,8 +44,8 @@
 
   .team-name {
     font-family: $font-display;
-    font-size: 1.8rem;
-    letter-spacing: 0.03em;
+    font-size: $text-2xl;
+    letter-spacing: $tracking-normal;
     color: $text-primary;
     margin: 0;
   }
@@ -62,14 +62,14 @@
   }
 
   .team-record {
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     font-family: $font-mono;
     font-size: $text-lg;
     color: $text-primary;
   }
 
   .team-streak {
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     font-family: $font-mono;
     font-size: $text-lg;
     
@@ -101,8 +101,8 @@
 // Player Group Titles
 .group-title {
   font-family: $font-display;
-  font-size: 1.5rem;
-  letter-spacing: 0.05em;
+  font-size: $text-xl;
+  letter-spacing: $tracking-wide;
   color: $champion-gold;
   margin-bottom: $spacing-md;
   padding-bottom: $spacing-xs;
@@ -159,7 +159,7 @@
 
         .player-name {
           font-size: $text-base;
-          font-weight: 600;
+          font-weight: $font-weight-semibold;
           margin: 0;
           color: $text-primary;
           white-space: nowrap;
@@ -187,7 +187,7 @@
     width: 100%;
     padding: 8px 0;
     margin: $spacing-sm 0 0 0;
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
     font-size: $text-sm;
     border-radius: $radius-xl;
     border: none;
@@ -255,7 +255,7 @@
     }
 
     .team-name {
-      font-size: 1.4rem;
+      font-size: $text-xl;
     }
 
     .team-place {
@@ -274,7 +274,7 @@
   }
 
   .group-title {
-    font-size: 1.2rem;
+    font-size: $text-lg;
     text-align: center;
   }
 }

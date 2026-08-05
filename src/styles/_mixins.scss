@@ -54,7 +54,7 @@
   padding: $spacing-sm $spacing-md;
   border: none;
   border-radius: $radius-xl;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   font-size: $text-base;
   cursor: pointer;
   transition: all $transition-base;
@@ -199,19 +199,19 @@
   border-radius: $radius-full;
   background-color: $color;
   color: $deep-navy;
-  font-weight: bold;
+  font-weight: $font-weight-bold;
   font-size: $text-sm;
 }
 
 // Streak indicators
 @mixin win-streak {
   color: $success-green;
-  font-weight: bold;
+  font-weight: $font-weight-bold;
 }
 
 @mixin loss-streak {
   color: $error-red;
-  font-weight: bold;
+  font-weight: $font-weight-bold;
 }
 
 // Loading skeleton
