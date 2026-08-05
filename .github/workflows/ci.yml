@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check style drift
+      - name: Check design tokens
         run: npm run lint:css
 
       - name: Production build
