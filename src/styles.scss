@@ -1,3 +1,5 @@
+
+@import 'tokens';
 @import 'styles/variables';
 @import 'styles/mixins';
 @import 'styles/theme';
@@ -76,7 +78,7 @@ button {
   border-radius: $radius-sm;
   cursor: pointer;
   color: $text-primary;
-  font-size: 1.2rem;
+  font-size: $text-lg;
   padding: $spacing-sm $spacing-md;
   margin: $spacing-sm;
   transition: all $transition-base;
@@ -105,12 +107,12 @@ a:focus-visible {
 
 .win-streak {
   color: $success-green;
-  font-weight: bold;
+  font-weight: $font-weight-bold;
 }
 
 .loss-streak {
   color: $error-red;
-  font-weight: bold;
+  font-weight: $font-weight-bold;
 }
 
 .clickable {

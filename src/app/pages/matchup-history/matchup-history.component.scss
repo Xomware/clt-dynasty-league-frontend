@@ -51,8 +51,8 @@
 
   .page-title {
     font-family: $font-display;
-    font-size: 2.5rem;
-    letter-spacing: 0.05em;
+    font-size: $text-4xl;
+    letter-spacing: $tracking-wide;
     color: $champion-gold;
     margin: 0;
   }
@@ -81,7 +81,7 @@
   color: $text-secondary;
   font-size: $text-sm;
   font-family: $font-body;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   cursor: pointer;
   transition: all $transition-base;
 
@@ -161,8 +161,8 @@
 
   .week-title {
     font-family: $font-display;
-    font-size: 1.3rem;
-    letter-spacing: 0.03em;
+    font-size: $text-lg;
+    letter-spacing: $tracking-normal;
     color: $champion-gold;
     margin: 0;
   }
@@ -237,7 +237,7 @@
   }
 
   .team-name {
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
     font-size: $text-base;
     color: $text-primary;
   }
@@ -250,7 +250,7 @@
   .team-score {
     font-family: $font-mono;
     font-size: $text-xl;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     color: $champion-gold;
   }
 }
@@ -266,9 +266,9 @@
 
   .vs-text {
     font-size: $text-sm;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     color: $text-muted;
-    letter-spacing: 0.1em;
+    letter-spacing: $tracking-wide;
   }
 
   .points-diff {
@@ -291,7 +291,7 @@
     }
 
     .page-title {
-      font-size: 2rem;
+      font-size: $text-3xl;
     }
   }
 
@@ -299,7 +299,7 @@
     padding: $spacing-md;
 
     .week-title {
-      font-size: 1.1rem;
+      font-size: $text-md;
     }
   }
 

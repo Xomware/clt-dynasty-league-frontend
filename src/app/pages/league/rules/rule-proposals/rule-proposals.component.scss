@@ -7,8 +7,8 @@
 
 .rules-section-title {
   font-family: $font-display;
-  font-size: 1.5rem;
-  letter-spacing: 0.05em;
+  font-size: $text-xl;
+  letter-spacing: $tracking-wide;
   color: $champion-gold;
   margin: 0 0 $spacing-md;
 }
@@ -32,7 +32,7 @@
   border-radius: $radius-md;
   padding: 8px $spacing-md;
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   font-family: $font-body;
   cursor: pointer;
   transition: all $transition-base;
@@ -87,7 +87,7 @@
   border-radius: $radius-md;
   padding: 10px $spacing-lg;
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-family: $font-body;
   cursor: pointer;
   transition: all $transition-base;
@@ -115,7 +115,7 @@
   border-radius: $radius-xl;
   padding: 6px 16px;
   font-size: $text-xs;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   font-family: $font-body;
   cursor: pointer;
   transition: all $transition-base;
@@ -179,10 +179,13 @@
   top: 50%;
   right: 16px;
   transform: translateY(-50%) rotate(-12deg);
-  font-size: 2rem;
-  font-weight: 900;
+  font-size: $text-3xl;
+  // Was 900. index.html loads Bebas Neue (single weight), JetBrains Mono
+  // and Plus Jakarta Sans at wght@400..700 — there is no 900 face, so the
+  // browser was synthesising faux-bold. 700 is the heaviest real weight.
+  font-weight: $font-weight-bold;
   font-family: $font-display;
-  letter-spacing: 0.1em;
+  letter-spacing: $tracking-wide;
   text-transform: uppercase;
   padding: 6px 18px;
   border-radius: $radius-sm;
@@ -238,9 +241,9 @@
 
 .proposal-status {
   font-size: $text-xs;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: $tracking-wide;
   padding: 2px 8px;
   border-radius: $radius-sm;
 
@@ -280,7 +283,7 @@
   background: none;
   border: none;
   color: $text-muted;
-  font-size: 1.1rem;
+  font-size: $text-md;
   cursor: pointer;
   padding: 0 4px;
   line-height: 1;
@@ -295,7 +298,7 @@
 
 .proposal-title {
   font-size: $text-base;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $text-primary;
   margin: 0 0 $spacing-xs;
 }
@@ -325,7 +328,7 @@
   padding: 6px $spacing-md;
   border-radius: $radius-md;
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   font-family: $font-body;
   cursor: pointer;
   transition: all $transition-base;

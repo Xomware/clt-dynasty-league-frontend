@@ -1,3 +1,5 @@
+@import 'tokens';
+
 @import 'src/styles/variables';
 @import 'src/styles/mixins';
 @import 'src/styles/theme';
@@ -35,7 +37,7 @@
     color: $champion-gold;
     text-decoration: none;
     font-size: $text-sm;
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
     border: 1px solid $surface-light;
     border-radius: $radius-sm;
     padding: $spacing-sm $spacing-md;

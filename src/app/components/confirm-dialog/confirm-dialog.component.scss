@@ -24,7 +24,7 @@
 
 .dialog-title {
   font-size: $text-base;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-primary;
   margin: 0;
 }
@@ -46,7 +46,7 @@ button {
   padding: 8px 20px;
   border-radius: $radius-md;
   font-size: $text-sm;
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   font-family: $font-body;
   cursor: pointer;
   border: none;

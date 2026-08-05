@@ -16,7 +16,7 @@
   border: none;
   // s10: --color-text-secondary → --xomper-text-secondary
   color: var(--xomper-text-secondary, #{$text-secondary});
-  font-size: 0.875rem;
+  font-size: $text-sm;
   cursor: pointer;
   padding: 8px 0;
   margin-bottom: 20px;
@@ -74,7 +74,7 @@
   padding: 8px 20px;
   border-radius: $radius-md;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: $text-sm;
   transition: border-color $transition-fast, color $transition-fast;
 
   &:hover {
@@ -110,13 +110,13 @@
 
 .ai-review-detail__period {
   color: var(--xomper-text-primary, #{$text-primary});
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: $text-base;
+  font-weight: $font-weight-semibold;
 }
 
 .ai-review-detail__date {
   color: var(--xomper-text-secondary, #{$text-secondary});
-  font-size: 0.8rem;
+  font-size: $text-xs;
   margin: 0;
 }
 
@@ -140,7 +140,7 @@
 
 .ai-review-detail__meta-tag {
   color: var(--xomper-text-muted, #{$text-muted});
-  font-size: 0.72rem;
+  font-size: $text-2xs;
   background: rgba($surface-light, 0.2);
   padding: 3px 8px;
   border-radius: $radius-sm;

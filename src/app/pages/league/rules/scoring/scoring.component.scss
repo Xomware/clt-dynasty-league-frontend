@@ -9,8 +9,8 @@
 .rules-section-title {
   @include xomper-subheader;
   font-family: $font-display;
-  font-size: 1.5rem;
-  letter-spacing: 0.05em;
+  font-size: $text-xl;
+  letter-spacing: $tracking-wide;
   margin: 0 0 $spacing-md;
 }
 
@@ -28,8 +28,8 @@
 
 .scoring-category-name {
   font-family: $font-display;
-  font-size: 1.1rem;
-  letter-spacing: 0.05em;
+  font-size: $text-md;
+  letter-spacing: $tracking-wide;
   color: $text-primary;
   padding: $spacing-sm $spacing-md;
   margin: 0;
@@ -57,7 +57,7 @@
 .scoring-value {
   font-family: $font-mono;
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
 
   &.positive {
     color: $champion-gold;

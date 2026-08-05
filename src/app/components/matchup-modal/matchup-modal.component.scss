@@ -51,15 +51,15 @@
 
   h2 {
     font-family: $font-display;
-    font-size: 1.3rem;
-    letter-spacing: 0.03em;
+    font-size: $text-lg;
+    letter-spacing: $tracking-normal;
     color: $text-primary;
     margin: 0;
   }
 
   .season-label {
     color: $text-secondary;
-    font-size: 1rem;
+    font-size: $text-base;
   }
 }
 
@@ -67,7 +67,7 @@
   background: transparent;
   border: none;
   color: $text-secondary;
-  font-size: 24px;
+  font-size: $text-xl;
   cursor: pointer;
   padding: $spacing-xs;
   margin: 0;
@@ -130,7 +130,7 @@
   h3 {
     font-family: $font-body;
     font-size: $text-base;
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
     margin: 0;
     color: $text-primary;
   }
@@ -150,8 +150,8 @@
 
   .team-score {
     font-family: $font-mono;
-    font-size: 1.8rem;
-    font-weight: 700;
+    font-size: $text-2xl;
+    font-weight: $font-weight-bold;
     color: $champion-gold;
     margin: 4px 0 0 0;
   }
@@ -159,9 +159,9 @@
 
 .vs-badge {
   font-size: $text-xs;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $text-muted;
-  letter-spacing: 0.1em;
+  letter-spacing: $tracking-wide;
   flex-shrink: 0;
 }
 
@@ -198,8 +198,8 @@
 
   .group-title {
     font-family: $font-display;
-    font-size: 1rem;
-    letter-spacing: 0.05em;
+    font-size: $text-base;
+    letter-spacing: $tracking-wide;
     color: $text-secondary;
     margin-bottom: $spacing-sm;
     text-transform: uppercase;
@@ -258,7 +258,7 @@
 
     .player-name {
       font-size: $text-sm;
-      font-weight: 600;
+      font-weight: $font-weight-semibold;
       color: $text-primary;
       white-space: nowrap;
       overflow: hidden;
@@ -280,8 +280,8 @@
   width: 30px;
   height: 22px;
   border-radius: $radius-sm;
-  font-size: 10px;
-  font-weight: 700;
+  font-size: $text-3xs;
+  font-weight: $font-weight-bold;
   font-family: $font-mono;
   flex-shrink: 0;
 
@@ -320,7 +320,7 @@
 .player-points {
   font-family: $font-mono;
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $champion-gold;
   min-width: 36px;
   text-align: right;
@@ -328,7 +328,7 @@
 
   &.muted {
     color: $text-secondary;
-    font-weight: 400;
+    font-weight: $font-weight-regular;
   }
 }
 
@@ -338,10 +338,13 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-12deg);
-  font-size: 1.6rem;
-  font-weight: 900;
+  font-size: $text-2xl;
+  // Was 900. index.html loads Bebas Neue (single weight), JetBrains Mono
+  // and Plus Jakarta Sans at wght@400..700 — there is no 900 face, so the
+  // browser was synthesising faux-bold. 700 is the heaviest real weight.
+  font-weight: $font-weight-bold;
   font-family: $font-display;
-  letter-spacing: 0.1em;
+  letter-spacing: $tracking-wide;
   text-transform: uppercase;
   padding: 4px 14px;
   border-radius: $radius-sm;
@@ -420,7 +423,7 @@
     }
 
     .team-score {
-      font-size: 1.4rem;
+      font-size: $text-xl;
     }
   }
 
@@ -442,22 +445,22 @@
     }
 
     .player-info .player-name {
-      font-size: 10px;
+      font-size: $text-3xs;
     }
 
     .player-info .player-meta {
-      font-size: 9px;
+      font-size: $text-3xs;
     }
   }
 
   .player-points {
-    font-size: 10px;
+    font-size: $text-3xs;
     min-width: 28px;
   }
 
   .position-badge {
     width: 24px;
     height: 18px;
-    font-size: 8px;
+    font-size: $text-3xs;
   }
 }

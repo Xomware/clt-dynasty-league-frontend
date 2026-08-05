@@ -17,9 +17,9 @@
 }
 
 .matchups-card__label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-size: $text-3xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: $tracking-wide;
   color: $text-secondary;
 }
 
@@ -90,13 +90,13 @@
       background: $surface-light;
       color: $text-secondary;
       font-size: $text-xs;
-      font-weight: 700;
+      font-weight: $font-weight-bold;
     }
   }
 
   &__team-name {
     font-size: $text-xs;
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
     color: $text-primary;
     white-space: nowrap;
     overflow: hidden;
@@ -111,7 +111,7 @@
 
   &__points {
     font-size: $text-base;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     color: $text-secondary;
     font-variant-numeric: tabular-nums;
     flex-shrink: 0;
@@ -122,9 +122,9 @@
   }
 
   &__vs {
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
+    font-size: $text-3xs;
+    font-weight: $font-weight-bold;
+    letter-spacing: $tracking-wide;
     color: $text-muted;
     flex-shrink: 0;
   }

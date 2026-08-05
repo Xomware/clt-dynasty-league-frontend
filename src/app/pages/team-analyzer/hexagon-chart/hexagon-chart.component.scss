@@ -1,3 +1,5 @@
+@import 'tokens';
+
 @import '../../../../styles/variables';
 @import '../../../../styles/mixins';
 
@@ -64,9 +66,9 @@
 // Axis labels
 .axis-label {
   font-family: $font-body;
-  font-size: 11px;
-  font-weight: 700;
+  font-size: $text-3xs;
+  font-weight: $font-weight-bold;
   fill: $text-secondary;
-  letter-spacing: 0.02em;
+  letter-spacing: $tracking-normal;
   user-select: none;
 }

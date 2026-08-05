@@ -43,7 +43,7 @@
     padding: 8px 14px;
     border-radius: $radius-md;
     font-size: $text-sm;
-    font-weight: 500;
+    font-weight: $font-weight-medium;
     font-family: $font-body;
     transition: all $transition-base;
     border: 1px solid transparent;
@@ -58,7 +58,7 @@
     &.active {
       background: $gold-accent;
       color: $deep-navy;
-      font-weight: 600;
+      font-weight: $font-weight-semibold;
       border-color: $champion-gold;
     }
   }
@@ -77,7 +77,7 @@
   }
 
   .dropdown-arrow {
-    font-size: 10px;
+    font-size: $text-3xs;
     transition: transform $transition-fast;
 
     &.open {
@@ -139,7 +139,7 @@
   margin: 0;
   cursor: pointer;
   font-size: $text-sm;
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   font-family: $font-body;
   transition: all $transition-base;
 
@@ -154,7 +154,7 @@
   display: none;
   cursor: pointer;
   margin-left: auto;
-  font-size: 24px;
+  font-size: $text-xl;
   color: $champion-gold;
   padding: $spacing-xs;
   border-radius: $radius-sm;
@@ -183,9 +183,9 @@
   .dropdown-section-header {
     padding: $spacing-sm $spacing-lg;
     font-size: $text-xs;
-    font-weight: 700;
+    font-weight: $font-weight-bold;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: $tracking-wide;
     color: $champion-gold;
     background: rgba($deep-navy, 0.5);
     margin-top: $spacing-sm;
@@ -213,7 +213,7 @@
       background-color: rgba($champion-gold, 0.15);
       color: $champion-gold;
       border-left-color: $champion-gold;
-      font-weight: 600;
+      font-weight: $font-weight-semibold;
     }
 
     &.sign-out-link {

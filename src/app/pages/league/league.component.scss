@@ -36,8 +36,8 @@
 .league-name {
   margin-top: $spacing-sm;
   font-family: $font-display;
-  font-size: 2rem;
-  letter-spacing: 0.03em;
+  font-size: $text-3xl;
+  letter-spacing: $tracking-normal;
   color: $text-primary;
 }
 

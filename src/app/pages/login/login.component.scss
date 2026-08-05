@@ -78,8 +78,8 @@
 
   .tagline {
     font-family: $font-display;
-    font-size: 1.2rem;
-    letter-spacing: 0.15em;
+    font-size: $text-lg;
+    letter-spacing: $tracking-wider;
     color: $text-secondary;
     text-transform: uppercase;
   }
@@ -95,8 +95,8 @@
 
 .login-title {
   font-family: $font-display;
-  font-size: 1.5rem;
-  letter-spacing: 0.03em;
+  font-size: $text-xl;
+  letter-spacing: $tracking-normal;
   color: $text-primary;
   text-align: center;
   margin-bottom: $spacing-lg;
@@ -112,7 +112,7 @@
   padding: 14px $spacing-lg;
   border-radius: $radius-xl;
   font-size: $text-base;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   font-family: $font-body;
   cursor: pointer;
   transition: all $transition-base;
@@ -234,7 +234,7 @@
   a {
     color: $champion-gold;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
 
     &:hover {
       text-decoration: underline;
@@ -291,7 +291,7 @@
   }
 
   .brand-section .tagline {
-    font-size: 1rem;
+    font-size: $text-base;
   }
 
   .login-box {

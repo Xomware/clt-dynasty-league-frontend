@@ -34,8 +34,8 @@
 
   h2 {
     font-family: $font-display;
-    font-size: 1.4rem;
-    letter-spacing: 0.03em;
+    font-size: $text-xl;
+    letter-spacing: $tracking-normal;
     color: $text-primary;
     margin-bottom: $spacing-xs;
   }
@@ -93,7 +93,7 @@
   background: $champion-gold;
   color: $deep-navy;
   font-size: $text-base;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   font-family: $font-body;
   cursor: pointer;
   transition: all $transition-base;
@@ -164,7 +164,7 @@
 
     .user-name {
       font-family: $font-display;
-      font-size: 1.2rem;
+      font-size: $text-lg;
       color: $text-primary;
       margin-bottom: 4px;
     }
@@ -189,7 +189,7 @@
   border-radius: $radius-xl;
   border: none;
   font-size: $text-base;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   font-family: $font-body;
   cursor: pointer;
   transition: all $transition-base;
@@ -268,7 +268,7 @@
     }
 
     h2 {
-      font-size: 1.2rem;
+      font-size: $text-lg;
     }
   }
 
@@ -279,7 +279,7 @@
     }
 
     .user-info .user-name {
-      font-size: 1rem;
+      font-size: $text-base;
     }
   }
 }

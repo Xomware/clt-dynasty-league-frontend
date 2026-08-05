@@ -14,7 +14,7 @@
   gap: $spacing-md;
   margin-bottom: 28px;
 
-  h2 { margin: 0; font-size: 1.4rem; font-weight: 600; color: $text-primary; }
+  h2 { margin: 0; font-size: $text-xl; font-weight: $font-weight-semibold; color: $text-primary; }
 }
 
 .btn-back {
@@ -22,7 +22,7 @@
   border: none;
   color: $champion-gold;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: $text-base;
   padding: 0;
   &:hover { text-decoration: underline; }
 }
@@ -62,8 +62,8 @@
 }
 
 .header-action {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: $text-md;
+  font-weight: $font-weight-bold;
   color: $text-primary;
   margin-bottom: 4px;
 }
@@ -71,7 +71,7 @@
 .header-meta {
   display: flex;
   gap: 12px;
-  font-size: 0.85rem;
+  font-size: $text-sm;
 }
 .meta-label { color: $text-muted; min-width: 80px; }
 .meta-value { color: $text-secondary; word-break: break-all; &.mono { font-family: $font-mono; } }
@@ -106,17 +106,17 @@
 }
 
 .block-label {
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-secondary;
 }
 
 .block-caret {
   color: $text-muted;
-  font-size: 0.8rem;
+  font-size: $text-xs;
 }
 
 .absent-label {
-  font-size: 0.8rem;
+  font-size: $text-xs;
   color: $text-muted;
   font-style: italic;
 }
@@ -125,7 +125,7 @@
   margin: 0;
   padding: 12px $spacing-md 16px;
   font-family: $font-mono;
-  font-size: 0.8rem;
+  font-size: $text-xs;
   line-height: 1.6;
   color: $text-secondary;
   overflow-x: auto;

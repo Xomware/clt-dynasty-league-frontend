@@ -52,13 +52,13 @@
 .meta-label {
   color: $text-secondary;
   flex-shrink: 0;
-  font-size: 0.8125rem;
+  font-size: $text-xs;
   min-width: 80px;
 }
 
 .meta-value {
   color: $text-primary;
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   text-align: right;
   word-break: break-all;
 
@@ -79,10 +79,10 @@
 
 .section-title {
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-secondary;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: $tracking-wide;
   margin: 0 0 12px;
 }
 
@@ -101,7 +101,7 @@
   @include xomper-card;
   border: 1px solid rgba($surface-light, 0.2);
   padding: $spacing-md;
-  font-size: 0.8125rem;
+  font-size: $text-xs;
   color: $text-primary;
   white-space: pre-wrap;
   word-break: break-word;
@@ -129,8 +129,8 @@
 }
 
 .field-label {
-  font-size: 0.8125rem;
-  font-weight: 600;
+  font-size: $text-xs;
+  font-weight: $font-weight-semibold;
   color: $text-secondary;
 }
 
@@ -159,7 +159,7 @@
   border-radius: $radius-md;
   padding: 10px;
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-family: $font-body;
   cursor: pointer;
   transition: filter $transition-fast;

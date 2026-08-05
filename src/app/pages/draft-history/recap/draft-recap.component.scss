@@ -21,8 +21,8 @@
 
   .report-title {
     font-family: $font-display;
-    font-size: 1.75rem;
-    letter-spacing: 0.04em;
+    font-size: $text-2xl;
+    letter-spacing: $tracking-normal;
     color: $champion-gold;
     margin: 0;
   }

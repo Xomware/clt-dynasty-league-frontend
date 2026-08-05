@@ -1,3 +1,5 @@
+@import 'tokens';
+
 @import '../../../../styles/variables';
 @import '../../../../styles/mixins';
 @import '../../../../styles/theme';
@@ -27,7 +29,7 @@
 
 .partner-name {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $text-primary;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -36,7 +38,7 @@
 
 .gap-pill {
   font-size: $text-xs;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $bg-dark;
   background: $success-green;
   padding: 2px $spacing-xs;
@@ -61,8 +63,8 @@
 
 .side-label {
   font-size: $text-xs;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-weight: $font-weight-bold;
+  letter-spacing: $tracking-wide;
   text-transform: uppercase;
 
   &.give-label {
@@ -76,7 +78,7 @@
 
 .player-name {
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-primary;
   overflow: hidden;
   text-overflow: ellipsis;

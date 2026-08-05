@@ -17,9 +17,9 @@
 }
 
 .announcements-card__label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-size: $text-3xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: $tracking-wide;
   color: $text-secondary;
 }
 
@@ -57,9 +57,9 @@
   }
 
   &__critical-badge {
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
+    font-size: $text-3xs;
+    font-weight: $font-weight-bold;
+    letter-spacing: $tracking-wide;
     // s10: was #ef4444 (off-palette). Correct: accentRed.
     color: $accent-red;
     flex-shrink: 0;
@@ -67,7 +67,7 @@
 
   &__title {
     font-size: $text-sm;
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
     color: $text-primary;
     display: -webkit-box;
     -webkit-line-clamp: 2;

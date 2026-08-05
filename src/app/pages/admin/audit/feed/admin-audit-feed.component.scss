@@ -10,7 +10,7 @@
 
 .feed-header {
   margin-bottom: $spacing-lg;
-  h2 { margin: 0; font-family: $font-display; font-size: 1.5rem; font-weight: 600; color: $text-primary; }
+  h2 { margin: 0; font-family: $font-display; font-size: $text-xl; font-weight: $font-weight-semibold; color: $text-primary; }
 }
 
 .state-empty {
@@ -21,7 +21,7 @@
   &.state-warning { color: $champion-gold; }
   &.state-error   { color: $error-red; }
 
-  .state-title { font-weight: 600; margin-bottom: $spacing-sm; }
+  .state-title { font-weight: $font-weight-semibold; margin-bottom: $spacing-sm; }
   .state-body  { font-size: $text-sm; }
   .state-sub   { font-size: $text-sm; margin-top: 4px; }
 }
@@ -62,13 +62,13 @@
 }
 
 .row-action {
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: $font-weight-semibold;
+  font-size: $text-base;
   color: $text-primary;
 }
 
 .row-meta {
-  font-size: 0.8rem;
+  font-size: $text-xs;
   color: $text-secondary;
   display: flex;
   gap: 6px;

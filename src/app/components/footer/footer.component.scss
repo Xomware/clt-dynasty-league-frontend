@@ -47,7 +47,7 @@ footer {
     padding: 10px 20px;
     cursor: pointer;
     font-size: $text-sm;
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
     font-family: $font-body;
     transition: all $transition-base;
     text-decoration: none;

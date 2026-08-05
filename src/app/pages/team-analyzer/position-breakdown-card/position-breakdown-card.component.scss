@@ -1,3 +1,5 @@
+@import 'tokens';
+
 @import '../../../../styles/variables';
 @import '../../../../styles/mixins';
 @import '../../../../styles/theme';
@@ -19,7 +21,7 @@
 
 .label {
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-primary;
   width: 52px;
   flex-shrink: 0;
@@ -42,7 +44,7 @@
 
 .value {
   font-size: $text-xs;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   font-family: $font-mono;
   width: 48px;
   text-align: right;
@@ -83,14 +85,14 @@
 
 .total-label {
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text-secondary;
   flex: 1;
 }
 
 .total-my {
   font-size: $text-sm;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $champion-gold;
   font-family: $font-mono;
 }

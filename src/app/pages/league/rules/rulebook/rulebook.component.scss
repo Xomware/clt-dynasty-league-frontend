@@ -9,8 +9,8 @@
 .rules-section-title {
   @include xomper-subheader;
   font-family: $font-display;
-  font-size: 1.5rem;
-  letter-spacing: 0.05em;
+  font-size: $text-xl;
+  letter-spacing: $tracking-wide;
   margin: 0 0 $spacing-md;
 }
 
@@ -41,7 +41,7 @@
   border: none;
   color: $text-primary;
   font-size: $text-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   font-family: $font-body;
   cursor: pointer;
   transition: background $transition-base;
@@ -92,7 +92,7 @@
     padding: 6px 10px;
     background: rgba($surface-light, 0.08);
     color: $champion-gold;
-    font-weight: 600;
+    font-weight: $font-weight-semibold;
     border-bottom: 1px solid rgba($surface-light, 0.15);
   }
 

@@ -7,8 +7,8 @@
 // h1 — big white title (matches iOS Text(.title2.weight(.bold)))
 .md-h1 {
   color: var(--xomper-text-primary, #{$text-primary});
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-size: $text-lg;
+  font-weight: $font-weight-bold;
   margin: 12px 0 8px;
   line-height: 1.3;
 }
@@ -32,10 +32,13 @@
 .md-h2 {
   // BUG FIX s10: was #e53935 (off-palette). Correct: accentRed #FF4757.
   color: var(--xomper-accent-red, #{$accent-red});
-  font-size: 1.05rem;
-  font-weight: 900;
+  font-size: $text-base;
+  // Was 900. index.html loads Bebas Neue (single weight), JetBrains Mono
+  // and Plus Jakarta Sans at wght@400..700 — there is no 900 face, so the
+  // browser was synthesising faux-bold. 700 is the heaviest real weight.
+  font-weight: $font-weight-bold;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: $tracking-wider;
   margin: 12px 0 0;
   line-height: 1.2;
 }
@@ -44,8 +47,8 @@
 .md-h3 {
   // BUG FIX s10: was #f0c040 (off-palette). Correct: championGold #00FFAB.
   color: var(--xomper-champion-gold, #{$champion-gold});
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: $text-base;
+  font-weight: $font-weight-bold;
   margin: 14px 0 4px;
   line-height: 1.3;
 }
@@ -73,7 +76,7 @@
   color: var(--xomper-text-secondary, #{$text-secondary});
   margin: 0;
   line-height: 1.5;
-  font-size: 0.9rem;
+  font-size: $text-sm;
 
   strong {
     color: var(--xomper-text-primary, #{$text-primary});
@@ -84,12 +87,12 @@
 // paragraph — body text; **bold** rendered as <strong>
 .md-paragraph {
   color: var(--xomper-text-primary, #{$text-primary});
-  font-size: 0.9rem;
+  font-size: $text-sm;
   line-height: 1.5;
   margin-bottom: 12px;
 
   strong {
     color: var(--xomper-text-primary, #{$text-primary});
-    font-weight: 700;
+    font-weight: $font-weight-bold;
   }
 }
