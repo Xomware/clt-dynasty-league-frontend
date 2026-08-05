@@ -1,0 +1,14 @@
+{
+  "customSyntax": "postcss-scss",
+  "rules": {
+    "declaration-property-value-allowed-list": {
+      "font-size": ["/^\\$text-/", "/^clamp\\(/", "/^var\\(/", "inherit", "1em"],
+      "letter-spacing": ["/^\\$tracking-/", "/^var\\(/", "normal", "inherit"],
+      "font-weight": ["/^\\$font-weight-/", "/^var\\(/", "inherit", "normal"]
+    }
+  },
+  "ignoreFiles": ["node_modules/**", "dist/**"],
+  "overrides": [
+    { "files": ["src/styles/_variables.scss"], "rules": { "declaration-property-value-allowed-list": null } }
+  ]
+}
