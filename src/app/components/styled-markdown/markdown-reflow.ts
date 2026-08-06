@@ -23,6 +23,9 @@ export function paragraphs(raw: string): string {
   let out = raw
 
   // 1. Detach a leading title that's glued to the first sentence
+  //    NOTE: the emoji in the character class below are INPUT being
+  //    matched — AI-generated recaps arrive containing them — not UI we
+  //    render. Do not strip them in an emoji sweep; that breaks reflow.
   //    e.g. "2025 Rookie Draft RecapThe 2025 class…"
   out = out.replace(/(Recap|Standings|Summary|Review)([A-Z\u{1F3C6}\u{1F947}\u{1F948}\u{1F949}⚡️])/gu, '$1\n\n$2')
 
