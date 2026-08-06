@@ -12,7 +12,7 @@
       [disabled]="tile.disabled ?? false"
       (click)="navigate(tile)"
     >
-      <span class="tile-icon">{{ tile.icon }}</span>
+      <span class="tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path [attr.d]="tile.iconPath"/></svg></span>
       <span class="tile-label">{{ tile.label }}</span>
       <span class="tile-subtitle">{{ tile.subtitle }}</span>
     </button>

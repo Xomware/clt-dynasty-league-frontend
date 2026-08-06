@@ -7,8 +7,6 @@
 
 export interface SidebarEntry {
   label: string
-  /** @deprecated emoji placeholder — use svg instead */
-  icon: string
   /** Inline SVG markup. Render with fill="currentColor" or stroke="currentColor". */
   svg: string
   route: string
@@ -128,38 +126,32 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
     entries: [
       {
         label: 'Home',
-        icon: '🏠',
         svg: ICONS.home,
         route: '/home',
       },
       {
         label: 'Standings',
-        icon: '🏆',
         svg: ICONS.standings,
         route: '/league/standings',
       },
       {
         label: 'Matchups',
-        icon: '⚔️',
         svg: ICONS.matchups,
         route: '/league/matchups',
       },
       {
         label: 'Playoffs',
-        icon: '🎯',
         svg: ICONS.playoffs,
         route: '/league/playoffs',
       },
       {
         label: 'Draft History',
-        icon: '📋',
         svg: ICONS.draftHistory,
         route: '/draft-history',
         // s4 restructures
       },
       {
         label: 'World Cup',
-        icon: '🌍',
         svg: ICONS.worldCup,
         route: '/league/world-cup',
       },
@@ -170,19 +162,16 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
     entries: [
       {
         label: 'My Team',
-        icon: '👥',
         svg: ICONS.myTeam,
         route: '/team',
       },
       {
         label: 'Taxi Squad',
-        icon: '🚕',
         svg: ICONS.taxiSquad,
         route: '/taxi-squad',
       },
       {
         label: 'Team Analyzer',
-        icon: '📊',
         svg: ICONS.teamAnalyzer,
         route: '/team-analyzer',
       },
@@ -193,37 +182,31 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
     entries: [
       {
         label: 'Rulebook',
-        icon: '📖',
         svg: ICONS.rulebook,
         route: '/league/rulebook',
       },
       {
         label: 'Scoring',
-        icon: '⚡',
         svg: ICONS.scoring,
         route: '/league/scoring',
       },
       {
         label: 'League Settings',
-        icon: '⚙️',
         svg: ICONS.settings,
         route: '/league/settings',
       },
       {
         label: 'Payouts',
-        icon: '💰',
         svg: ICONS.payouts,
         route: '/league/payouts',
       },
       {
         label: 'Rule Proposals',
-        icon: '🗳️',
         svg: ICONS.ruleProposals,
         route: '/league/rule-proposals',
       },
       {
         label: 'Draft Order',
-        icon: '🎲',
         svg: ICONS.draftOrder,
         route: '/league/draft-order',
       },
@@ -235,14 +218,12 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
     entries: [
       {
         label: 'AI Review',
-        icon: '🤖',
         svg: ICONS.aiReview,
         route: '/ai-review',
         adminOnly: true,
       },
       {
         label: 'Admin',
-        icon: '🔧',
         svg: ICONS.admin,
         route: '/admin',
         adminOnly: true,
