@@ -1,4 +1,4 @@
-name: Deploy Frontend
+name: Deploy CLT Dynasty League
 
 on:
   push:
@@ -30,10 +30,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
         run: |
-          echo "API_AUTH_TOKEN=$(aws ssm get-parameter --name "/xomper/api/API_AUTH_TOKEN" --with-decryption --query "Parameter.Value" --output text)" >> xomper_credentials.env
-          echo "API_ID=$(aws ssm get-parameter --name "/xomper/api/API_ID" --with-decryption --query "Parameter.Value" --output text)" >> xomper_credentials.env
-          echo "SUPABASE_URL=$(aws ssm get-parameter --name "/xomper/api/SUPABASE_URL" --with-decryption --query "Parameter.Value" --output text)" >> xomper_credentials.env
-          echo "SUPABASE_ANON_KEY=$(aws ssm get-parameter --name "/xomper/api/SUPABASE_ANON_KEY" --with-decryption --query "Parameter.Value" --output text)" >> xomper_credentials.env
+          echo "API_AUTH_TOKEN=$(aws ssm get-parameter --name "/clt-dynasty/api/API_AUTH_TOKEN" --with-decryption --query "Parameter.Value" --output text)" >> xomper_credentials.env
+          echo "API_ID=$(aws ssm get-parameter --name "/clt-dynasty/api/API_ID" --with-decryption --query "Parameter.Value" --output text)" >> xomper_credentials.env
+          echo "SUPABASE_URL=$(aws ssm get-parameter --name "/clt-dynasty/api/SUPABASE_URL" --with-decryption --query "Parameter.Value" --output text)" >> xomper_credentials.env
+          echo "SUPABASE_ANON_KEY=$(aws ssm get-parameter --name "/clt-dynasty/api/SUPABASE_ANON_KEY" --with-decryption --query "Parameter.Value" --output text)" >> xomper_credentials.env
 
       - name: Mask sensitive values
         run: |
@@ -67,7 +67,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-east-1
-        run: aws s3 sync ./dist/xomper-frontend s3://xomper.xomware.com --delete
+        run: aws s3 sync ./dist/xomper-frontend s3://clt.dynasty.xomware.com --delete
 
       - name: Invalidate CloudFront cache
         env:
@@ -75,10 +75,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-east-1
         run: |
-          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items[?contains(@, 'xomper.xomware.com')]].Id" --output text)
+          DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items[?contains(@, 'clt.dynasty.xomware.com')]].Id" --output text)
           if [ -n "$DISTRIBUTION_ID" ]; then
             aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths "/*"
             echo "CloudFront cache invalidated for distribution $DISTRIBUTION_ID"
           else
-            echo "No CloudFront distribution found for xomper.xomware.com, skipping invalidation"
+            echo "No CloudFront distribution found for clt.dynasty.xomware.com, skipping invalidation"
           fi
