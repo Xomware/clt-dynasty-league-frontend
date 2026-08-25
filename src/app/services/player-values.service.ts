@@ -1,3 +1,25 @@
+/**
+ * FROZEN FORK — do not sync with xomper-frontend.
+ *
+ * Fork point: a54528ef773b4459ed28b4947a54a3b6633bbaae
+ *
+ * This file is a copy taken when clt-dynasty-league split from what is now
+ * `xomper-frontend`. The platform's copy has since diverged: it was refactored
+ * to resolve values per league from a settings fingerprint, and to distinguish
+ * an unknown player from a zero-valued one.
+ *
+ * CLT deliberately does NOT take those changes. It analyzes exactly one
+ * league, with one scoring format, and the singleton behaviour here is correct
+ * for that. Porting the platform's version would add complexity this app has
+ * no use for.
+ *
+ * Critical fixes get cherry-picked by hand. Expected volume is near zero — the
+ * engine is pure and covered by the existing specs.
+ *
+ * TRIPWIRE: if this file needs changing twice in one quarter, the
+ * frozen-fork assumption is wrong. Revisit the split then, with evidence.
+ * See docs/features/xomper-rebrand/PLAN.md in xomper-frontend.
+ */
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import {
