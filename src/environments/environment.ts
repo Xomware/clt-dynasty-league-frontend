@@ -1,8 +1,10 @@
 export const environment = {
   production: true,
   appName: 'CLT Dynasty League',
-  appTagline: 'Dynasty fantasy football for the CLT league — standings, trades, drafts and team analysis.',
+  appEyebrow: 'Charlotte Dynasty League · 12 teams · Superflex',
+  appTagline: 'Standings, trades, drafts and team analysis for the Charlotte Dynasty League.',
   poweredByXomper: true,
+  secondaryCta: { label: 'League standings', route: '/league/standings' },
   baseCallbackUrl: 'https://clt.dynasty.xomware.com',
   apiAuthToken: '---',
   apiId: '---',
