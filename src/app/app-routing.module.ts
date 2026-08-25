@@ -20,7 +20,14 @@ import { LinkSleeperComponent } from './pages/link-sleeper/link-sleeper.componen
 
 const routes: Routes = [
   // Public
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  // Public landing. This used to redirect straight to /home, which is
+  // auth-gated, so every unauthenticated visitor hit a bare login form.
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () =>
+      import('./pages/welcome/welcome.component').then((m) => m.WelcomeComponent),
+  },
 
   // Login — public, no guard. Authed users visiting /login get redirected
   // to /home inside LoginComponent.ngOnInit.
