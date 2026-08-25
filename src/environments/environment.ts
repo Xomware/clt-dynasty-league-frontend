@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  baseCallbackUrl: 'https://xomper.xomware.com',
+  baseCallbackUrl: 'https://clt.dynasty.xomware.com',
   apiAuthToken: '---',
   apiId: '---',
   supabaseUrl: '---',
