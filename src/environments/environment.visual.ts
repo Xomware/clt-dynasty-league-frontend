@@ -19,6 +19,6 @@ export const environment = {
   supabaseUrl: 'https://visual-tests.invalid',
   supabaseAnonKey: 'visual-tests-placeholder',
   // Whitelisted League Config
-  myLeagueId: '1181789700187090944',
+  myLeagueId: '1317249551823814656',
   myLeagueName: 'CLT DYNASTY',
 }
