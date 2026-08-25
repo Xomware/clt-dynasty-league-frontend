@@ -16,7 +16,6 @@ export const environment = {
   poweredByXomper: true,
   secondaryCta: { label: 'League standings', route: '/league/standings' },
   baseCallbackUrl: 'https://clt.dynasty.xomware.com',
-  apiAuthToken: '---',
   apiId: '---',
   supabaseUrl: 'https://visual-tests.invalid',
   supabaseAnonKey: 'visual-tests-placeholder',
